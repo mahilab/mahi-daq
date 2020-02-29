@@ -1,4 +1,6 @@
+<p align="center">
 <img src="https://github.com/mahilab/mahi-daq/blob/master/mahi-daq.png" width="256"> 
+</p>
 
 ## mahi-daq
 
