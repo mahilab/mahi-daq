@@ -4,8 +4,8 @@
 #include "Detail/MyRioFpga60/MyRio.h"
 
 
-namespace mel
-{
+namespace mahi {
+namespace daq {
 
 namespace {
 std::string connectorName(MyRioConnector::Type type) {
@@ -107,4 +107,5 @@ bool MyRioMxp::on_open() {
 }
 
 
-} // mel
+} // namespace daq
+} // namespace mahi

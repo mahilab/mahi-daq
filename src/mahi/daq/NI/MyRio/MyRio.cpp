@@ -3,7 +3,6 @@
 
 #include "Detail/MyRioFpga60/MyRio.h"
 #include "Detail/MyRioUtil.hpp"
-#include <MEL/Core/Clock.hpp>
 
 #define MyRio_DefaultFolder "/var/local/natinst/bitfiles/"
 #define MyRio_BitfilePath MyRio_DefaultFolder MyRio_Bitfile

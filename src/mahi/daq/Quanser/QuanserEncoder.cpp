@@ -89,7 +89,7 @@ bool QuanserEncoder::reset_count(ChanNum channel_number, int count) {
 bool QuanserEncoder::set_quadrature_factors(const std::vector<QuadFactor>& factors) {
     if (!Encoder::set_quadrature_factors(factors))
         return false;
-    // convert MEL QuadFactor to Quanser t_encoder_quadratue_mode
+    // convert QuadFactor to Quanser t_encoder_quadratue_mode
     std::vector<t_encoder_quadrature_mode> converted_factors;
     for (auto it = factors.begin(); it != factors.end(); ++it) {
         if (*it == QuadFactor::X0)
@@ -121,7 +121,7 @@ bool QuanserEncoder::set_quadrature_factors(const std::vector<QuadFactor>& facto
 bool QuanserEncoder::set_quadrature_factor(ChanNum channel_number, QuadFactor factor) {
     if (!Encoder::set_quadrature_factor(channel_number, factor))
         return false;
-    // convert MEL QuadFactor to Quanser t_encoder_quadratue_mode
+    // convert QuadFactor to Quanser t_encoder_quadratue_mode
     t_encoder_quadrature_mode converted_factor;
     if (factor == QuadFactor::X0)
         converted_factor = ENCODER_QUADRATURE_NONE;

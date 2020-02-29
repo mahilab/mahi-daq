@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
+// Copyright (c) 2020 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -59,7 +59,7 @@ public:
     /// physical means by checking for a digital loopback on same numbered
     /// digital input and output channels. For example, if you connect two Q8
     /// USBs to the host, one which has DO5 connected to DI5 (arbitraily
-    /// chosen), and the MEL Q8Usb object with id = 0 returns identify(5) =
+    /// chosen), and the Q8Usb object with id = 0 returns identify(5) =
     /// true, you know Q8Usb(id = 0) is the Q8 USB with the loopback, and
     /// Q8Usb(id = 1) is the Q8 USB without a loopback. If identify(5) = false,
     /// you know Q8Usb(id = 0) is the Q8 USB without the loopback, and Q8Usb(id

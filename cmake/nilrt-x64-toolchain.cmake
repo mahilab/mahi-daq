@@ -4,7 +4,7 @@
 set(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_SYSTEM_PROCESSOR x64)
 
-# set flag for MEL CMakeLists.txt
+# set flag
 set(NI_LRT ON)
 
 # root to cross compiler
@@ -23,8 +23,8 @@ set(CMAKE_CROSSCOMPILING 1)
 # setup sysroot (for NI RT cross compiler)
 set(CMAKE_SYSROOT ${NI_X64_ROOT}/sysroots/core2-64-nilrt-linux CACHE FILEPATH "Path to NI x64 Cross Compiler Sysroot")
 set(CMAKE_FIND_ROOT_PATH 
-    "C:/Program Files (x86)/MEL-nilrt-x64/lib/cmake/MEL"
-    "C:/Program Files/MEL-nilrt-x64/lib/cmake/MEL"
+    "C:/Program Files (x86)/mahi-daq-nilrt-x64/lib/cmake/mahi-daq"
+    "C:/Program Files/mahi-daq-nilrt-x64/lib/cmake/mahi-daq"
 )
 
 set(CMAKE_C_FLAGS_INIT   "-pthread")

@@ -1,4 +1,4 @@
-# MEL CMake Tools Variants
+# CMake Tools Variants
 # Evan Pezent (epezent@rice.edu)
 
 buildType: 
@@ -21,10 +21,10 @@ examples:
    short: Examples
    long: "Build examples"
    settings: 
-    MEL_EXAMPLES: ON
+    MAHI_GUI_EXAMPLES: ON
   off: 
    short: "No Examples"
    long: "Do not build examples"
    settings: 
-    MEL_EXAMPLES: OFF
+    MAHI_GUI_EXAMPLES: OFF
 

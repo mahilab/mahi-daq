@@ -128,7 +128,7 @@ namespace daq {
     bool QuanserDIO::set_expire_values(const std::vector<Logic>& expire_values) {
         if (!InputOutput::set_expire_values(expire_values))
             return false;
-        // convert MEL logic to Quanser t_encoder_quadratue_mode
+        // convert Logic to Quanser t_encoder_quadratue_mode
         std::vector<t_digital_state> converted_expire_values;
         for (auto it = expire_values.begin(); it != expire_values.end(); ++it) {
             if (*it == High)
@@ -151,7 +151,7 @@ namespace daq {
     bool QuanserDIO::set_expire_value(ChanNum channel_number, Logic expire_value) {
         if (!InputOutput::set_expire_value(channel_number, expire_value))
             return false;
-        // convert MEL logic to Quanser t_encoder_quadratue_mode
+        // convert Logic to Quanser t_encoder_quadratue_mode
         t_digital_state converted_expire_value;
         if (expire_value == High)
             converted_expire_value = DIGITAL_STATE_HIGH;

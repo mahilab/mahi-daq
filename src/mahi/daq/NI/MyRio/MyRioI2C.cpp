@@ -6,8 +6,8 @@
 
 extern NiFpga_Session myrio_session;
 
-namespace mel
-{
+namespace mahi {
+namespace daq {
 
 MyRioI2C::MyRioI2C(MyRioMxp& connector) :
     Device(connector.get_name() + "_i2c"),

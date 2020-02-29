@@ -4,7 +4,7 @@
 SET(CMAKE_SYSTEM_NAME Linux)
 set(CMAKE_SYSTEM_PROCESSOR ARM)
 
-# set flags for MEL CMakeLists.txt
+# set flags
 set(NI_LRT ON)
 set(NI_ARM ON)
 
@@ -24,8 +24,8 @@ set(CMAKE_CROSSCOMPILING 1)
 # setup sysroot (for NI RT cross compiler)
 set(CMAKE_SYSROOT ${NI_ARM_ROOT}/sysroots/cortexa9-vfpv3-nilrt-linux-gnueabi CACHE FILEPATH "Path to NI ARM Cross Compiler Sysroot")
 set(CMAKE_FIND_ROOT_PATH 
-    "C:/Program Files (x86)/MEL-nilrt-arm/lib/cmake/MEL"
-    "C:/Program Files/MEL-nilrt-arm/lib/cmake/MEL"
+    "C:/Program Files (x86)/mahi-daq-nilrt-arm/lib/cmake/mahi-daq"
+    "C:/Program Files/mahi-daq-nilrt-arm/lib/cmake/mahi-daq"
 )
 
 set(CMAKE_C_FLAGS_INIT   "-pthread -march=armv7-a -mfpu=vfpv3 -mfloat-abi=softfp -mcpu=cortex-a9")

@@ -1,6 +1,6 @@
 // MIT License
 //
-// Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
+// Copyright (c) 2020 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -16,7 +16,6 @@
 
 #pragma once
 #include <mahi/daq/Input.hpp>
-#include <MEL/Core/NonCopyable.hpp>
 
 namespace mahi {
 namespace daq {
