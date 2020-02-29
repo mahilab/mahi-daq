@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -17,9 +16,9 @@
 
 #pragma once
 #include <mahi/daq/Output.hpp>
-#include <MEL/Core/NonCopyable.hpp>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 //==============================================================================
 // FORWARD DECLARATIONS
@@ -31,7 +30,7 @@ class QuanserDaq;
 // CLASS DECLARATION
 //==============================================================================
 
-class QuanserDO : public DigitalOutput, NonCopyable {
+class QuanserDO : public DigitalOutput {
 public:
     QuanserDO(QuanserDaq& daq, const ChanNums& channel_numbers);
 
@@ -48,6 +47,10 @@ public:
 private:
     QuanserDaq& daq_;  ///< Reference to parent QDaq
     Registry<char> quanser_values_;
+
+    QuanserDO( const QuanserDO& ) = delete; // non construction-copyable
+    QuanserDO& operator=( const QuanserDO& ) = delete; // non copyable
 };
 
-}  // namespace mel
+} // namespace daq
+} // namespace mahi

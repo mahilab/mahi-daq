@@ -1,9 +1,10 @@
 #include <hil.h>
 #include <mahi/daq/Quanser/QuanserDaq.hpp>
 #include <mahi/daq/Quanser/QuanserDIO.hpp>
-#include <MEL/Logging/Log.hpp>
 
-namespace mel {
+
+namespace mahi {
+namespace daq {
 
     //==============================================================================
     // CLASS DEFINITIONS
@@ -20,11 +21,11 @@ namespace mel {
     bool QuanserDIO::on_enable() {
         set_values(enable_values_.get());
         if (update()) {
-            LOG(Verbose) << "Set " << get_name() << " enable values to " << enable_values_;
+            // LOG(Verbose) << "Set " << get_name() << " enable values to " << enable_values_;
             return true;
         }
         else {
-            LOG(Error) << "Failed to set " << get_name() << " enable values to " << enable_values_;
+            // LOG(Error) << "Failed to set " << get_name() << " enable values to " << enable_values_;
             return false;
         }
     }
@@ -32,11 +33,11 @@ namespace mel {
     bool QuanserDIO::on_disable() {
         set_values(disable_values_.get());
         if (update()) {
-            LOG(Verbose) << "Set " << get_name() << " disable values to " << disable_values_;
+            // LOG(Verbose) << "Set " << get_name() << " disable values to " << disable_values_;
             return true;
         }
         else {
-            LOG(Error) << "Failed to set " << get_name() << " disable values to " << disable_values_;
+            // LOG(Error) << "Failed to set " << get_name() << " disable values to " << disable_values_;
             return false;
         }
     }
@@ -45,27 +46,27 @@ namespace mel {
         for (std::size_t i = 0; i < get_output_channel_count(); ++i)
             quanser_output_buffer_[i] = static_cast<char>(values_[output_channel_numbers_[i]]);
         t_error result = hil_read_digital_write_digital(daq_.handle_,
-            &input_channel_numbers_[0], static_cast<uint32>(get_input_channel_count()),
-            &output_channel_numbers_[0], static_cast<uint32>(get_output_channel_count()),
+            &input_channel_numbers_[0], static_cast<ChanNum>(get_input_channel_count()),
+            &output_channel_numbers_[0], static_cast<ChanNum>(get_output_channel_count()),
             &quanser_input_buffer_[0], &quanser_output_buffer_[0]);
         for (std::size_t i = 0; i < get_input_channel_count(); ++i)
             values_[input_channel_numbers_[i]] = static_cast<Logic>(quanser_input_buffer_[i]);
         if (result == 0)
             return true;
         else {
-            LOG(Error) << "Failed to update " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
+            // LOG(Error) << "Failed to update " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
             return false;
         }
     }
 
     bool QuanserDIO::update_input() {
-        t_error result = hil_read_digital(daq_.handle_, &input_channel_numbers_[0],  static_cast<uint32>(get_input_channel_count()), &quanser_input_buffer_[0]);
+        t_error result = hil_read_digital(daq_.handle_, &input_channel_numbers_[0],  static_cast<ChanNum>(get_input_channel_count()), &quanser_input_buffer_[0]);
         for (std::size_t i = 0; i < get_input_channel_count(); ++i)
             values_[input_channel_numbers_[i]] = static_cast<Logic>(quanser_input_buffer_[i]);
         if (result == 0)
             return true;
         else {
-            LOG(Error) << "Failed to update inputs on " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
+            // LOG(Error) << "Failed to update inputs on " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
             return false;
         }
     }
@@ -73,11 +74,11 @@ namespace mel {
     bool QuanserDIO::update_output() {
         for (std::size_t i = 0; i < get_output_channel_count(); ++i)
             quanser_output_buffer_[i] = static_cast<char>(values_[output_channel_numbers_[i]]);
-        t_error result = hil_write_digital(daq_.handle_, &output_channel_numbers_[0], static_cast<uint32>(get_output_channel_count()), &quanser_output_buffer_[0]);
+        t_error result = hil_write_digital(daq_.handle_, &output_channel_numbers_[0], static_cast<ChanNum>(get_output_channel_count()), &quanser_output_buffer_[0]);
         if (result == 0)
             return true;
         else {
-            LOG(Error) << "Failed to update outputs on " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
+            // LOG(Error) << "Failed to update outputs on " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
             return false;
         }
     }
@@ -96,8 +97,7 @@ namespace mel {
         if (result == 0)
             return true;
         else {
-            LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " "
-                << QuanserDaq::get_quanser_error_message(result);
+            // LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " "  << QuanserDaq::get_quanser_error_message(result);
             return false;
         }
     }
@@ -107,15 +107,14 @@ namespace mel {
             return false;
         t_error result;
         result = hil_set_digital_directions(daq_.handle_,
-            &input_channel_numbers_[0], static_cast<uint32>(get_input_channel_count()),
-            &output_channel_numbers_[0], static_cast<uint32>(get_output_channel_count()));
+            &input_channel_numbers_[0], static_cast<ChanNum>(get_input_channel_count()),
+            &output_channel_numbers_[0], static_cast<ChanNum>(get_output_channel_count()));
         if (result == 0) {
-            LOG(Verbose) << "Set " << get_name() << " directions";
+            // LOG(Verbose) << "Set " << get_name() << " directions";
             return true;
         }
         else {
-            LOG(Error) << "Failed to set " << get_name() << " directions "
-                << QuanserDaq::get_quanser_error_message(result);
+            // LOG(Error) << "Failed to set " << get_name() << " directions " << QuanserDaq::get_quanser_error_message(result);
             return false;
         }
     }
@@ -138,14 +137,13 @@ namespace mel {
                 converted_expire_values.push_back(DIGITAL_STATE_LOW);
         }
         t_error result;
-        result = hil_watchdog_set_digital_expiration_state(daq_.handle_, &get_channel_numbers()[0], static_cast<uint32>(get_channel_count()), &converted_expire_values[0]);
+        result = hil_watchdog_set_digital_expiration_state(daq_.handle_, &get_channel_numbers()[0], static_cast<ChanNum>(get_channel_count()), &converted_expire_values[0]);
         if (result == 0) {
-            LOG(Verbose) << "Set " << get_name() << " expire values to " << expire_values_;
+            // LOG(Verbose) << "Set " << get_name() << " expire values to " << expire_values_;
             return true;
         }
         else {
-            LOG(Error) << "Failed to set " << get_name() << " expire values "
-                << QuanserDaq::get_quanser_error_message(result);
+            // LOG(Error) << "Failed to set " << get_name() << " expire values " << QuanserDaq::get_quanser_error_message(result);
             return false;
         }
     }
@@ -162,12 +160,11 @@ namespace mel {
         t_error result;
         result = hil_watchdog_set_digital_expiration_state(daq_.handle_, &channel_number, 1, &converted_expire_value);
         if (result == 0) {
-            LOG(Verbose) << "Set " << get_name() << " channel number " << channel_number << " expire value to " << expire_value;
+            // LOG(Verbose) << "Set " << get_name() << " channel number " << channel_number << " expire value to " << expire_value;
             return true;
         }
         else {
-            LOG(Error) << "Failed to set " << get_name() << " channel number " << channel_number << " expire value "
-                << QuanserDaq::get_quanser_error_message(result);
+            // LOG(Error) << "Failed to set " << get_name() << " channel number " << channel_number << " expire value " << QuanserDaq::get_quanser_error_message(result);
             return false;
         }
     }
@@ -188,4 +185,5 @@ namespace mel {
             quanser_output_buffer_[i] = static_cast<char>(get_value(get_output_channel_numbers()[i]));
     }
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

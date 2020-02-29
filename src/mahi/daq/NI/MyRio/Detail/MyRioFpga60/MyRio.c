@@ -67,7 +67,7 @@ void MyRio_PrintStatus(NiFpga_Status status)
  */
 NiFpga_Status MyRio_Open()
 {
-    const uint32_t timeoutDelay = 5; /* 5 seconds */
+    const ChanNum_t timeoutDelay = 5; /* 5 seconds */
     NiFpga_Status status;
     NiFpga_Bool sysReady;
     time_t currentTime;

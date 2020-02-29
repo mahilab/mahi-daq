@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,13 +17,13 @@
 #pragma once
 
 #include <mahi/daq/InputOutput.hpp>
-#include <MEL/Core/NonCopyable.hpp>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 class S826;
 
-class S826DIO : public DigitalInputOutput, NonCopyable {
+class S826DIO : public DigitalInputOutput {
 public:
 
     bool update() override;
@@ -42,6 +41,10 @@ private:
 
 private:
     S826& s826_;
+
+    S826DIO( const S826DIO& ) = delete; // non construction-copyable
+    S826DIO& operator=( const S826DIO& ) = delete; // non copyable
 };
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

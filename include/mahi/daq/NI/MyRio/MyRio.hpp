@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,7 +17,8 @@
 #pragma once
 #include <mahi/daq/NI/MyRio/MyRioConnector.hpp>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 /// National Instruments myRIO embedded system
 class MyRio : public DaqBase, NonCopyable {
@@ -61,4 +61,5 @@ public:
 
 };
 
-}  // namespace mel
+} // namespace daq
+} // namespace mahi

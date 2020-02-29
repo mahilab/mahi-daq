@@ -84,13 +84,13 @@ int32_t Irq_RemoveReserved(uint8_t irqNumber);
  * Wait until the specified IRQ number occurred or ready signal arrived.
  */
 void Irq_Wait(NiFpga_IrqContext irqContext, NiFpga_Irq irqNumber,
-              uint32_t* irqAssert, NiFpga_Bool* continueWaiting);
+              ChanNum_t* irqAssert, NiFpga_Bool* continueWaiting);
 
 
 /**
  * Acknowledge the IRQ(s).
  */
-void Irq_Acknowledge(uint32_t irqAssert);
+void Irq_Acknowledge(ChanNum_t irqAssert);
 
 #if NiFpga_Cpp
 }

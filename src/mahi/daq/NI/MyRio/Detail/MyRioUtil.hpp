@@ -3,7 +3,8 @@
 #include <vector>
 #include <bitset>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 /// Set a myRIO register bit to 1
 void set_register_bit(unsigned int reg, int i);
@@ -26,4 +27,5 @@ std::bitset<8> read_register(unsigned int reg);
 /// Formats NI Error
 std::string get_nifpga_error_message(int error);
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

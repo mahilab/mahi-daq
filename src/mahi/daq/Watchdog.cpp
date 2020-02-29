@@ -1,12 +1,13 @@
 #include <mahi/daq/Watchdog.hpp>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 //==============================================================================
 // CLASS DEFINTIONS
 //==============================================================================
 
-Watchdog::Watchdog(Time timeout) :
+Watchdog::Watchdog(double timeout) :
     timeout_(timeout),
     watching_(false)
 {
@@ -16,8 +17,9 @@ Watchdog::~Watchdog() {
 
 }
 
-void Watchdog::set_timeout(Time timeout) {
+void Watchdog::set_timeout(double timeout) {
     timeout_ = timeout;
 }
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

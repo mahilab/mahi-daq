@@ -1,6 +1,7 @@
 #include <mahi/daq/Quanser/QuanserOptions.hpp>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 //==============================================================================
 // CLASS DEFINTIONS
@@ -9,7 +10,7 @@ namespace mel {
 QuanserOptions::QuanserOptions()
 { }
 
-void QuanserOptions::set_decimation(uint32 decimation) {    
+void QuanserOptions::set_decimation(ChanNum decimation) {    
     if (decimation != 1)
         options_ += "decimation=" + std::to_string(decimation) + ";";
 }
@@ -19,42 +20,42 @@ void QuanserOptions::set_update_rate(UpdateRate update_rate) {
         options_ += "update_rate=fast;";
 }
 
-void QuanserOptions::set_encoder_direction(uint32 channel_number, EncoderDirection direction) {
+void QuanserOptions::set_encoder_direction(ChanNum channel_number, EncoderDirection direction) {
     if (direction == EncoderDirection::Reversed)
         options_ += "enc" + std::to_string(channel_number) + "_dir=1;";
 }
 
-void QuanserOptions::set_encoder_filter(uint32 channel_number, EncoderFilter filter) {
+void QuanserOptions::set_encoder_filter(ChanNum channel_number, EncoderFilter filter) {
     if (filter == EncoderFilter::Filtered)
         options_ += "enc" + std::to_string(channel_number) + "_filter=1;";
 
 }
 
-void QuanserOptions::set_encoder_detection_a(uint32 channel_number, EncoderDetection detection) {
+void QuanserOptions::set_encoder_detection_a(ChanNum channel_number, EncoderDetection detection) {
     if (detection == EncoderDetection::Low)
         options_ += "enc" + std::to_string(channel_number) + "_a=1;";
 
 }
 
-void QuanserOptions::set_encoder_detection_b(uint32 channel_number, EncoderDetection detection) {
+void QuanserOptions::set_encoder_detection_b(ChanNum channel_number, EncoderDetection detection) {
     if (detection == EncoderDetection::Low)
         options_ += "enc" + std::to_string(channel_number) + "_b=1;";
 
 }
 
-void QuanserOptions::set_encoder_detection_z(uint32 channel_number, EncoderDetection detection) {
+void QuanserOptions::set_encoder_detection_z(ChanNum channel_number, EncoderDetection detection) {
     if (detection == EncoderDetection::Low)
         options_ += "enc" + std::to_string(channel_number) + "_z=1;";
 
 }
 
-void QuanserOptions::set_encoder_reload(uint32 channel_number, EncoderReload reload) {
+void QuanserOptions::set_encoder_reload(ChanNum channel_number, EncoderReload reload) {
     if (reload == EncoderReload::OnPulse)
         options_ += "enc" + std::to_string(channel_number) + "_reload=1;";
 
 }
 
-void QuanserOptions::set_encoder_velocity(uint32 channel_number, double velocity) {
+void QuanserOptions::set_encoder_velocity(ChanNum channel_number, double velocity) {
     if (velocity > 0.0) {
         std::string v = std::to_string(velocity);
         v.resize(7);
@@ -62,7 +63,7 @@ void QuanserOptions::set_encoder_velocity(uint32 channel_number, double velocity
     }
 }
 
-void QuanserOptions::enable_pwm(uint32 channel_number, bool enable) {
+void QuanserOptions::enable_pwm(ChanNum channel_number, bool enable) {
     if (enable)
         options_ += "pwm" + std::to_string(channel_number) + "_en=1;";
     else
@@ -70,7 +71,7 @@ void QuanserOptions::enable_pwm(uint32 channel_number, bool enable) {
 }
 
 
-void QuanserOptions::set_analog_output_mode(uint32 channel_number, AoMode mode, double kff,
+void QuanserOptions::set_analog_output_mode(ChanNum channel_number, AoMode mode, double kff,
     double a0, double a1, double a2, double b0, double b1, double post) {
 
     std::string ch = "ch" + std::to_string(channel_number) + "_";
@@ -115,4 +116,5 @@ void QuanserOptions::clear() {
     options_.clear();
 }
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

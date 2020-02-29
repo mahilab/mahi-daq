@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,7 +19,8 @@
 #include <mahi/daq/ChannelBase.hpp>
 #include <mahi/daq/Module.hpp>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 /// Encapsulates an incremental optical encoder module with 32-bit precision
 class Encoder : public Module<int> {
@@ -95,7 +95,7 @@ protected:
 
 public:
     /// Encapsulates and Encoder channel (can be used as a PositionSensor)
-    class Channel : public ChannelBase<int>, public PositionSensor {
+    class Channel : public ChannelBase<int> {
     public:
         /// Default constructor. Creates invalid channel
         Channel();
@@ -107,7 +107,7 @@ public:
         using ChannelBase<int>::operator=;
 
         /// Gets the encoder position
-        double get_position() override;
+        double get_position();
 
         /// Zeros the encoder count
         bool zero();
@@ -123,7 +123,10 @@ public:
         /// Sets the encoder quadrature factor
         bool set_quadrature_factor(QuadFactor factor);
 
+        double position_;
+
     };
 };
 
-}  // namespace mel
+} // namespace daq
+} // namespace mahi

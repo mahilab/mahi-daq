@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,7 +17,8 @@
 #pragma once
 #include <mahi/daq/Encoder.hpp>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 //==============================================================================
 // FORWARD DECLARATIONS
@@ -41,9 +41,9 @@ public:
 
     bool update_channel(ChanNum channel_number) override;
 
-    bool reset_counts(const std::vector<int32>& counts) override;
+    bool reset_counts(const std::vector<int>& counts) override;
 
-    bool reset_count(ChanNum channel_number, int32 count) override;
+    bool reset_count(ChanNum channel_number, int count) override;
 
     bool set_quadrature_factors(const std::vector<QuadFactor>& factors) override;
 
@@ -90,7 +90,7 @@ private:
 public:
 
     /// Encapsulates and QuanserEncoder channel (can be used as a PositionSensor or VelocitySensor)
-    class Channel : public Encoder::Channel, public VelocitySensor {
+    class Channel : public Encoder::Channel {
     public:
         /// Default constructor. Creates invalid channel
         Channel();
@@ -105,10 +105,15 @@ public:
         double get_value_per_sec();
 
         /// Gets the encoder velocity if available
-        double get_velocity() override;
+        double get_velocity();
+
+    private:
+
+        double velocity_;
 
     };
 
 };
 
-}  // namespace mel
+} // namespace daq
+} // namespace mahi

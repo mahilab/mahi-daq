@@ -1,22 +1,22 @@
 #include <mahi/daq/Quanser/QPid.hpp>
-#include <MEL/Utility/System.hpp>
-#include <MEL/Logging/Log.hpp>
 #include <hil.h>
+#include <thread>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 //==============================================================================
 // STATIC VARIABLES
 //==============================================================================
 
- uint32 NEXT_QPID_ID = 0;
+ ChanNum NEXT_QPID_ID = 0;
 
 //==============================================================================
 // CLASS DEFINITIONS
 //==============================================================================
 
 QPid::QPid(QuanserOptions options,
-             uint32 id) :
+             ChanNum id) :
     QuanserDaq("qpid_e", id, options),
     AI(*this, { 0, 1, 2, 3, 4, 5, 6, 7 }),
     AO(*this, { 0, 1, 2, 3, 4, 5, 6, 7 }),
@@ -27,7 +27,7 @@ QPid::QPid(QuanserOptions options,
                  40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
                  50, 51, 52, 53, 54, 55  }),
     encoder(*this, { 0, 1, 2, 3, 4, 5, 6, 7 }, true), // has velocity estimation
-    watchdog(*this, milliseconds(100))
+    watchdog(*this, 0.1)
 {
     // increment NEXT_ID
     ++NEXT_QPID_ID;
@@ -70,10 +70,10 @@ bool QPid::on_open() {
     std::vector<double> pwm_exp_vals(8, 0.0);
     t_error result = hil_watchdog_set_pwm_expiration_state(handle_, &pwm_channels[0], 8, &pwm_exp_vals[0]);
     if (result != 0)
-        LOG(Error) << "Failed to set PWM expiration states on QPID " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
+        // LOG(Error) << "Failed to set PWM expiration states on QPID " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
 
     // allow changes to take effect
-    sleep(milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     return true;
 }
 
@@ -83,14 +83,14 @@ bool QPid::on_close() {
     // clear the watchdog (precautionary, ok if fails)
     watchdog.clear();
     // allow changes to take effect
-    sleep(milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     // close as QDaq
     return QuanserDaq::on_close();
 }
 
 bool QPid::on_enable() {
     if (!is_open()) {
-        LOG(Error) << "Unable to enable Q8-USB " << get_name() << " because it is not open";
+        // LOG(Error) << "Unable to enable Q8-USB " << get_name() << " because it is not open";
         return false;
     }
     bool success = true;
@@ -104,13 +104,13 @@ bool QPid::on_enable() {
     if (!encoder.enable())
         success = false;
     // allow changes to take effect
-    sleep(milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     return success;
 }
 
 bool QPid::on_disable() {
     if (!is_open()) {
-        LOG(Error) << "Unable to disable Q8-USB " << get_name() << " because it is not open";
+        // LOG(Error) << "Unable to disable Q8-USB " << get_name() << " because it is not open";
         return false;
     }
     bool success = true;
@@ -124,25 +124,25 @@ bool QPid::on_disable() {
     if (!encoder.disable())
         success = false;
     // allow changes to take effect
-    sleep(milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     return success;
 }
 
 bool QPid::update_input() {
     if (!is_enabled()) {
-        LOG(Error) << "Unable to update " << get_name() << " input because it is disabled";
+        // LOG(Error) << "Unable to update " << get_name() << " input because it is disabled";
         return false;
     }
     t_error result;
     result = hil_read(handle_,
         AI.get_channel_count() > 0 ? &(AI.get_channel_numbers())[0] : NULL,
-        static_cast<uint32>(AI.get_channel_count()),
+        static_cast<ChanNum>(AI.get_channel_count()),
         encoder.get_channel_count() > 0 ? &(encoder.get_channel_numbers())[0] : NULL,
-        static_cast<uint32>(encoder.get_channel_count()),
+        static_cast<ChanNum>(encoder.get_channel_count()),
         DIO.get_input_channel_count() > 0 ? &(DIO.get_input_channel_numbers())[0] : NULL,
-        static_cast<uint32>(DIO.get_input_channel_count()),
+        static_cast<ChanNum>(DIO.get_input_channel_count()),
         encoder.get_channel_count() > 0 ? &(encoder.get_quanser_velocity_channels())[0] : NULL,
-        static_cast<uint32>(encoder.get_channel_count()),
+        static_cast<ChanNum>(encoder.get_channel_count()),
         AI.get_channel_count() > 0 ? &(AI.get_values())[0] : NULL,
         encoder.get_channel_count() > 0 ? &(encoder.get_values())[0] : NULL,
         DIO.get_input_channel_count() > 0 ? &(DIO.quanser_input_buffer_)[0] : NULL,
@@ -151,15 +151,14 @@ bool QPid::update_input() {
     if (result == 0)
         return true;
     else {
-        LOG(Error) << "Failed to update " << get_name() << " input "
-            << QuanserDaq::get_quanser_error_message(result);
+        // LOG(Error) << "Failed to update " << get_name() << " input " << QuanserDaq::get_quanser_error_message(result);
         return false;
     }
 }
 
 bool QPid::update_output() {
     if (!is_enabled()) {
-        LOG(Error) << "Unable to update " << get_name() << " output because it is disabled";
+        // LOG(Error) << "Unable to update " << get_name() << " output because it is disabled";
         return false;
     }
     // convert digitals
@@ -167,10 +166,10 @@ bool QPid::update_output() {
     t_error result;
     result = hil_write(handle_,
         AO.get_channel_count() > 0 ? &(AO.get_channel_numbers())[0] : NULL,
-        static_cast<uint32>(AO.get_channel_count()),
+        static_cast<ChanNum>(AO.get_channel_count()),
         NULL, 0,
         DIO.get_output_channel_count() > 0 ? &(DIO.get_output_channel_numbers())[0] : NULL,
-        static_cast<uint32>(DIO.get_output_channel_count()),
+        static_cast<ChanNum>(DIO.get_output_channel_count()),
         NULL, 0,
         AO.get_channel_count() > 0 ? &(AO.get_values())[0] : NULL,
         NULL,
@@ -179,15 +178,15 @@ bool QPid::update_output() {
     if (result == 0)
         return true;
     else {
-        LOG(Error) << "Failed to update " << get_name() << " output "
-            << QuanserDaq::get_quanser_error_message(result);
+        // LOG(Error) << "Failed to update " << get_name() << " output " << QuanserDaq::get_quanser_error_message(result);
         return false;
     }
 }
 
-uint32 QPid::next_id() {
+ChanNum QPid::next_id() {
     return NEXT_QPID_ID;
 }
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi
 

@@ -1,17 +1,18 @@
 #include <mahi/daq/NI/MyRio/MyRio.hpp>
 #include <mahi/daq/NI/MyRio/MyRioAI.hpp>
-#include <MEL/Logging/Log.hpp>
+
 #include <mahi/daq/NI/MyRio/MyRioConnector.hpp>
 #include "Detail/MyRioFpga60/MyRio.h"
 
 extern NiFpga_Session myrio_session;
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 namespace {
 
 // AI registers
-static const std::vector<std::vector<uint32_t>> REGISTERS({
+static const std::vector<std::vector<ChanNum_t>> REGISTERS({
     {AIA_0VAL, AIA_1VAL, AIA_2VAL, AIA_3VAL},
     {AIB_0VAL, AIB_1VAL, AIB_2VAL, AIB_3VAL},
     {AIC_0VAL, AIC_1VAL}
@@ -42,13 +43,13 @@ MyRioAI::MyRioAI(MyRioConnector& connector, const ChanNums& channel_numbers) :
 
 bool MyRioAI::update_channel(ChanNum channel_number) {
     if (!connector_.is_open()) {
-        LOG(Error) << "Failed to update channel because" << connector_.get_name() << " is not open";
+        // LOG(Error) << "Failed to update channel because" << connector_.get_name() << " is not open";
         return false;
     }
     uint16_t value = 0;
     NiFpga_Status status = NiFpga_ReadU16(myrio_session, REGISTERS[connector_.type][channel_number], &value);
     if (status < 0) {
-        LOG(Error) << "Failed to update " << get_name() << " channel number "  << channel_number;
+        // LOG(Error) << "Failed to update " << get_name() << " channel number "  << channel_number;
         return false;
     }
     else {
@@ -60,4 +61,5 @@ bool MyRioAI::update_channel(ChanNum channel_number) {
     }
 }
 
-}  // namespace mel
+} // namespace daq
+} // namespace mahi

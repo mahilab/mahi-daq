@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -17,9 +16,9 @@
 
 #pragma once
 #include <mahi/daq/Output.hpp>
-#include <MEL/Core/NonCopyable.hpp>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 //==============================================================================
 // FORWARD DECLARATIONS
@@ -31,7 +30,7 @@ class QuanserDaq;
 // CLASS DECLARATION
 //==============================================================================
 
-class QuanserPwm : public PwmOutput, NonCopyable {
+class QuanserPwm : public PwmOutput {
 public:
     QuanserPwm(QuanserDaq& daq, const ChanNums& channel_numbers);
 
@@ -45,6 +44,10 @@ public:
 
 private:
     QuanserDaq& daq_;  ///< Reference to parent QDaq
+
+    QuanserPwm( const QuanserPwm& ) = delete; // non construction-copyable
+    QuanserPwm& operator=( const QuanserPwm& ) = delete; // non copyable
 };
 
-}  // namespace mel
+} // namespace daq
+} // namespace mahi

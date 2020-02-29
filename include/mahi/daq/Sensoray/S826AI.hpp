@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,21 +17,20 @@
 #pragma once
 
 #include <mahi/daq/Input.hpp>
-#include <MEL/Core/NonCopyable.hpp>
-#include <MEL/Core/Time.hpp>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 class S826;
 
-class S826AI : public AnalogInput, NonCopyable {
+class S826AI : public AnalogInput {
 public:
 
     bool update() override;
     bool update_channel(ChanNum channel_number) override;
 
     /// Sets the amount of time to allow each analog input to settle before conversion (default = 5 us)
-    bool set_settling_time(Time t);
+    bool set_settling_time(double t);
 
 private:
 
@@ -46,7 +44,11 @@ private:
 
 private:
     S826& s826_;
-    int32 adc_buffer_[16];
+    int adc_buffer_[16];
+
+    S826AI( const S826AI& ) = delete; // non construction-copyable
+    S826AI& operator=( const S826AI& ) = delete; // non copyable
 };
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

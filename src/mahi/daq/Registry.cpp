@@ -1,7 +1,8 @@
 #include <mahi/daq/Registry.hpp>  
 #include <mahi/daq/Module.hpp>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
     RegistryBase::RegistryBase(ModuleBase* module) :
         module_(module) 
@@ -14,4 +15,5 @@ namespace mel {
     }
 
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

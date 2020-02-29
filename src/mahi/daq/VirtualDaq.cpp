@@ -1,16 +1,16 @@
 #include <mahi/daq/VirtualDaq.hpp>
-#include <MEL/Logging/Log.hpp>
-#include <MEL/Math/Functions.hpp>
-#include <MEL/Math/Constants.hpp>
+#include <chrono>
+#include <cmath>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 //==============================================================================
 // VIRTUAL AI
 //==============================================================================
 
-static Voltage DEFAULT_AI_SOURCE(Time t) {
-    return sin(2.0 * PI * t.as_seconds());
+static Voltage DEFAULT_AI_SOURCE(double t) {
+    return std::sin(2.0 * 3.14159265358979 * t);
 }
 
 VirtualAI::VirtualAI(VirtualDaq& daq, const ChanNums& channel_numbers) :
@@ -22,7 +22,8 @@ VirtualAI::VirtualAI(VirtualDaq& daq, const ChanNums& channel_numbers) :
 }
 
 bool VirtualAI::update_channel(ChanNum channel_number) {
-    values_[channel_number] = sources[channel_number](daq_.clock_.get_elapsed_time());
+    double t = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    values_[channel_number] = sources[channel_number](t);
     return true;
 }
 
@@ -45,8 +46,8 @@ bool VirtualAO::update_channel(ChanNum channel_number) {
 // VIRTUAL DI
 //==============================================================================
 
-static Logic DEFAULT_DI_SOURCE(Time t) {
-    if (sin(2.0 * PI * t.as_seconds()) > 0.0)
+static Logic DEFAULT_DI_SOURCE(double t) {
+    if (sin(2.0 * 3.14159265358979 * t) > 0.0)
         return High;
     else
         return Low;
@@ -61,7 +62,8 @@ VirtualDI::VirtualDI(VirtualDaq& daq, const ChanNums& channel_numbers) :
 }
 
 bool VirtualDI::update_channel(ChanNum channel_number) {
-    values_[channel_number] = sources[channel_number](daq_.clock_.get_elapsed_time());
+    double t = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    values_[channel_number] = sources[channel_number](t);
     return true;
 }
 
@@ -84,8 +86,8 @@ bool VirtualDO::update_channel(ChanNum channel_number) {
 // VIRTUAL ENCODER
 //==============================================================================
 
-int32 DEFAULT_ENCODER_SOURCE(Time t) {
-    return static_cast<int32>(1024.0 * (sin(2.0 * PI * t.as_seconds())));
+int DEFAULT_ENCODER_SOURCE(double t) {
+    return static_cast<int>(1024.0 * (sin(2.0 * 3.14159265358979 * t)));
 }
 
 VirtualEncoder::VirtualEncoder(VirtualDaq& daq, const ChanNums& channel_numbers) :
@@ -97,7 +99,8 @@ VirtualEncoder::VirtualEncoder(VirtualDaq& daq, const ChanNums& channel_numbers)
 }
 
 bool VirtualEncoder::update_channel(ChanNum channel_number) {
-    values_[channel_number] = sources[channel_number](daq_.clock_.get_elapsed_time());
+    double t = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
+    values_[channel_number] = sources[channel_number](t);
     return true;
 }
 
@@ -160,7 +163,6 @@ bool VirtualDaq::update_output() {
 }
 
 bool VirtualDaq::on_open() {
-    clock_.restart();
     return true;
 }
 
@@ -168,4 +170,5 @@ bool VirtualDaq::on_close() {
     return true;
 }
 
-}  // namespace mel
+} // namespace daq
+} // namespace mahi

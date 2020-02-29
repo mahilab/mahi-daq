@@ -1,11 +1,13 @@
 #include <mahi/daq/Sensoray/S826.hpp>
 #include <mahi/daq/Sensoray/S826DIO.hpp>
-#include <MEL/Logging/Log.hpp>
+
 #include <windows.h>
 #include <826api.h> 
 #include <bitset>
 
-namespace mel {
+namespace mahi {
+namespace daq {
+
     S826DIO::S826DIO(S826& s826) : 
         DigitalInputOutput({ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
                             10,11,12,13,14,15,16,17,18,19,
@@ -32,4 +34,6 @@ namespace mel {
     bool S826DIO::on_open() {
         return true;
     }
-}
+
+} // namespace daq
+} // namespace mahi

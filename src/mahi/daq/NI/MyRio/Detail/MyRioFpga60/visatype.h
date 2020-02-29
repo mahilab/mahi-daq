@@ -96,15 +96,15 @@ typedef ViInt64     _VI_PTR ViAInt64;
 #endif
 
 #if defined(LONG_MAX) && (LONG_MAX > 0x7FFFFFFFL)
-typedef unsigned int        ViUInt32;
+typedef unsigned int        ViChanNum;
 typedef _VI_SIGNED int      ViInt32;
 #else
-typedef unsigned long       ViUInt32;
+typedef unsigned long       ViChanNum;
 typedef _VI_SIGNED long     ViInt32;
 #endif
 
-typedef ViUInt32    _VI_PTR ViPUInt32;
-typedef ViUInt32    _VI_PTR ViAUInt32;
+typedef ViChanNum    _VI_PTR ViPChanNum;
+typedef ViChanNum    _VI_PTR ViAChanNum;
 typedef ViInt32     _VI_PTR ViPInt32;
 typedef ViInt32     _VI_PTR ViAInt32;
 
@@ -170,11 +170,11 @@ typedef ViInt32             ViStatus;
 typedef ViStatus    _VI_PTR ViPStatus;
 typedef ViStatus    _VI_PTR ViAStatus;
 
-typedef ViUInt32            ViVersion;
+typedef ViChanNum            ViVersion;
 typedef ViVersion   _VI_PTR ViPVersion;
 typedef ViVersion   _VI_PTR ViAVersion;
 
-typedef ViUInt32            ViObject;
+typedef ViChanNum            ViObject;
 typedef ViObject    _VI_PTR ViPObject;
 typedef ViObject    _VI_PTR ViAObject;
 
@@ -182,7 +182,7 @@ typedef ViObject            ViSession;
 typedef ViSession   _VI_PTR ViPSession;
 typedef ViSession   _VI_PTR ViASession;
 
-typedef ViUInt32             ViAttr;
+typedef ViChanNum             ViAttr;
 
 /*- Completion and Error Codes ----------------------------------------------*/
 

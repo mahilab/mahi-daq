@@ -79,7 +79,8 @@
         "*.tcc": "cpp",
         "memory_resource": "cpp",
         "mutex": "cpp",
-        "optional": "cpp"
+        "optional": "cpp",
+        "concepts": "cpp"
     },
     "cSpell.enabledLanguageIds": [
         "asciidoc",

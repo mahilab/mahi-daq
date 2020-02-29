@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -16,11 +15,12 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <MEL/Core/Device.hpp>
+#include <mahi/daq/Device.hpp>
 #include <mahi/daq/Registry.hpp>
 #include <map>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 /// Defines non-templated Module functions/members
 class ModuleBase : public Device {
@@ -81,7 +81,7 @@ private:
     void update_map();
 
     /// Returns vector index associated with channel number
-    std::size_t index(uint32 channel_number) const;
+    std::size_t index(ChanNum channel_number) const;
 
 private:
 
@@ -134,6 +134,7 @@ protected:
 
 };
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi
 
 #include <mahi/daq/Detail/Module.inl>

@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,7 +17,8 @@
 #pragma once
 #include <mahi/daq/Watchdog.hpp>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 //==============================================================================
 // FORWARD DECLARATIONS
@@ -34,7 +34,7 @@ class QuanserDaq;
 class QuanserWatchdog : public Watchdog {
 public:
     /// Default constructor
-    QuanserWatchdog(QuanserDaq& daq, Time timeout);
+    QuanserWatchdog(QuanserDaq& daq, double timeout);
 
     /// Default destructor. Stops the watchdog if watching
     ~QuanserWatchdog();
@@ -51,6 +51,10 @@ public:
 
 private:
     QuanserDaq& daq_;  ///< Reference to parent QDaq
+
+    QuanserWatchdog( const QuanserWatchdog& ) = delete; // non construction-copyable
+    QuanserWatchdog& operator=( const QuanserWatchdog& ) = delete; // non copyable
 };
 
-}  // namespace mel
+} // namespace daq
+} // namespace mahi

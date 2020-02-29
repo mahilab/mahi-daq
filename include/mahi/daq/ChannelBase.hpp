@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -16,10 +15,11 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <MEL/Core/Types.hpp>
+#include <mahi/daq/Types.hpp>
 #include <mahi/daq/Module.hpp>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 //==============================================================================
 // CLASS DECLARATION
@@ -63,6 +63,7 @@ protected:
     ChanNum channel_number_;  ///< The channel number of this channel
 };
 
-}  // namespace mel
+} // namespace daq
+} // namespace mahi
 
 #include <mahi/daq/Detail/ChannelBase.inl>

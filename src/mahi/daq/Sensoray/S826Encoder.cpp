@@ -1,10 +1,11 @@
 #include <mahi/daq/Sensoray/S826.hpp>
 #include <mahi/daq/Sensoray/S826Encoder.hpp>
-#include <MEL/Logging/Log.hpp>
+
 #include <windows.h>
 #include <826api.h> 
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 S826Encoder::S826Encoder(S826& s826) : 
     Encoder({ 0,1,2,3,4,5 }), 
@@ -23,12 +24,12 @@ bool S826Encoder::on_open() {
     for (auto& c : get_channel_numbers()) {
         result = S826_CounterModeWrite(s826_.board_, c, S826_CM_K_QUADX4);
         if (result != S826_ERR_OK) {
-            LOG(Error) << "Failed to writer counter mode of " << get_name() << " channel number " << c << " (" << S826::get_error_message(result) << ")";
+            // LOG(Error) << "Failed to writer counter mode of " << get_name() << " channel number " << c << " (" << S826::get_error_message(result) << ")";
             return false;
         }
         S826_CounterStateWrite(s826_.board_, c, 1);
         if (result != S826_ERR_OK) {
-            LOG(Error) << "Failed to write counter state of " << get_name() << " channel number " << c << " (" << S826::get_error_message(result) << ")";
+            // LOG(Error) << "Failed to write counter state of " << get_name() << " channel number " << c << " (" << S826::get_error_message(result) << ")";
             return false;
         }
     }
@@ -36,40 +37,40 @@ bool S826Encoder::on_open() {
 }
 
 bool S826Encoder::update_channel(ChanNum channel_number) {
-    uint32 count;
-    uint32 timestamp;
+    unsigned int count;
+    unsigned int timestamp;
     int result;
     result = S826_CounterSnapshot(s826_.board_, channel_number);
     if (result != S826_ERR_OK) {
-        LOG(Error) << "Failed to trigger snapshot on " << get_name() << " channel number " << channel_number << " (" << S826::get_error_message(result) << ")";
+        // LOG(Error) << "Failed to trigger snapshot on " << get_name() << " channel number " << channel_number << " (" << S826::get_error_message(result) << ")";
         return false;
     }
     result = S826_CounterSnapshotRead(s826_.board_, channel_number, &count, &timestamp, NULL, 0);
     if (result != S826_ERR_OK) {
-        LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " (" << S826::get_error_message(result) << ")";
+        // LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " (" << S826::get_error_message(result) << ")";
         return false;
     }
-    int32 last_count = values_[channel_number];
-    int32 this_count = static_cast<int32>(count);
-    Time last_time = timestamps_[channel_number];
-    Time this_time = microseconds(timestamp);
+    int last_count = values_[channel_number];
+    int this_count = static_cast<int>(count);
+    double last_time = timestamps_[channel_number];
+    double this_time = timestamp / 1000000;
     values_[channel_number] = this_count;
     timestamps_[channel_number] = this_time;
-    values_per_sec_[channel_number] = static_cast<double>(this_count - last_count) / (this_time - last_time).as_seconds();
+    values_per_sec_[channel_number] = static_cast<double>(this_count - last_count) / (this_time - last_time);
     return true;
 }
 
-bool S826Encoder::reset_count(ChanNum channel_number, int32 count) {
-    uint32 ucount = (uint32)count;
+bool S826Encoder::reset_count(ChanNum channel_number, int count) {
+    unsigned int ucount = (unsigned int)count;
     int result;
     result = S826_CounterPreloadWrite(s826_.board_, channel_number, 0, count);
     if (result != S826_ERR_OK) {
-        LOG(Error) << "Failed to preload counts in to Preload0 register (" << S826::get_error_message(result) << ")";
+        // LOG(Error) << "Failed to preload counts in to Preload0 register (" << S826::get_error_message(result) << ")";
         return false;
     }
     result = S826_CounterPreload(s826_.board_, channel_number, 1, 0);
     if (result != S826_ERR_OK) {
-        LOG(Error) << "Failed to reset counts of " << get_name() << " channel number " << channel_number << " (" << S826::get_error_message(result) << ")";
+        // LOG(Error) << "Failed to reset counts of " << get_name() << " channel number " << channel_number << " (" << S826::get_error_message(result) << ")";
         return false;
     }
     values_[channel_number] = count;
@@ -82,27 +83,27 @@ bool S826Encoder::set_quadrature_factor(ChanNum channel_number, QuadFactor facto
     if (factor == QuadFactor::X1) {
         int result = S826_CounterModeWrite(s826_.board_, channel_number, S826_CM_K_QUADX1);
         if (result != S826_ERR_OK) {
-            LOG(Error) << "Failed to set quadrature mode of " << get_name() << " channel number " << channel_number << " (" << S826::get_error_message(result) << ")";
+            // LOG(Error) << "Failed to set quadrature mode of " << get_name() << " channel number " << channel_number << " (" << S826::get_error_message(result) << ")";
             return false;
         }
     }
     else if (factor == QuadFactor::X2) {
         int result = S826_CounterModeWrite(s826_.board_, channel_number, S826_CM_K_QUADX2);
         if (result != S826_ERR_OK) {
-            LOG(Error) << "Failed to set quadrature mode of " << get_name() << " channel number " << channel_number << " (" << S826::get_error_message(result) << ")";
+            // LOG(Error) << "Failed to set quadrature mode of " << get_name() << " channel number " << channel_number << " (" << S826::get_error_message(result) << ")";
             return false;
         }
     }
     else if (factor == QuadFactor::X4) {
         int result = S826_CounterModeWrite(s826_.board_, channel_number, S826_CM_K_QUADX4);
         if (result != S826_ERR_OK) {
-            LOG(Error) << "Failed to set quadrature mode of " << get_name() << " channel number " << channel_number << " (" << S826::get_error_message(result) << ")";
+            // LOG(Error) << "Failed to set quadrature mode of " << get_name() << " channel number " << channel_number << " (" << S826::get_error_message(result) << ")";
             return false;
         }
         
     }
     else {
-        LOG(Error) << "Unsupported quadrature factor requested of " << get_name();
+        // LOG(Error) << "Unsupported quadrature factor requested of " << get_name();
         return false;
     }
     return true;
@@ -133,13 +134,13 @@ double S826Encoder::get_velocity(ChanNum channel_number) {
         return double();
 }
 
-Time S826Encoder::get_timestamp(ChanNum channel_number) {
+double S826Encoder::get_timestamp(ChanNum channel_number) {
     if (validate_channel_number(channel_number))
         return timestamps_[channel_number];
-    return Time::Zero;
+    return 0;
 }
 
-std::vector<Time>& S826Encoder::get_timestamps() {
+std::vector<double>& S826Encoder::get_timestamps() {
     return timestamps_.get();
 }
 
@@ -184,8 +185,9 @@ double S826Encoder::Channel::get_velocity() {
     return velocity_;
 }
 
-Time S826Encoder::Channel::get_timestamp() {
+double S826Encoder::Channel::get_timestamp() {
     return static_cast<S826Encoder*>(module_)->get_timestamp(channel_number_);
 }
 
-}
+} // namespace daq
+} // namespace mahi

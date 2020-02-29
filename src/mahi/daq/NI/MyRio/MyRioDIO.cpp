@@ -1,12 +1,13 @@
 #include <mahi/daq/NI/MyRio/MyRio.hpp>
-#include <MEL/Logging/Log.hpp>
+
 #include <mahi/daq/NI/MyRio/MyRioConnector.hpp>
 #include "Detail/MyRioFpga60/MyRio.h"
 #include "Detail/MyRioUtil.hpp"
 
 extern NiFpga_Session myrio_session;
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 MyRioDIO::MyRioDIO(MyRioConnector& connector, const ChanNums& channel_numbers) :
     DigitalInputOutput(channel_numbers),
@@ -116,4 +117,5 @@ void MyRioDIO::sync() {
     }
 }
 
-}  // namespace mel
+} // namespace daq
+} // namespace mahi

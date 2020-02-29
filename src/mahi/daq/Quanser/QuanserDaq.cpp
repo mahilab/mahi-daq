@@ -1,20 +1,21 @@
 #include <mahi/daq/Quanser/QuanserDaq.hpp>
-#include <MEL/Utility/System.hpp>
-#include <MEL/Logging/Log.hpp>
+
 #include <quanser_messages.h>
 #include <hil.h>
 #include <tchar.h>
 #include <cstring>
 #include <stdexcept>
+#include <thread>
 
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 //==============================================================================
 // CLASS DEFINITIONS
 //==============================================================================
 
-QuanserDaq::QuanserDaq(const std::string& card_type, uint32 id, QuanserOptions options) :
+QuanserDaq::QuanserDaq(const std::string& card_type, ChanNum id, QuanserOptions options) :
     DaqBase(card_type + "_" + std::to_string(id)),
     card_type_(card_type),
     id_(id),
@@ -27,7 +28,7 @@ bool QuanserDaq::on_open() {
     // Try to open in 5 attempts
     for (int attempt = 0; attempt < 5; attempt++) {
         result = hil_open(card_type_.c_str(), std::to_string(id_).c_str(), &handle_);
-        sleep(milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
         if (result == 0) {
             // successful open
             if (!set_options(options_)) {
@@ -39,24 +40,23 @@ bool QuanserDaq::on_open() {
         }
         else {
             // unsuccesful open, continue
-            LOG(Error) << "Failed to open " << get_name() << " (Attempt " << attempt + 1 << "/" << 5 << ") "
-                       << get_quanser_error_message(result);
+            // LOG(Error) << "Failed to open " << get_name() << " (Attempt " << attempt + 1 << "/" << 5 << ") " << get_quanser_error_message(result);
         }
     }
     // all attempts to open were unsuccessful
-    LOG(Error) << "Exhausted all attempts to open " << get_name();
+    // LOG(Error) << "Exhausted all attempts to open " << get_name();
     return false;
 }
 
 bool QuanserDaq::on_close() {
     t_error result;
     result = hil_close(handle_);
-    sleep(milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     if (result == 0) {
         return true;
     }
     else {
-        LOG(Error) << get_quanser_error_message(result);
+        // LOG(Error) << get_quanser_error_message(result);
         return false;
     }
 }
@@ -67,14 +67,13 @@ bool QuanserDaq::set_options(const QuanserOptions& options) {
     std::strcpy(options_str, options_.get_string().c_str());
     t_error result;
     result = hil_set_card_specific_options(handle_, options_str, std::strlen(options_str));
-    sleep(milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     if (result == 0) {
-        LOG(Verbose) << "Set " << get_name() << " options to: \"" << options_.get_string() << "\"";
+        // LOG(Verbose) << "Set " << get_name() << " options to: \"" << options_.get_string() << "\"";
         return true;
     }
     else {
-        LOG(Error) << "Failed to set " << get_name() << " options to: \"" << options_.get_string() << "\" "
-                   << get_quanser_error_message(result);
+        // LOG(Error) << "Failed to set " << get_name() << " options to: \"" << options_.get_string() << "\" " << get_quanser_error_message(result);
         return false;
     }
 }
@@ -113,4 +112,5 @@ std::string QuanserDaq::get_quanser_error_message(int error, bool format) {
         return std::string(message);
 }
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

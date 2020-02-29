@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,7 +19,8 @@
 #include <mahi/daq/Encoder.hpp>
 #include <utility>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 class MyRioConnector;
 
@@ -53,11 +53,11 @@ private:
     MyRioConnector& connector_;
 
     // NI FPGA Registers
-    uint32_t              sysselect_;
+    ChanNum_t              sysselect_;
     std::vector<int>      bits_;
-    std::vector<uint32_t> stat_;
-    std::vector<uint32_t> cntr_;
-    std::vector<uint32_t> cnfg_;
+    std::vector<ChanNum_t> stat_;
+    std::vector<ChanNum_t> cntr_;
+    std::vector<ChanNum_t> cnfg_;
 
     ChanNums              allowed_;  ///< allowed channels
 };

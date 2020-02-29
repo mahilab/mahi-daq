@@ -1,4 +1,5 @@
-namespace mel {
+namespace mahi {
+namespace daq {
 
     template <typename T>
     Output<T>::Output() :
@@ -120,4 +121,5 @@ namespace mel {
         return dynamic_cast<Output<T>*>(this->module_)->set_expire_value(this->channel_number_, expire_value);
     }
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

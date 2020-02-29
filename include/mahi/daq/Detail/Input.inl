@@ -1,4 +1,5 @@
-namespace mel {
+namespace mahi {
+namespace daq {
 
     template<typename T>
     Input<T>::Input() : 
@@ -47,4 +48,5 @@ namespace mel {
     Input<T>::Channel::Channel(Input* module, ChanNum channel_number)
         : ChannelBase<T>(module, channel_number) { }
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

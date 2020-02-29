@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,16 +17,16 @@
 #pragma once
 
 #include <mahi/daq/DaqBase.hpp>
-#include <MEL/Core/NonCopyable.hpp>
 #include <mahi/daq/Sensoray/S826AI.hpp>
 #include <mahi/daq/Sensoray/S826AO.hpp>
 #include <mahi/daq/Sensoray/S826DIO.hpp>
 #include <mahi/daq/Sensoray/S826Encoder.hpp>
 #include <mahi/daq/Sensoray/S826Watchdog.hpp>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
-class S826 : public DaqBase, NonCopyable {
+class S826 : public DaqBase {
 public:
 
     S826(int board = 0);
@@ -39,7 +38,7 @@ public:
     virtual bool on_disable() override;
 
     /// Returns the current board time
-    Time get_timestamp() const;
+    double get_timestamp() const;
 
 public:
 
@@ -64,6 +63,9 @@ private:
 
     int board_; ///< the S826 baord identification number
 
+    S826( const S826& ) = delete; // non construction-copyable
+    S826& operator=( const S826& ) = delete; // non copyable
 };
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

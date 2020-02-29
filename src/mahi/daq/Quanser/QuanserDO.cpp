@@ -1,9 +1,10 @@
 #include <hil.h>
 #include <mahi/daq/Quanser/QuanserDaq.hpp>
 #include <mahi/daq/Quanser/QuanserDO.hpp>
-#include <MEL/Logging/Log.hpp>
 
-namespace mel {
+
+namespace mahi {
+namespace daq {
 
     //==============================================================================
     // CLASS DEFINITIONS
@@ -22,12 +23,11 @@ namespace mel {
         for (auto const& ch : get_channel_numbers())
             quanser_values_[ch] = static_cast<char>(values_[ch]);
         t_error result;
-        result = hil_write_digital(daq_.handle_, &get_channel_numbers()[0], static_cast<uint32>(get_channel_count()), &quanser_values_.get()[0]);
+        result = hil_write_digital(daq_.handle_, &get_channel_numbers()[0], static_cast<ChanNum>(get_channel_count()), &quanser_values_.get()[0]);
         if (result == 0)
             return true;
         else {
-            LOG(Error) << "Failed to update " << get_name() << " "
-                << QuanserDaq::get_quanser_error_message(result);
+            // LOG(Error) << "Failed to update " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
             return false;
         }
     }
@@ -40,8 +40,7 @@ namespace mel {
         if (result == 0)
             return true;
         else {
-            LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " "
-                << QuanserDaq::get_quanser_error_message(result);
+            // LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " " << QuanserDaq::get_quanser_error_message(result);
             return false;
         }
     }
@@ -63,14 +62,13 @@ namespace mel {
                 converted_expire_values.push_back(DIGITAL_STATE_LOW);
         }
         t_error result;
-        result = hil_watchdog_set_digital_expiration_state(daq_.handle_, &get_channel_numbers()[0], static_cast<uint32>(get_channel_count()), &converted_expire_values[0]);
+        result = hil_watchdog_set_digital_expiration_state(daq_.handle_, &get_channel_numbers()[0], static_cast<ChanNum>(get_channel_count()), &converted_expire_values[0]);
         if (result == 0) {
-            LOG(Verbose) << "Set " << get_name() << " expire values to " << expire_values_;
+            // LOG(Verbose) << "Set " << get_name() << " expire values to " << expire_values_;
             return true;
         }
         else {
-            LOG(Error) << "Failed to set " << get_name() << " expire values "
-                << QuanserDaq::get_quanser_error_message(result);
+            // LOG(Error) << "Failed to set " << get_name() << " expire values " << QuanserDaq::get_quanser_error_message(result);
             return false;
         }
     }
@@ -87,14 +85,14 @@ namespace mel {
         t_error result;
         result = hil_watchdog_set_digital_expiration_state(daq_.handle_, &channel_number, 1, &converted_expire_value);
         if (result == 0) {
-            LOG(Verbose) << "Set " << get_name() << " channel number " << channel_number << " expire value to " << expire_value;
+            // LOG(Verbose) << "Set " << get_name() << " channel number " << channel_number << " expire value to " << expire_value;
             return true;
         }
         else {
-            LOG(Error) << "Failed to set " << get_name() << " channel number " << channel_number << " expire value "
-                << QuanserDaq::get_quanser_error_message(result);
+            // LOG(Error) << "Failed to set " << get_name() << " channel number " << channel_number << " expire value " << QuanserDaq::get_quanser_error_message(result);
             return false;
         }
     }
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

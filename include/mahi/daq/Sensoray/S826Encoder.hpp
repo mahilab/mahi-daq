@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,11 +17,11 @@
 #pragma once
 
 #include <mahi/daq/Encoder.hpp>
-#include <MEL/Core/Time.hpp>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
-    class S826;
+class S826;
 
 class S826Encoder : public Encoder {
 public:
@@ -30,7 +29,7 @@ public:
     class Channel;
 
     bool update_channel(ChanNum channel_number) override;
-    bool reset_count(ChanNum channel_number, int32 count) override;
+    bool reset_count(ChanNum channel_number, int count) override;
     bool set_quadrature_factor(ChanNum channel_number, QuadFactor factor) override;
 
     /// Returns values per second for all channels
@@ -46,10 +45,10 @@ public:
     double get_velocity(ChanNum channel_number);
 
     /// Gets the hardware based timestamps of the most recent update
-    std::vector<Time>& get_timestamps();
+    std::vector<double>& get_timestamps();
 
     /// Gets the hardware based timestamp of the most recent update for single channel
-    Time get_timestamp(ChanNum channel_number);
+    double get_timestamp(ChanNum channel_number);
 
     /// Returns a S826Encoder::Channel
     Channel get_channel(ChanNum channel_number);
@@ -77,14 +76,17 @@ private:
 
     S826& s826_;
     
-    Registry<Time> timestamps_;
+    Registry<double> timestamps_;
     Registry<double> values_per_sec_;
     Registry<double> velocities_;
+
+    S826Encoder( const S826Encoder& ) = delete; // non construction-copyable
+    S826Encoder& operator=( const S826Encoder& ) = delete; // non copyable
 
 public:
 
     /// Encapsulates and S826Encoder channel (can be used as a PositionSensor or VelocitySensor)
-    class Channel : public Encoder::Channel, public VelocitySensor {
+    class Channel : public Encoder::Channel {
     public:
         /// Default constructor. Creates invalid channel
         Channel();
@@ -99,13 +101,15 @@ public:
         double get_value_per_sec();
 
         /// Gets the encoder velocity if available
-        double get_velocity() override;
+        double get_velocity();
 
         /// Gets the timestamp of the encoder read
-        Time get_timestamp();
-
+        double get_timestamp();
+    private:
+        double velocity_;
     };
 
 };
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

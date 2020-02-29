@@ -1,4 +1,5 @@
-namespace mel {
+namespace mahi {
+namespace daq {
 
     template <typename T>
     InputOutput<T>::InputOutput() :
@@ -145,4 +146,5 @@ namespace mel {
         dynamic_cast<InputOutput<T>*>(this->module_)->set_direction(this->channel_number_, direction);
     }
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

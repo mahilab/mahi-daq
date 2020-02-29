@@ -1,15 +1,15 @@
 #include <mahi/daq/Quanser/Q8Usb.hpp>
-#include <MEL/Utility/System.hpp>
-#include <MEL/Logging/Log.hpp>
 #include <hil.h>
+#include <thread>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 //==============================================================================
 // STATIC VARIABLES
 //==============================================================================
 
- uint32 NEXT_Q8USB_ID = 0;
+ ChanNum NEXT_Q8USB_ID = 0;
 
 //==============================================================================
 // CLASS DEFINITIONS
@@ -17,7 +17,7 @@ namespace mel {
 
 Q8Usb::Q8Usb(QuanserOptions options,
              bool perform_sanity_check,
-             uint32 id) :
+             ChanNum id) :
     QuanserDaq("q8_usb", id, options),
     perform_sanity_check_(perform_sanity_check),
     AI(*this, { 0, 1, 2, 3, 4, 5, 6, 7 }),
@@ -25,7 +25,7 @@ Q8Usb::Q8Usb(QuanserOptions options,
     DI(*this, { 0, 1, 2, 3, 4, 5, 6, 7 }),
     DO(*this, { 0, 1, 2, 3, 4, 5, 6, 7 }),
     encoder(*this, { 0, 1, 2, 3, 4, 5, 6, 7 }, true), // has velocity estimation
-    watchdog(*this, milliseconds(100))
+    watchdog(*this, 0.1)
 {
     // increment NEXT_ID
     ++NEXT_Q8USB_ID;
@@ -70,7 +70,7 @@ bool Q8Usb::on_open() {
         return false;
     }
     // allow changes to take effect
-    sleep(milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     return true;
 }
 
@@ -80,14 +80,14 @@ bool Q8Usb::on_close() {
     // clear the watchdog (precautionary, ok if fails)
     watchdog.clear();
     // allow changes to take effect
-    sleep(milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     // close as QDaq
     return QuanserDaq::on_close();
 }
 
 bool Q8Usb::on_enable() {
     if (!is_open()) {
-        LOG(Error) << "Unable to enable Q8-USB " << get_name() << " because it is not open";
+        // LOG(Error) << "Unable to enable Q8-USB " << get_name() << " because it is not open";
         return false;
     }
     bool success = true;
@@ -103,13 +103,13 @@ bool Q8Usb::on_enable() {
     if (!encoder.enable())
         success = false;
     // allow changes to take effect
-    sleep(milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     return success;
 }
 
 bool Q8Usb::on_disable() {
     if (!is_open()) {
-        LOG(Error) << "Unable to disable Q8-USB " << get_name() << " because it is not open";
+        // LOG(Error) << "Unable to disable Q8-USB " << get_name() << " because it is not open";
         return false;
     }
     bool success = true;
@@ -125,25 +125,25 @@ bool Q8Usb::on_disable() {
     if (!encoder.disable())
         success = false;
     // allow changes to take effect
-    sleep(milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     return success;
 }
 
 bool Q8Usb::update_input() {
     if (!is_enabled()) {
-        LOG(Error) << "Unable to update " << get_name() << " input because it is disabled";
+        // LOG(Error) << "Unable to update " << get_name() << " input because it is disabled";
         return false;
     }
     t_error result;
     result = hil_read(handle_,
         AI.get_channel_count() > 0 ? &(AI.get_channel_numbers())[0] : NULL,
-        static_cast<uint32>(AI.get_channel_count()),
+        static_cast<ChanNum>(AI.get_channel_count()),
         encoder.get_channel_count() > 0 ? &(encoder.get_channel_numbers())[0] : NULL,
-        static_cast<uint32>(encoder.get_channel_count()),
+        static_cast<ChanNum>(encoder.get_channel_count()),
         DI.get_channel_count() > 0 ? &(DI.get_channel_numbers())[0] : NULL,
-        static_cast<uint32>(DI.get_channel_count()),
+        static_cast<ChanNum>(DI.get_channel_count()),
         encoder.get_channel_count() > 0 ? &(encoder.get_quanser_velocity_channels())[0] : NULL,
-        static_cast<uint32>(encoder.get_channel_count()),
+        static_cast<ChanNum>(encoder.get_channel_count()),
         AI.get_channel_count() > 0 ? &(AI.get_values())[0] : NULL,
         encoder.get_channel_count() > 0 ? &(encoder.get_values())[0] : NULL,
         DI.get_channel_count() > 0 ? &(DI.get_quanser_values())[0] : NULL,
@@ -153,15 +153,14 @@ bool Q8Usb::update_input() {
     if (result == 0)
         return true;
     else {
-        LOG(Error) << "Failed to update " << get_name() << " input "
-            << QuanserDaq::get_quanser_error_message(result);
+        // LOG(Error) << "Failed to update " << get_name() << " input " << QuanserDaq::get_quanser_error_message(result);
         return false;
     }
 }
 
 bool Q8Usb::update_output() {
     if (!is_enabled()) {
-        LOG(Error) << "Unable to update " << get_name() << " output because it is disabled";
+        // LOG(Error) << "Unable to update " << get_name() << " output because it is disabled";
         return false;
     }
     // convert digitals
@@ -170,10 +169,10 @@ bool Q8Usb::update_output() {
     t_error result;
     result = hil_write(handle_,
         AO.get_channel_count() > 0 ? &(AO.get_channel_numbers())[0] : NULL,
-        static_cast<uint32>(AO.get_channel_count()),
+        static_cast<ChanNum>(AO.get_channel_count()),
         NULL, 0,
         DO.get_channel_count() > 0 ? &(DO.get_channel_numbers())[0] : NULL,
-        static_cast<uint32>(DO.get_channel_count()),
+        static_cast<ChanNum>(DO.get_channel_count()),
         NULL, 0,
         AO.get_channel_count() > 0 ? &(AO.get_values())[0] : NULL,
         NULL,
@@ -182,16 +181,14 @@ bool Q8Usb::update_output() {
     if (result == 0)
         return true;
     else {
-        LOG(Error) << "Failed to update " << get_name() << " output "
-            << QuanserDaq::get_quanser_error_message(result);
+        // LOG(Error) << "Failed to update " << get_name() << " output " << QuanserDaq::get_quanser_error_message(result);
         return false;
     }
 }
 
 bool Q8Usb::identify(ChanNum channel_number) {
     if (!is_open()) {
-        LOG(Error) << "Unable to call " << __FUNCTION__ << " because "
-            << get_name() << " is not open";
+        // LOG(Error) << "Unable to call " << __FUNCTION__ << " because " << get_name() << " is not open";
         return false;
     }
     Input<Logic>::Channel di_ch = DI.get_channel(channel_number);
@@ -199,14 +196,14 @@ bool Q8Usb::identify(ChanNum channel_number) {
     for (int i = 0; i < 5; ++i) {
         do_ch.set_value(High);
         do_ch.update();
-        sleep(milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
         di_ch.update();
         if (di_ch.get_value() != High) {
             return false;
         }
         do_ch.set_value(Low);
         do_ch.update();
-        sleep(milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
         di_ch.update();
         if (di_ch.get_value() != Low) {
             return false;
@@ -230,12 +227,12 @@ bool Q8Usb::sanity_check() {
     for (auto it = velocities.begin(); it != velocities.end(); ++it) {
         if (*it != 0.0) {
             sane = false;
-            LOG(Warning) << "Sanity check on " << get_name() << " failed";
+            // LOG(Warning) << "Sanity check on " << get_name() << " failed";
             break;
         }
     }
     if (sane)
-        LOG(Verbose) << "Sanity check on " << get_name() << " passed";
+        // LOG(Verbose) << "Sanity check on " << get_name() << " passed";
     return sane;
 }
 
@@ -243,9 +240,10 @@ std::size_t Q8Usb::get_q8_usb_count() {
     return QuanserDaq::get_qdaq_count("q8_usb");
 }
 
-uint32 Q8Usb::next_id() {
+ChanNum Q8Usb::next_id() {
     return NEXT_Q8USB_ID;
 }
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi
 

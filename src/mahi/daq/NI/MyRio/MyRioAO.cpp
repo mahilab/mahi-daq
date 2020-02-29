@@ -1,15 +1,16 @@
 #include <mahi/daq/NI/MyRio/MyRio.hpp>
-#include <MEL/Logging/Log.hpp>
+
 #include "Detail/MyRioFpga60/MyRio.h"
 
 extern NiFpga_Session myrio_session;
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 namespace {
 
 // AO registers
-static const std::vector<std::vector<uint32_t>> REGISTERS({
+static const std::vector<std::vector<ChanNum_t>> REGISTERS({
     {AOA_0VAL, AOA_1VAL},
     {AOB_0VAL, AOB_1VAL},
     {AOC_0VAL, AOC_1VAL}
@@ -60,16 +61,17 @@ bool MyRioAO::update_channel(ChanNum channel_number) {
 
     status = NiFpga_WriteU16(myrio_session, REGISTERS[connector_.type][channel_number], valueScaled);
     if (status < 0) {
-        LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number;
+        // LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number;
         return false;
     }
 
     status = NiFpga_WriteU16(myrio_session, AOSYSGO, 1);
     if (status < 0) {
-        LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number;
+        // LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number;
         return false;
     }
     return true;
 }
 
-}  // namespace mel
+} // namespace daq
+} // namespace mahi

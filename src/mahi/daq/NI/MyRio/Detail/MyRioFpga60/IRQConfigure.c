@@ -138,7 +138,7 @@ int32_t Irq_RemoveReserved(uint8_t irqNumber)
  * @param[in]  continueWaiting      Signal which aborts the waiting thread.
  */
 void Irq_Wait(NiFpga_IrqContext irqContext, NiFpga_Irq irqNumber,
-              uint32_t* irqAssert, NiFpga_Bool* continueWaiting)
+              ChanNum_t* irqAssert, NiFpga_Bool* continueWaiting)
 {
     NiFpga_Status status;
 
@@ -178,7 +178,7 @@ void Irq_Wait(NiFpga_IrqContext irqContext, NiFpga_Irq irqNumber,
  *
  * @param[in]  irqAssert  Bitwise OR of IRQs to acknowledge.
  */
-void Irq_Acknowledge(uint32_t irqAssert)
+void Irq_Acknowledge(ChanNum_t irqAssert)
 {
     NiFpga_Status status;
 

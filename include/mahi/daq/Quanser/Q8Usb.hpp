@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,7 +24,8 @@
 #include <mahi/daq/Quanser/QuanserOptions.hpp>
 #include <mahi/daq/Quanser/QuanserWatchdog.hpp>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 //==============================================================================
 // CLASS DECLARATION
@@ -37,7 +37,7 @@ public:
     /// Default constructor
     Q8Usb(QuanserOptions options                  = QuanserOptions(),
           bool perform_sanity_check               = true,
-          uint32 id                               = next_id());
+          ChanNum id                               = next_id());
 
     /// Default destructor. First calls disable() if the Q8Usb is enabled
     /// then close() if the Q8Usb is open.
@@ -65,7 +65,7 @@ public:
     /// you know Q8Usb(id = 0) is the Q8 USB without the loopback, and Q8Usb(id
     /// = 1) can be infered as the Q8 USB with a loopback, and subsequently
     /// checked by calling indentify(5) on it.
-    bool identify(uint32 channel_number);
+    bool identify(ChanNum channel_number);
 
     /// This is an alternate version of identify() that checks for a loopback
     /// connection on all digital channel pairs, and returns the channel number
@@ -113,9 +113,10 @@ private:
                                  ///< performed on enable
 private:
     /// Returns the next automatic ID# to use
-    static uint32 next_id();
+    static ChanNum next_id();
 };
 
-}  // namespace mel
+} // namespace daq
+} // namespace mahi
 
 /// http://quanser-update.azurewebsites.net/quarc/documentation/q8_usb.html

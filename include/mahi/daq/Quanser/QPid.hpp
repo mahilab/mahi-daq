@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,7 +23,8 @@
 #include <mahi/daq/Quanser/QuanserOptions.hpp>
 #include <mahi/daq/Quanser/QuanserWatchdog.hpp>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 //==============================================================================
 // CLASS DECLARATION
@@ -35,7 +35,7 @@ class QPid : public QuanserDaq {
 public:
     /// Default constructor
     QPid(QuanserOptions options = QuanserOptions(),
-          uint32 id             = next_id());
+          ChanNum id             = next_id());
 
     /// Default destructor. First calls disable() if the QPid is enabled
     /// then close() if the QPid is open.
@@ -75,9 +75,10 @@ private:
 
 private:
     /// Returns the next automatic ID# to use
-    static uint32 next_id();
+    static ChanNum next_id();
 };
 
-}  // namespace mel
+} // namespace daq
+} // namespace mahi
 
 /// http://quanser-update.azurewebsites.net/quarc/documentation/q8_usb.html

@@ -79,13 +79,13 @@ static NiFpga_Status (NiFpga_CCall *NiFpga_open)(
                           const char*     path,
                           const char*     signature,
                           const char*     resource,
-                          uint32_t        attribute,
+                          ChanNum_t        attribute,
                           NiFpga_Session* session) = NULL;
 
 NiFpga_Status NiFpga_Open(const char*     path,
                           const char*     signature,
                           const char*     resource,
-                          uint32_t        attribute,
+                          ChanNum_t        attribute,
                           NiFpga_Session* session)
 {
    const NiFpga_Status result = NiFpga_open
@@ -108,10 +108,10 @@ NiFpga_Status NiFpga_Open(const char*     path,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_close)(
                            NiFpga_Session session,
-                           uint32_t       attribute) = NULL;
+                           ChanNum_t       attribute) = NULL;
 
 NiFpga_Status NiFpga_Close(NiFpga_Session session,
-                           uint32_t       attribute)
+                           ChanNum_t       attribute)
 {
    if (!NiFpga_close)
       return NiFpga_Status_ResourceNotInitialized;
@@ -127,10 +127,10 @@ NiFpga_Status NiFpga_Close(NiFpga_Session session,
  */
 static NiFpga_Status (NiFpga_CCall *NiFpga_run)(
                          NiFpga_Session session,
-                         uint32_t       attribute) = NULL;
+                         ChanNum_t       attribute) = NULL;
 
 NiFpga_Status NiFpga_Run(NiFpga_Session session,
-                         uint32_t       attribute)
+                         ChanNum_t       attribute)
 {
    return NiFpga_run
         ? NiFpga_run(session, attribute)
@@ -172,11 +172,11 @@ NiFpga_Status NiFpga_Download(NiFpga_Session session)
  */
 static NiFpga_Status (NiFpga_CCall *NiFpga_readBool)(
                               NiFpga_Session session,
-                              uint32_t       indicator,
+                              ChanNum_t       indicator,
                               NiFpga_Bool*   value) = NULL;
 
 NiFpga_Status NiFpga_ReadBool(NiFpga_Session session,
-                              uint32_t       indicator,
+                              ChanNum_t       indicator,
                               NiFpga_Bool*   value)
 {
    return NiFpga_readBool
@@ -186,11 +186,11 @@ NiFpga_Status NiFpga_ReadBool(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readI8)(
                             NiFpga_Session session,
-                            uint32_t       indicator,
+                            ChanNum_t       indicator,
                             int8_t*        value) = NULL;
 
 NiFpga_Status NiFpga_ReadI8(NiFpga_Session session,
-                            uint32_t       indicator,
+                            ChanNum_t       indicator,
                             int8_t*        value)
 {
    return NiFpga_readI8
@@ -200,11 +200,11 @@ NiFpga_Status NiFpga_ReadI8(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readU8)(
                             NiFpga_Session session,
-                            uint32_t       indicator,
+                            ChanNum_t       indicator,
                             uint8_t*       value) = NULL;
 
 NiFpga_Status NiFpga_ReadU8(NiFpga_Session session,
-                            uint32_t       indicator,
+                            ChanNum_t       indicator,
                             uint8_t*       value)
 {
    return NiFpga_readU8
@@ -214,11 +214,11 @@ NiFpga_Status NiFpga_ReadU8(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readI16)(
                              NiFpga_Session session,
-                             uint32_t       indicator,
+                             ChanNum_t       indicator,
                              int16_t*       value) = NULL;
 
 NiFpga_Status NiFpga_ReadI16(NiFpga_Session session,
-                             uint32_t       indicator,
+                             ChanNum_t       indicator,
                              int16_t*       value)
 {
    return NiFpga_readI16
@@ -228,11 +228,11 @@ NiFpga_Status NiFpga_ReadI16(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readU16)(
                              NiFpga_Session session,
-                             uint32_t       indicator,
+                             ChanNum_t       indicator,
                              uint16_t*      value) = NULL;
 
 NiFpga_Status NiFpga_ReadU16(NiFpga_Session session,
-                             uint32_t       indicator,
+                             ChanNum_t       indicator,
                              uint16_t*      value)
 {
    return NiFpga_readU16
@@ -242,11 +242,11 @@ NiFpga_Status NiFpga_ReadU16(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readI32)(
                              NiFpga_Session session,
-                             uint32_t       indicator,
+                             ChanNum_t       indicator,
                              int32_t*       value) = NULL;
 
 NiFpga_Status NiFpga_ReadI32(NiFpga_Session session,
-                             uint32_t       indicator,
+                             ChanNum_t       indicator,
                              int32_t*       value)
 {
    return NiFpga_readI32
@@ -256,12 +256,12 @@ NiFpga_Status NiFpga_ReadI32(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readU32)(
                              NiFpga_Session session,
-                             uint32_t       indicator,
-                             uint32_t*      value) = NULL;
+                             ChanNum_t       indicator,
+                             ChanNum_t*      value) = NULL;
 
 NiFpga_Status NiFpga_ReadU32(NiFpga_Session session,
-                             uint32_t       indicator,
-                             uint32_t*      value)
+                             ChanNum_t       indicator,
+                             ChanNum_t*      value)
 {
    return NiFpga_readU32
         ? NiFpga_readU32(session, indicator, value)
@@ -270,11 +270,11 @@ NiFpga_Status NiFpga_ReadU32(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readI64)(
                              NiFpga_Session session,
-                             uint32_t       indicator,
+                             ChanNum_t       indicator,
                              int64_t*       value) = NULL;
 
 NiFpga_Status NiFpga_ReadI64(NiFpga_Session session,
-                             uint32_t       indicator,
+                             ChanNum_t       indicator,
                              int64_t*       value)
 {
    return NiFpga_readI64
@@ -284,11 +284,11 @@ NiFpga_Status NiFpga_ReadI64(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readU64)(
                              NiFpga_Session session,
-                             uint32_t       indicator,
+                             ChanNum_t       indicator,
                              uint64_t*      value) = NULL;
 
 NiFpga_Status NiFpga_ReadU64(NiFpga_Session session,
-                             uint32_t       indicator,
+                             ChanNum_t       indicator,
                              uint64_t*      value)
 {
    return NiFpga_readU64
@@ -298,11 +298,11 @@ NiFpga_Status NiFpga_ReadU64(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readSgl)(
                              NiFpga_Session session,
-                             uint32_t       indicator,
+                             ChanNum_t       indicator,
                              float*         value) = NULL;
 
 NiFpga_Status NiFpga_ReadSgl(NiFpga_Session session,
-                             uint32_t       indicator,
+                             ChanNum_t       indicator,
                              float*         value)
 {
    return NiFpga_readSgl
@@ -312,11 +312,11 @@ NiFpga_Status NiFpga_ReadSgl(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readDbl)(
                              NiFpga_Session session,
-                             uint32_t       indicator,
+                             ChanNum_t       indicator,
                              double*        value) = NULL;
 
 NiFpga_Status NiFpga_ReadDbl(NiFpga_Session session,
-                             uint32_t       indicator,
+                             ChanNum_t       indicator,
                              double*        value)
 {
    return NiFpga_readDbl
@@ -329,11 +329,11 @@ NiFpga_Status NiFpga_ReadDbl(NiFpga_Session session,
  */
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeBool)(
                                NiFpga_Session session,
-                               uint32_t       control,
+                               ChanNum_t       control,
                                NiFpga_Bool    value) = NULL;
 
 NiFpga_Status NiFpga_WriteBool(NiFpga_Session session,
-                               uint32_t       control,
+                               ChanNum_t       control,
                                NiFpga_Bool    value)
 {
    return NiFpga_writeBool
@@ -343,11 +343,11 @@ NiFpga_Status NiFpga_WriteBool(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeI8)(
                              NiFpga_Session session,
-                             uint32_t       control,
+                             ChanNum_t       control,
                              int8_t         value) = NULL;
 
 NiFpga_Status NiFpga_WriteI8(NiFpga_Session session,
-                             uint32_t       control,
+                             ChanNum_t       control,
                              int8_t         value)
 {
    return NiFpga_writeI8
@@ -357,11 +357,11 @@ NiFpga_Status NiFpga_WriteI8(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeU8)(
                              NiFpga_Session session,
-                             uint32_t       control,
+                             ChanNum_t       control,
                              uint8_t        value) = NULL;
 
 NiFpga_Status NiFpga_WriteU8(NiFpga_Session session,
-                             uint32_t       control,
+                             ChanNum_t       control,
                              uint8_t        value)
 {
    return NiFpga_writeU8
@@ -371,11 +371,11 @@ NiFpga_Status NiFpga_WriteU8(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeI16)(
                               NiFpga_Session session,
-                              uint32_t       control,
+                              ChanNum_t       control,
                               int16_t        value) = NULL;
 
 NiFpga_Status NiFpga_WriteI16(NiFpga_Session session,
-                              uint32_t       control,
+                              ChanNum_t       control,
                               int16_t        value)
 {
    return NiFpga_writeI16
@@ -385,11 +385,11 @@ NiFpga_Status NiFpga_WriteI16(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeU16)(
                               NiFpga_Session session,
-                              uint32_t       control,
+                              ChanNum_t       control,
                               uint16_t       value) = NULL;
 
 NiFpga_Status NiFpga_WriteU16(NiFpga_Session session,
-                              uint32_t       control,
+                              ChanNum_t       control,
                               uint16_t       value)
 {
    return NiFpga_writeU16
@@ -399,11 +399,11 @@ NiFpga_Status NiFpga_WriteU16(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeI32)(
                               NiFpga_Session session,
-                              uint32_t       control,
+                              ChanNum_t       control,
                               int32_t        value) = NULL;
 
 NiFpga_Status NiFpga_WriteI32(NiFpga_Session session,
-                              uint32_t       control,
+                              ChanNum_t       control,
                               int32_t        value)
 {
    return NiFpga_writeI32
@@ -413,12 +413,12 @@ NiFpga_Status NiFpga_WriteI32(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeU32)(
                               NiFpga_Session session,
-                              uint32_t       control,
-                              uint32_t       value) = NULL;
+                              ChanNum_t       control,
+                              ChanNum_t       value) = NULL;
 
 NiFpga_Status NiFpga_WriteU32(NiFpga_Session session,
-                              uint32_t       control,
-                              uint32_t       value)
+                              ChanNum_t       control,
+                              ChanNum_t       value)
 {
    return NiFpga_writeU32
         ? NiFpga_writeU32(session, control, value)
@@ -427,11 +427,11 @@ NiFpga_Status NiFpga_WriteU32(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeI64)(
                               NiFpga_Session session,
-                              uint32_t       control,
+                              ChanNum_t       control,
                               int64_t        value) = NULL;
 
 NiFpga_Status NiFpga_WriteI64(NiFpga_Session session,
-                              uint32_t       control,
+                              ChanNum_t       control,
                               int64_t        value)
 {
    return NiFpga_writeI64
@@ -441,11 +441,11 @@ NiFpga_Status NiFpga_WriteI64(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeU64)(
                               NiFpga_Session session,
-                              uint32_t       control,
+                              ChanNum_t       control,
                               uint64_t       value) = NULL;
 
 NiFpga_Status NiFpga_WriteU64(NiFpga_Session session,
-                              uint32_t       control,
+                              ChanNum_t       control,
                               uint64_t       value)
 {
    return NiFpga_writeU64
@@ -455,11 +455,11 @@ NiFpga_Status NiFpga_WriteU64(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeSgl)(
                               NiFpga_Session session,
-                              uint32_t       control,
+                              ChanNum_t       control,
                               float          value) = NULL;
 
 NiFpga_Status NiFpga_WriteSgl(NiFpga_Session session,
-                              uint32_t       control,
+                              ChanNum_t       control,
                               float          value)
 {
    return NiFpga_writeSgl
@@ -469,11 +469,11 @@ NiFpga_Status NiFpga_WriteSgl(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeDbl)(
                               NiFpga_Session session,
-                              uint32_t       control,
+                              ChanNum_t       control,
                               double         value) = NULL;
 
 NiFpga_Status NiFpga_WriteDbl(NiFpga_Session session,
-                              uint32_t       control,
+                              ChanNum_t       control,
                               double         value)
 {
    return NiFpga_writeDbl
@@ -486,12 +486,12 @@ NiFpga_Status NiFpga_WriteDbl(NiFpga_Session session,
  */
 static NiFpga_Status (NiFpga_CCall *NiFpga_readArrayBool)(
                                    NiFpga_Session session,
-                                   uint32_t       indicator,
+                                   ChanNum_t       indicator,
                                    NiFpga_Bool*   array,
                                    size_t         size) = NULL;
 
 NiFpga_Status NiFpga_ReadArrayBool(NiFpga_Session session,
-                                   uint32_t       indicator,
+                                   ChanNum_t       indicator,
                                    NiFpga_Bool*   array,
                                    size_t         size)
 {
@@ -502,12 +502,12 @@ NiFpga_Status NiFpga_ReadArrayBool(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readArrayI8)(
                                  NiFpga_Session session,
-                                 uint32_t       indicator,
+                                 ChanNum_t       indicator,
                                  int8_t*        array,
                                  size_t         size) = NULL;
 
 NiFpga_Status NiFpga_ReadArrayI8(NiFpga_Session session,
-                                 uint32_t       indicator,
+                                 ChanNum_t       indicator,
                                  int8_t*        array,
                                  size_t         size)
 {
@@ -518,12 +518,12 @@ NiFpga_Status NiFpga_ReadArrayI8(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readArrayU8)(
                                  NiFpga_Session session,
-                                 uint32_t       indicator,
+                                 ChanNum_t       indicator,
                                  uint8_t*       array,
                                  size_t         size) = NULL;
 
 NiFpga_Status NiFpga_ReadArrayU8(NiFpga_Session session,
-                                 uint32_t       indicator,
+                                 ChanNum_t       indicator,
                                  uint8_t*       array,
                                  size_t         size)
 {
@@ -534,12 +534,12 @@ NiFpga_Status NiFpga_ReadArrayU8(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readArrayI16)(
                                   NiFpga_Session session,
-                                  uint32_t       indicator,
+                                  ChanNum_t       indicator,
                                   int16_t*       array,
                                   size_t         size) = NULL;
 
 NiFpga_Status NiFpga_ReadArrayI16(NiFpga_Session session,
-                                  uint32_t       indicator,
+                                  ChanNum_t       indicator,
                                   int16_t*       array,
                                   size_t         size)
 {
@@ -550,12 +550,12 @@ NiFpga_Status NiFpga_ReadArrayI16(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readArrayU16)(
                                   NiFpga_Session session,
-                                  uint32_t       indicator,
+                                  ChanNum_t       indicator,
                                   uint16_t*      array,
                                   size_t         size) = NULL;
 
 NiFpga_Status NiFpga_ReadArrayU16(NiFpga_Session session,
-                                  uint32_t       indicator,
+                                  ChanNum_t       indicator,
                                   uint16_t*      array,
                                   size_t         size)
 {
@@ -566,12 +566,12 @@ NiFpga_Status NiFpga_ReadArrayU16(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readArrayI32)(
                                   NiFpga_Session session,
-                                  uint32_t       indicator,
+                                  ChanNum_t       indicator,
                                   int32_t*       array,
                                   size_t         size) = NULL;
 
 NiFpga_Status NiFpga_ReadArrayI32(NiFpga_Session session,
-                                  uint32_t       indicator,
+                                  ChanNum_t       indicator,
                                   int32_t*       array,
                                   size_t         size)
 {
@@ -582,13 +582,13 @@ NiFpga_Status NiFpga_ReadArrayI32(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readArrayU32)(
                                   NiFpga_Session session,
-                                  uint32_t       indicator,
-                                  uint32_t*      array,
+                                  ChanNum_t       indicator,
+                                  ChanNum_t*      array,
                                   size_t         size) = NULL;
 
 NiFpga_Status NiFpga_ReadArrayU32(NiFpga_Session session,
-                                  uint32_t       indicator,
-                                  uint32_t*      array,
+                                  ChanNum_t       indicator,
+                                  ChanNum_t*      array,
                                   size_t         size)
 {
    return NiFpga_readArrayU32
@@ -598,12 +598,12 @@ NiFpga_Status NiFpga_ReadArrayU32(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readArrayI64)(
                                   NiFpga_Session session,
-                                  uint32_t       indicator,
+                                  ChanNum_t       indicator,
                                   int64_t*       array,
                                   size_t         size) = NULL;
 
 NiFpga_Status NiFpga_ReadArrayI64(NiFpga_Session session,
-                                  uint32_t       indicator,
+                                  ChanNum_t       indicator,
                                   int64_t*       array,
                                   size_t         size)
 {
@@ -614,12 +614,12 @@ NiFpga_Status NiFpga_ReadArrayI64(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readArrayU64)(
                                   NiFpga_Session session,
-                                  uint32_t       indicator,
+                                  ChanNum_t       indicator,
                                   uint64_t*      array,
                                   size_t         size) = NULL;
 
 NiFpga_Status NiFpga_ReadArrayU64(NiFpga_Session session,
-                                  uint32_t       indicator,
+                                  ChanNum_t       indicator,
                                   uint64_t*      array,
                                   size_t         size)
 {
@@ -630,12 +630,12 @@ NiFpga_Status NiFpga_ReadArrayU64(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readArraySgl)(
                                   NiFpga_Session session,
-                                  uint32_t       indicator,
+                                  ChanNum_t       indicator,
                                   float*         array,
                                   size_t         size) = NULL;
 
 NiFpga_Status NiFpga_ReadArraySgl(NiFpga_Session session,
-                                  uint32_t       indicator,
+                                  ChanNum_t       indicator,
                                   float*         array,
                                   size_t         size)
 {
@@ -646,12 +646,12 @@ NiFpga_Status NiFpga_ReadArraySgl(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readArrayDbl)(
                                   NiFpga_Session session,
-                                  uint32_t       indicator,
+                                  ChanNum_t       indicator,
                                   double*        array,
                                   size_t         size) = NULL;
 
 NiFpga_Status NiFpga_ReadArrayDbl(NiFpga_Session session,
-                                  uint32_t       indicator,
+                                  ChanNum_t       indicator,
                                   double*        array,
                                   size_t         size)
 {
@@ -665,12 +665,12 @@ NiFpga_Status NiFpga_ReadArrayDbl(NiFpga_Session session,
  */
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeArrayBool)(
                                     NiFpga_Session     session,
-                                    uint32_t           control,
+                                    ChanNum_t           control,
                                     const NiFpga_Bool* array,
                                     size_t             size) = NULL;
 
 NiFpga_Status NiFpga_WriteArrayBool(NiFpga_Session     session,
-                                    uint32_t           control,
+                                    ChanNum_t           control,
                                     const NiFpga_Bool* array,
                                     size_t             size)
 {
@@ -681,12 +681,12 @@ NiFpga_Status NiFpga_WriteArrayBool(NiFpga_Session     session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeArrayI8)(
                                   NiFpga_Session session,
-                                  uint32_t       control,
+                                  ChanNum_t       control,
                                   const int8_t*  array,
                                   size_t         size) = NULL;
 
 NiFpga_Status NiFpga_WriteArrayI8(NiFpga_Session session,
-                                  uint32_t       control,
+                                  ChanNum_t       control,
                                   const int8_t*  array,
                                   size_t         size)
 {
@@ -697,12 +697,12 @@ NiFpga_Status NiFpga_WriteArrayI8(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeArrayU8)(
                                   NiFpga_Session session,
-                                  uint32_t       control,
+                                  ChanNum_t       control,
                                   const uint8_t* array,
                                   size_t         size) = NULL;
 
 NiFpga_Status NiFpga_WriteArrayU8(NiFpga_Session session,
-                                  uint32_t       control,
+                                  ChanNum_t       control,
                                   const uint8_t* array,
                                   size_t         size)
 {
@@ -713,12 +713,12 @@ NiFpga_Status NiFpga_WriteArrayU8(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeArrayI16)(
                                    NiFpga_Session session,
-                                   uint32_t       control,
+                                   ChanNum_t       control,
                                    const int16_t* array,
                                    size_t         size) = NULL;
 
 NiFpga_Status NiFpga_WriteArrayI16(NiFpga_Session session,
-                                   uint32_t       control,
+                                   ChanNum_t       control,
                                    const int16_t* array,
                                    size_t         size)
 {
@@ -729,12 +729,12 @@ NiFpga_Status NiFpga_WriteArrayI16(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeArrayU16)(
                                    NiFpga_Session  session,
-                                   uint32_t        control,
+                                   ChanNum_t        control,
                                    const uint16_t* array,
                                    size_t          size) = NULL;
 
 NiFpga_Status NiFpga_WriteArrayU16(NiFpga_Session  session,
-                                   uint32_t        control,
+                                   ChanNum_t        control,
                                    const uint16_t* array,
                                    size_t          size)
 {
@@ -745,12 +745,12 @@ NiFpga_Status NiFpga_WriteArrayU16(NiFpga_Session  session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeArrayI32)(
                                    NiFpga_Session session,
-                                   uint32_t       control,
+                                   ChanNum_t       control,
                                    const int32_t* array,
                                    size_t         size) = NULL;
 
 NiFpga_Status NiFpga_WriteArrayI32(NiFpga_Session session,
-                                   uint32_t       control,
+                                   ChanNum_t       control,
                                    const int32_t* array,
                                    size_t         size)
 {
@@ -761,13 +761,13 @@ NiFpga_Status NiFpga_WriteArrayI32(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeArrayU32)(
                                    NiFpga_Session  session,
-                                   uint32_t        control,
-                                   const uint32_t* array,
+                                   ChanNum_t        control,
+                                   const ChanNum_t* array,
                                    size_t          size) = NULL;
 
 NiFpga_Status NiFpga_WriteArrayU32(NiFpga_Session  session,
-                                   uint32_t        control,
-                                   const uint32_t* array,
+                                   ChanNum_t        control,
+                                   const ChanNum_t* array,
                                    size_t          size)
 {
    return NiFpga_writeArrayU32
@@ -777,12 +777,12 @@ NiFpga_Status NiFpga_WriteArrayU32(NiFpga_Session  session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeArrayI64)(
                                    NiFpga_Session session,
-                                   uint32_t       control,
+                                   ChanNum_t       control,
                                    const int64_t* array,
                                    size_t         size) = NULL;
 
 NiFpga_Status NiFpga_WriteArrayI64(NiFpga_Session session,
-                                   uint32_t       control,
+                                   ChanNum_t       control,
                                    const int64_t* array,
                                    size_t         size)
 {
@@ -793,12 +793,12 @@ NiFpga_Status NiFpga_WriteArrayI64(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeArrayU64)(
                                    NiFpga_Session  session,
-                                   uint32_t        control,
+                                   ChanNum_t        control,
                                    const uint64_t* array,
                                    size_t          size) = NULL;
 
 NiFpga_Status NiFpga_WriteArrayU64(NiFpga_Session  session,
-                                   uint32_t        control,
+                                   ChanNum_t        control,
                                    const uint64_t* array,
                                    size_t          size)
 {
@@ -809,12 +809,12 @@ NiFpga_Status NiFpga_WriteArrayU64(NiFpga_Session  session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeArraySgl)(
                                    NiFpga_Session session,
-                                   uint32_t       control,
+                                   ChanNum_t       control,
                                    const float*   array,
                                    size_t         size) = NULL;
 
 NiFpga_Status NiFpga_WriteArraySgl(NiFpga_Session session,
-                                   uint32_t       control,
+                                   ChanNum_t       control,
                                    const float*   array,
                                    size_t         size)
 {
@@ -825,12 +825,12 @@ NiFpga_Status NiFpga_WriteArraySgl(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeArrayDbl)(
                                    NiFpga_Session session,
-                                   uint32_t       control,
+                                   ChanNum_t       control,
                                    const double*  array,
                                    size_t         size) = NULL;
 
 NiFpga_Status NiFpga_WriteArrayDbl(NiFpga_Session session,
-                                   uint32_t       control,
+                                   ChanNum_t       control,
                                    const double*  array,
                                    size_t         size)
 {
@@ -884,16 +884,16 @@ NiFpga_Status NiFpga_UnreserveIrqContext(NiFpga_Session    session,
 static NiFpga_Status (NiFpga_CCall *NiFpga_waitOnIrqs)(
                                 NiFpga_Session    session,
                                 NiFpga_IrqContext context,
-                                uint32_t          irqs,
-                                uint32_t          timeout,
-                                uint32_t*         irqsAsserted,
+                                ChanNum_t          irqs,
+                                ChanNum_t          timeout,
+                                ChanNum_t*         irqsAsserted,
                                 NiFpga_Bool*      timedOut) = NULL;
 
 NiFpga_Status NiFpga_WaitOnIrqs(NiFpga_Session    session,
                                 NiFpga_IrqContext context,
-                                uint32_t          irqs,
-                                uint32_t          timeout,
-                                uint32_t*         irqsAsserted,
+                                ChanNum_t          irqs,
+                                ChanNum_t          timeout,
+                                ChanNum_t*         irqsAsserted,
                                 NiFpga_Bool*      timedOut)
 {
    return NiFpga_waitOnIrqs
@@ -908,10 +908,10 @@ NiFpga_Status NiFpga_WaitOnIrqs(NiFpga_Session    session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acknowledgeIrqs)(
                                      NiFpga_Session session,
-                                     uint32_t       irqs) = NULL;
+                                     ChanNum_t       irqs) = NULL;
 
 NiFpga_Status NiFpga_AcknowledgeIrqs(NiFpga_Session session,
-                                     uint32_t       irqs)
+                                     ChanNum_t       irqs)
 {
    return NiFpga_acknowledgeIrqs
         ? NiFpga_acknowledgeIrqs(session, irqs)
@@ -923,11 +923,11 @@ NiFpga_Status NiFpga_AcknowledgeIrqs(NiFpga_Session session,
  */
 static NiFpga_Status (NiFpga_CCall *NiFpga_configureFifo)(
                                    NiFpga_Session session,
-                                   uint32_t       fifo,
+                                   ChanNum_t       fifo,
                                    size_t         depth) = NULL;
 
 NiFpga_Status NiFpga_ConfigureFifo(NiFpga_Session session,
-                                   uint32_t       fifo,
+                                   ChanNum_t       fifo,
                                    size_t         depth)
 {
    return NiFpga_configureFifo
@@ -937,12 +937,12 @@ NiFpga_Status NiFpga_ConfigureFifo(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_configureFifo2)(
                                    NiFpga_Session session,
-                                   uint32_t       fifo,
+                                   ChanNum_t       fifo,
                                    size_t         requestedDepth,
                                    size_t*        actualDepth) = NULL;
 
 NiFpga_Status NiFpga_ConfigureFifo2(NiFpga_Session session,
-                                   uint32_t       fifo,
+                                   ChanNum_t       fifo,
                                    size_t         requestedDepth,
                                    size_t*        actualDepth)
 {
@@ -953,10 +953,10 @@ NiFpga_Status NiFpga_ConfigureFifo2(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_startFifo)(
                                NiFpga_Session session,
-                               uint32_t       fifo) = NULL;
+                               ChanNum_t       fifo) = NULL;
 
 NiFpga_Status NiFpga_StartFifo(NiFpga_Session session,
-                               uint32_t       fifo)
+                               ChanNum_t       fifo)
 {
    return NiFpga_startFifo
         ? NiFpga_startFifo(session, fifo)
@@ -965,10 +965,10 @@ NiFpga_Status NiFpga_StartFifo(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_stopFifo)(
                               NiFpga_Session session,
-                              uint32_t       fifo) = NULL;
+                              ChanNum_t       fifo) = NULL;
 
 NiFpga_Status NiFpga_StopFifo(NiFpga_Session session,
-                              uint32_t       fifo)
+                              ChanNum_t       fifo)
 {
    return NiFpga_stopFifo
         ? NiFpga_stopFifo(session, fifo)
@@ -980,17 +980,17 @@ NiFpga_Status NiFpga_StopFifo(NiFpga_Session session,
  */
 static NiFpga_Status (NiFpga_CCall *NiFpga_readFifoBool)(
                                   NiFpga_Session session,
-                                  uint32_t       fifo,
+                                  ChanNum_t       fifo,
                                   NiFpga_Bool*   data,
                                   size_t         numberOfElements,
-                                  uint32_t       timeout,
+                                  ChanNum_t       timeout,
                                   size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_ReadFifoBool(NiFpga_Session session,
-                                  uint32_t       fifo,
+                                  ChanNum_t       fifo,
                                   NiFpga_Bool*   data,
                                   size_t         numberOfElements,
-                                  uint32_t       timeout,
+                                  ChanNum_t       timeout,
                                   size_t*        elementsRemaining)
 {
    return NiFpga_readFifoBool
@@ -1005,17 +1005,17 @@ NiFpga_Status NiFpga_ReadFifoBool(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readFifoI8)(
                                 NiFpga_Session session,
-                                uint32_t       fifo,
+                                ChanNum_t       fifo,
                                 int8_t*        data,
                                 size_t         numberOfElements,
-                                uint32_t       timeout,
+                                ChanNum_t       timeout,
                                 size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_ReadFifoI8(NiFpga_Session session,
-                                uint32_t       fifo,
+                                ChanNum_t       fifo,
                                 int8_t*        data,
                                 size_t         numberOfElements,
-                                uint32_t       timeout,
+                                ChanNum_t       timeout,
                                 size_t*        elementsRemaining)
 {
    return NiFpga_readFifoI8
@@ -1030,17 +1030,17 @@ NiFpga_Status NiFpga_ReadFifoI8(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readFifoU8)(
                                 NiFpga_Session session,
-                                uint32_t       fifo,
+                                ChanNum_t       fifo,
                                 uint8_t*       data,
                                 size_t         numberOfElements,
-                                uint32_t       timeout,
+                                ChanNum_t       timeout,
                                 size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_ReadFifoU8(NiFpga_Session session,
-                                uint32_t       fifo,
+                                ChanNum_t       fifo,
                                 uint8_t*       data,
                                 size_t         numberOfElements,
-                                uint32_t       timeout,
+                                ChanNum_t       timeout,
                                 size_t*        elementsRemaining)
 {
    return NiFpga_readFifoU8
@@ -1055,17 +1055,17 @@ NiFpga_Status NiFpga_ReadFifoU8(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readFifoI16)(
                                  NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  int16_t*       data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_ReadFifoI16(NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  int16_t*       data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        elementsRemaining)
 {
    return NiFpga_readFifoI16
@@ -1080,17 +1080,17 @@ NiFpga_Status NiFpga_ReadFifoI16(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readFifoU16)(
                                  NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  uint16_t*      data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_ReadFifoU16(NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  uint16_t*      data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        elementsRemaining)
 {
    return NiFpga_readFifoU16
@@ -1105,17 +1105,17 @@ NiFpga_Status NiFpga_ReadFifoU16(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readFifoI32)(
                                  NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  int32_t*       data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_ReadFifoI32(NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  int32_t*       data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        elementsRemaining)
 {
    return NiFpga_readFifoI32
@@ -1130,17 +1130,17 @@ NiFpga_Status NiFpga_ReadFifoI32(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readFifoU32)(
                                  NiFpga_Session session,
-                                 uint32_t       fifo,
-                                 uint32_t*      data,
+                                 ChanNum_t       fifo,
+                                 ChanNum_t*      data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_ReadFifoU32(NiFpga_Session session,
-                                 uint32_t       fifo,
-                                 uint32_t*      data,
+                                 ChanNum_t       fifo,
+                                 ChanNum_t*      data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        elementsRemaining)
 {
    return NiFpga_readFifoU32
@@ -1155,17 +1155,17 @@ NiFpga_Status NiFpga_ReadFifoU32(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readFifoI64)(
                                  NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  int64_t*       data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_ReadFifoI64(NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  int64_t*       data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        elementsRemaining)
 {
    return NiFpga_readFifoI64
@@ -1180,17 +1180,17 @@ NiFpga_Status NiFpga_ReadFifoI64(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readFifoU64)(
                                  NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  uint64_t*      data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_ReadFifoU64(NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  uint64_t*      data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        elementsRemaining)
 {
    return NiFpga_readFifoU64
@@ -1205,17 +1205,17 @@ NiFpga_Status NiFpga_ReadFifoU64(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readFifoSgl)(
                                  NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  float*         data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_ReadFifoSgl(NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  float*         data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        elementsRemaining)
 {
    return NiFpga_readFifoSgl
@@ -1230,17 +1230,17 @@ NiFpga_Status NiFpga_ReadFifoSgl(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_readFifoDbl)(
                                  NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  double*        data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_ReadFifoDbl(NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  double*        data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        elementsRemaining)
 {
    return NiFpga_readFifoDbl
@@ -1258,18 +1258,18 @@ NiFpga_Status NiFpga_ReadFifoDbl(NiFpga_Session session,
  */
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeFifoBool)(
                              NiFpga_Session     session,
-                             uint32_t           fifo,
+                             ChanNum_t           fifo,
                              const NiFpga_Bool* data,
                              size_t             numberOfElements,
-                             uint32_t           timeout,
+                             ChanNum_t           timeout,
                              size_t*            emptyElementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_WriteFifoBool(
                              NiFpga_Session     session,
-                             uint32_t           fifo,
+                             ChanNum_t           fifo,
                              const NiFpga_Bool* data,
                              size_t             numberOfElements,
-                             uint32_t           timeout,
+                             ChanNum_t           timeout,
                              size_t*            emptyElementsRemaining)
 {
    return NiFpga_writeFifoBool
@@ -1284,17 +1284,17 @@ NiFpga_Status NiFpga_WriteFifoBool(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeFifoI8)(
                                  NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  const int8_t*  data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        emptyElementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_WriteFifoI8(NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  const int8_t*  data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        emptyElementsRemaining)
 {
    return NiFpga_writeFifoI8
@@ -1309,17 +1309,17 @@ NiFpga_Status NiFpga_WriteFifoI8(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeFifoU8)(
                                  NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  const uint8_t* data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        emptyElementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_WriteFifoU8(NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  const uint8_t* data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        emptyElementsRemaining)
 {
    return NiFpga_writeFifoU8
@@ -1334,18 +1334,18 @@ NiFpga_Status NiFpga_WriteFifoU8(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeFifoI16)(
                                  NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  const int16_t* data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        emptyElementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_WriteFifoI16(
                                  NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  const int16_t* data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        emptyElementsRemaining)
 {
    return NiFpga_writeFifoI16
@@ -1360,18 +1360,18 @@ NiFpga_Status NiFpga_WriteFifoI16(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeFifoU16)(
                                 NiFpga_Session  session,
-                                uint32_t        fifo,
+                                ChanNum_t        fifo,
                                 const uint16_t* data,
                                 size_t          numberOfElements,
-                                uint32_t        timeout,
+                                ChanNum_t        timeout,
                                 size_t*         emptyElementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_WriteFifoU16(
                                 NiFpga_Session  session,
-                                uint32_t        fifo,
+                                ChanNum_t        fifo,
                                 const uint16_t* data,
                                 size_t          numberOfElements,
-                                uint32_t        timeout,
+                                ChanNum_t        timeout,
                                 size_t*         emptyElementsRemaining)
 {
    return NiFpga_writeFifoU16
@@ -1386,18 +1386,18 @@ NiFpga_Status NiFpga_WriteFifoU16(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeFifoI32)(
                                  NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  const int32_t* data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        emptyElementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_WriteFifoI32(
                                  NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  const int32_t* data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        emptyElementsRemaining)
 {
    return NiFpga_writeFifoI32
@@ -1412,18 +1412,18 @@ NiFpga_Status NiFpga_WriteFifoI32(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeFifoU32)(
                                 NiFpga_Session  session,
-                                uint32_t        fifo,
-                                const uint32_t* data,
+                                ChanNum_t        fifo,
+                                const ChanNum_t* data,
                                 size_t          numberOfElements,
-                                uint32_t        timeout,
+                                ChanNum_t        timeout,
                                 size_t*         emptyElementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_WriteFifoU32(
                                 NiFpga_Session  session,
-                                uint32_t        fifo,
-                                const uint32_t* data,
+                                ChanNum_t        fifo,
+                                const ChanNum_t* data,
                                 size_t          numberOfElements,
-                                uint32_t        timeout,
+                                ChanNum_t        timeout,
                                 size_t*         emptyElementsRemaining)
 {
    return NiFpga_writeFifoU32
@@ -1438,18 +1438,18 @@ NiFpga_Status NiFpga_WriteFifoU32(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeFifoI64)(
                                  NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  const int64_t* data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        emptyElementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_WriteFifoI64(
                                  NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  const int64_t* data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        emptyElementsRemaining)
 {
    return NiFpga_writeFifoI64
@@ -1464,18 +1464,18 @@ NiFpga_Status NiFpga_WriteFifoI64(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeFifoU64)(
                                 NiFpga_Session  session,
-                                uint32_t        fifo,
+                                ChanNum_t        fifo,
                                 const uint64_t* data,
                                 size_t          numberOfElements,
-                                uint32_t        timeout,
+                                ChanNum_t        timeout,
                                 size_t*         emptyElementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_WriteFifoU64(
                                 NiFpga_Session  session,
-                                uint32_t        fifo,
+                                ChanNum_t        fifo,
                                 const uint64_t* data,
                                 size_t          numberOfElements,
-                                uint32_t        timeout,
+                                ChanNum_t        timeout,
                                 size_t*         emptyElementsRemaining)
 {
    return NiFpga_writeFifoU64
@@ -1490,18 +1490,18 @@ NiFpga_Status NiFpga_WriteFifoU64(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeFifoSgl)(
                                  NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  const float*   data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        emptyElementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_WriteFifoSgl(
                                  NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  const float*   data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        emptyElementsRemaining)
 {
    return NiFpga_writeFifoSgl
@@ -1516,18 +1516,18 @@ NiFpga_Status NiFpga_WriteFifoSgl(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_writeFifoDbl)(
                                  NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  const double*  data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        emptyElementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_WriteFifoDbl(
                                  NiFpga_Session session,
-                                 uint32_t       fifo,
+                                 ChanNum_t       fifo,
                                  const double*  data,
                                  size_t         numberOfElements,
-                                 uint32_t       timeout,
+                                 ChanNum_t       timeout,
                                  size_t*        emptyElementsRemaining)
 {
    return NiFpga_writeFifoDbl
@@ -1542,19 +1542,19 @@ NiFpga_Status NiFpga_WriteFifoDbl(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acquireFifoReadElementsBool)(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       NiFpga_Bool**  elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_AcquireFifoReadElementsBool(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       NiFpga_Bool**  elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining)
 {
@@ -1571,19 +1571,19 @@ NiFpga_Status NiFpga_AcquireFifoReadElementsBool(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acquireFifoReadElementsI8)(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       int8_t**       elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_AcquireFifoReadElementsI8(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       int8_t**       elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining)
 {
@@ -1600,19 +1600,19 @@ NiFpga_Status NiFpga_AcquireFifoReadElementsI8(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acquireFifoReadElementsU8)(
                                      NiFpga_Session  session,
-                                     uint32_t        fifo,
+                                     ChanNum_t        fifo,
                                      uint8_t**       elements,
                                      size_t          elementsRequested,
-                                     uint32_t        timeout,
+                                     ChanNum_t        timeout,
                                      size_t*         elementsAcquired,
                                      size_t*         elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_AcquireFifoReadElementsU8(
                                      NiFpga_Session  session,
-                                     uint32_t        fifo,
+                                     ChanNum_t        fifo,
                                      uint8_t**       elements,
                                      size_t          elementsRequested,
-                                     uint32_t        timeout,
+                                     ChanNum_t        timeout,
                                      size_t*         elementsAcquired,
                                      size_t*         elementsRemaining)
 {
@@ -1629,19 +1629,19 @@ NiFpga_Status NiFpga_AcquireFifoReadElementsU8(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acquireFifoReadElementsI16)(
                                      NiFpga_Session  session,
-                                     uint32_t        fifo,
+                                     ChanNum_t        fifo,
                                      int16_t**       elements,
                                      size_t          elementsRequested,
-                                     uint32_t        timeout,
+                                     ChanNum_t        timeout,
                                      size_t*         elementsAcquired,
                                      size_t*         elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_AcquireFifoReadElementsI16(
                                      NiFpga_Session  session,
-                                     uint32_t        fifo,
+                                     ChanNum_t        fifo,
                                      int16_t**       elements,
                                      size_t          elementsRequested,
-                                     uint32_t        timeout,
+                                     ChanNum_t        timeout,
                                      size_t*         elementsAcquired,
                                      size_t*         elementsRemaining)
 {
@@ -1658,19 +1658,19 @@ NiFpga_Status NiFpga_AcquireFifoReadElementsI16(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acquireFifoReadElementsU16)(
                                     NiFpga_Session   session,
-                                    uint32_t         fifo,
+                                    ChanNum_t         fifo,
                                     uint16_t**       elements,
                                     size_t           elementsRequested,
-                                    uint32_t         timeout,
+                                    ChanNum_t         timeout,
                                     size_t*          elementsAcquired,
                                     size_t*          elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_AcquireFifoReadElementsU16(
                                     NiFpga_Session   session,
-                                    uint32_t         fifo,
+                                    ChanNum_t         fifo,
                                     uint16_t**       elements,
                                     size_t           elementsRequested,
-                                    uint32_t         timeout,
+                                    ChanNum_t         timeout,
                                     size_t*          elementsAcquired,
                                     size_t*          elementsRemaining)
 {
@@ -1687,19 +1687,19 @@ NiFpga_Status NiFpga_AcquireFifoReadElementsU16(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acquireFifoReadElementsI32)(
                                      NiFpga_Session  session,
-                                     uint32_t        fifo,
+                                     ChanNum_t        fifo,
                                      int32_t**       elements,
                                      size_t          elementsRequested,
-                                     uint32_t        timeout,
+                                     ChanNum_t        timeout,
                                      size_t*         elementsAcquired,
                                      size_t*         elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_AcquireFifoReadElementsI32(
                                      NiFpga_Session  session,
-                                     uint32_t        fifo,
+                                     ChanNum_t        fifo,
                                      int32_t**       elements,
                                      size_t          elementsRequested,
-                                     uint32_t        timeout,
+                                     ChanNum_t        timeout,
                                      size_t*         elementsAcquired,
                                      size_t*         elementsRemaining)
 {
@@ -1716,19 +1716,19 @@ NiFpga_Status NiFpga_AcquireFifoReadElementsI32(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acquireFifoReadElementsU32)(
                                     NiFpga_Session   session,
-                                    uint32_t         fifo,
-                                    uint32_t**       elements,
+                                    ChanNum_t         fifo,
+                                    ChanNum_t**       elements,
                                     size_t           elementsRequested,
-                                    uint32_t         timeout,
+                                    ChanNum_t         timeout,
                                     size_t*          elementsAcquired,
                                     size_t*          elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_AcquireFifoReadElementsU32(
                                     NiFpga_Session   session,
-                                    uint32_t         fifo,
-                                    uint32_t**       elements,
+                                    ChanNum_t         fifo,
+                                    ChanNum_t**       elements,
                                     size_t           elementsRequested,
-                                    uint32_t         timeout,
+                                    ChanNum_t         timeout,
                                     size_t*          elementsAcquired,
                                     size_t*          elementsRemaining)
 {
@@ -1745,19 +1745,19 @@ NiFpga_Status NiFpga_AcquireFifoReadElementsU32(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acquireFifoReadElementsI64)(
                                      NiFpga_Session  session,
-                                     uint32_t        fifo,
+                                     ChanNum_t        fifo,
                                      int64_t**       elements,
                                      size_t          elementsRequested,
-                                     uint32_t        timeout,
+                                     ChanNum_t        timeout,
                                      size_t*         elementsAcquired,
                                      size_t*         elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_AcquireFifoReadElementsI64(
                                      NiFpga_Session  session,
-                                     uint32_t        fifo,
+                                     ChanNum_t        fifo,
                                      int64_t**       elements,
                                      size_t          elementsRequested,
-                                     uint32_t        timeout,
+                                     ChanNum_t        timeout,
                                      size_t*         elementsAcquired,
                                      size_t*         elementsRemaining)
 {
@@ -1774,19 +1774,19 @@ NiFpga_Status NiFpga_AcquireFifoReadElementsI64(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acquireFifoReadElementsU64)(
                                     NiFpga_Session   session,
-                                    uint32_t         fifo,
+                                    ChanNum_t         fifo,
                                     uint64_t**       elements,
                                     size_t           elementsRequested,
-                                    uint32_t         timeout,
+                                    ChanNum_t         timeout,
                                     size_t*          elementsAcquired,
                                     size_t*          elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_AcquireFifoReadElementsU64(
                                     NiFpga_Session   session,
-                                    uint32_t         fifo,
+                                    ChanNum_t         fifo,
                                     uint64_t**       elements,
                                     size_t           elementsRequested,
-                                    uint32_t         timeout,
+                                    ChanNum_t         timeout,
                                     size_t*          elementsAcquired,
                                     size_t*          elementsRemaining)
 {
@@ -1803,19 +1803,19 @@ NiFpga_Status NiFpga_AcquireFifoReadElementsU64(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acquireFifoReadElementsSgl)(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       float**        elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_AcquireFifoReadElementsSgl(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       float**        elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining)
 {
@@ -1832,19 +1832,19 @@ NiFpga_Status NiFpga_AcquireFifoReadElementsSgl(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acquireFifoReadElementsDbl)(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       double**       elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_AcquireFifoReadElementsDbl(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       double**       elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining)
 {
@@ -1861,19 +1861,19 @@ NiFpga_Status NiFpga_AcquireFifoReadElementsDbl(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acquireFifoWriteElementsBool)(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       NiFpga_Bool**  elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_AcquireFifoWriteElementsBool(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       NiFpga_Bool**  elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining)
 {
@@ -1890,19 +1890,19 @@ NiFpga_Status NiFpga_AcquireFifoWriteElementsBool(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acquireFifoWriteElementsI8)(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       int8_t**       elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_AcquireFifoWriteElementsI8(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       int8_t**       elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining)
 {
@@ -1919,19 +1919,19 @@ NiFpga_Status NiFpga_AcquireFifoWriteElementsI8(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acquireFifoWriteElementsU8)(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       uint8_t**      elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_AcquireFifoWriteElementsU8(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       uint8_t**      elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining)
 {
@@ -1948,19 +1948,19 @@ NiFpga_Status NiFpga_AcquireFifoWriteElementsU8(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acquireFifoWriteElementsI16)(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       int16_t**      elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_AcquireFifoWriteElementsI16(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       int16_t**      elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining)
 {
@@ -1977,19 +1977,19 @@ NiFpga_Status NiFpga_AcquireFifoWriteElementsI16(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acquireFifoWriteElementsU16)(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       uint16_t**     elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_AcquireFifoWriteElementsU16(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       uint16_t**     elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining)
 {
@@ -2006,19 +2006,19 @@ NiFpga_Status NiFpga_AcquireFifoWriteElementsU16(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acquireFifoWriteElementsI32)(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       int32_t**      elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_AcquireFifoWriteElementsI32(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       int32_t**      elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining)
 {
@@ -2035,19 +2035,19 @@ NiFpga_Status NiFpga_AcquireFifoWriteElementsI32(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acquireFifoWriteElementsU32)(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
-                                      uint32_t**     elements,
+                                      ChanNum_t       fifo,
+                                      ChanNum_t**     elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_AcquireFifoWriteElementsU32(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
-                                      uint32_t**     elements,
+                                      ChanNum_t       fifo,
+                                      ChanNum_t**     elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining)
 {
@@ -2064,19 +2064,19 @@ NiFpga_Status NiFpga_AcquireFifoWriteElementsU32(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acquireFifoWriteElementsI64)(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       int64_t**      elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_AcquireFifoWriteElementsI64(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       int64_t**      elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining)
 {
@@ -2093,19 +2093,19 @@ NiFpga_Status NiFpga_AcquireFifoWriteElementsI64(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acquireFifoWriteElementsU64)(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       uint64_t**     elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_AcquireFifoWriteElementsU64(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       uint64_t**     elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining)
 {
@@ -2122,19 +2122,19 @@ NiFpga_Status NiFpga_AcquireFifoWriteElementsU64(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acquireFifoWriteElementsSgl)(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       float**        elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_AcquireFifoWriteElementsSgl(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       float**        elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining)
 {
@@ -2151,19 +2151,19 @@ NiFpga_Status NiFpga_AcquireFifoWriteElementsSgl(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_acquireFifoWriteElementsDbl)(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       double**       elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining) = NULL;
 
 NiFpga_Status NiFpga_AcquireFifoWriteElementsDbl(
                                       NiFpga_Session session,
-                                      uint32_t       fifo,
+                                      ChanNum_t       fifo,
                                       double**       elements,
                                       size_t         elementsRequested,
-                                      uint32_t       timeout,
+                                      ChanNum_t       timeout,
                                       size_t*        elementsAcquired,
                                       size_t*        elementsRemaining)
 {
@@ -2180,11 +2180,11 @@ NiFpga_Status NiFpga_AcquireFifoWriteElementsDbl(
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_releaseFifoElements)(
                                          NiFpga_Session session,
-                                         uint32_t       fifo,
+                                         ChanNum_t       fifo,
                                          size_t         elements) = NULL;
 
 NiFpga_Status NiFpga_ReleaseFifoElements(NiFpga_Session session,
-                                         uint32_t       fifo,
+                                         ChanNum_t       fifo,
                                          size_t         elements)
 {
    return NiFpga_releaseFifoElements
@@ -2194,12 +2194,12 @@ NiFpga_Status NiFpga_ReleaseFifoElements(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_getPeerToPeerFifoEndpoint)(
                                          NiFpga_Session session,
-                                         uint32_t       fifo,
-                                         uint32_t*      endpoint) = NULL;
+                                         ChanNum_t       fifo,
+                                         ChanNum_t*      endpoint) = NULL;
 
 NiFpga_Status NiFpga_GetPeerToPeerFifoEndpoint(NiFpga_Session session,
-                                         uint32_t       fifo,
-                                         uint32_t*      endpoint)
+                                         ChanNum_t       fifo,
+                                         ChanNum_t*      endpoint)
 {
    return NiFpga_getPeerToPeerFifoEndpoint
         ? NiFpga_getPeerToPeerFifoEndpoint(session, fifo, endpoint)
@@ -2220,16 +2220,16 @@ NiFpga_Status NiFpga_GetBitfileContents(NiFpga_Session session,
 
 static NiFpga_Status (NiFpga_CCall *NiFpga_clientFunctionCall)(
                                         NiFpga_Session session,
-                                        uint32_t group,
-                                        uint32_t functionId,
+                                        ChanNum_t group,
+                                        ChanNum_t functionId,
                                         const void* inBuffer,
                                         size_t inBufferSize,
                                         void* outBuffer,
                                         size_t outBufferSize) = NULL;
 
 NiFpga_Status NiFpga_ClientFunctionCall(NiFpga_Session session,
-                                        uint32_t group,
-                                        uint32_t functionId,
+                                        ChanNum_t group,
+                                        ChanNum_t functionId,
                                         const void* inBuffer,
                                         size_t inBufferSize,
                                         void* outBuffer,

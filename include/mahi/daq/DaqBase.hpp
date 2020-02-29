@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -17,12 +16,12 @@
 
 #pragma once
 
-#include <MEL/Core/Device.hpp>
 #include <mahi/daq/Module.hpp>
 #include <typeindex>
 #include <unordered_map>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 //==============================================================================
 // CLASS DECLARATION
@@ -80,4 +79,5 @@ private:
 
 };
 
-}  // namespace mel
+} // namespace daq
+} // namespace mahi

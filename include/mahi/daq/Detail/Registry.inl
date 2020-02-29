@@ -2,7 +2,8 @@
 #pragma warning( disable : 4505 )
 #endif
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
     template <typename T>
     Registry<T>::Registry(ModuleBase* module, T default_value) :
@@ -79,4 +80,5 @@ namespace mel {
         return os;
     }
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

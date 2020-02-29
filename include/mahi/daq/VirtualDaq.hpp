@@ -1,6 +1,5 @@
 // MIT License
-//
-// MEL - Mechatronics Engine and Library
+//// MEL - Mechatronics Engine and Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,10 +20,10 @@
 #include <mahi/daq/Output.hpp>
 #include <mahi/daq/InputOutput.hpp>
 #include <mahi/daq/Encoder.hpp>
-#include <MEL/Core/Clock.hpp>
 #include <functional>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 class VirtualDaq;
 
@@ -37,7 +36,7 @@ public:
     VirtualAI(VirtualDaq& daq, const ChanNums& channel_numbers);
     bool update_channel(ChanNum channel_number) override;
 public:
-    Registry<std::function<Voltage(Time)>> sources;
+    Registry<std::function<Voltage(double)>> sources;
 private:
     VirtualDaq& daq_;
 };
@@ -63,7 +62,7 @@ public:
     VirtualDI(VirtualDaq& daq, const ChanNums& channel_numbers);
     bool update_channel(ChanNum channel_number) override;
 public:
-    Registry<std::function<Logic(Time)>> sources;
+    Registry<std::function<Logic(double)>> sources;
 private:
     VirtualDaq& daq_;
 };
@@ -90,7 +89,7 @@ public:
     bool update_channel(ChanNum channel_number) override;
     bool reset_count(ChanNum channel_number, int count);
 public:
-    Registry<std::function<int32(Time)>> sources;
+    Registry<std::function<int(double)>> sources;
 private:
     VirtualDaq& daq_;
 };
@@ -126,7 +125,7 @@ protected:
     friend class VirtualDI;
     friend class VirtualDO;
     friend class VirtualEncoder;
-    Clock clock_;
 };
 
-}
+} // namespace daq
+} // namespace mahi

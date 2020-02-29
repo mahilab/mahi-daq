@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -16,20 +15,19 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <MEL/Core/NonCopyable.hpp>
-#include <MEL/Core/Time.hpp>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 //==============================================================================
 // CLASS DECLARATION
 //==============================================================================
 
 /// Encapsulates a hardware watchdog timer
-class Watchdog : NonCopyable {
+class Watchdog {
 public:
     /// Default constructor
-    Watchdog(Time timeout);
+    Watchdog(double timeout);
 
     /// Default destructor
     virtual ~Watchdog();
@@ -57,11 +55,16 @@ public:
     virtual bool clear() = 0;
 
     /// Sets the timeout period this Watchdog should operate on
-    virtual void set_timeout(Time timeout);
+    virtual void set_timeout(double timeout);
 
 protected:
-    Time timeout_;   ///< The timeout period for this Watchdog
+    double timeout_; ///< The timeout period for this Watchdog
     bool watching_;  ///< True if watchdog has been started, false if stopped
+
+private:
+    Watchdog( const Watchdog& ) = delete; // non construction-copyable
+    Watchdog& operator=( const Watchdog& ) = delete; // non copyable
 };
 
-}  // namespace mel
+} // namespace daq
+} // namespace mahi

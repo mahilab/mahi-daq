@@ -1,7 +1,8 @@
 #include <mahi/daq/Encoder.hpp>
-#include <MEL/Logging/Log.hpp>
 
-namespace mel {
+
+namespace mahi {
+namespace daq {
 
 //==============================================================================
 // MODULE DEFINITIONS
@@ -168,4 +169,5 @@ void Encoder::Channel::set_units_per_count(double units_per_count) {
     static_cast<Encoder*>(module_)->set_units_per_count(channel_number_, units_per_count);
 }
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

@@ -1,4 +1,5 @@
-namespace mel {
+namespace mahi {
+namespace daq {
 
 template <typename T>
 ChannelBase<T>::ChannelBase() : module_(nullptr), channel_number_(0) {}
@@ -49,4 +50,5 @@ bool ChannelBase<T>::is_valid() const {
     return true;
 }
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

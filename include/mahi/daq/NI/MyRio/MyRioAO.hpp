@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,7 +18,8 @@
 #include <MEL/Core/NonCopyable.hpp>
 #include <mahi/daq/Output.hpp>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 class MyRioConnector;
 
@@ -42,4 +42,5 @@ private:
 
 };
 
-}  // namespace mel
+} // namespace daq
+} // namespace mahi

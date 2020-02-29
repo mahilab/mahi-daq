@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,7 +17,8 @@
 #pragma once
 #include <mahi/daq/Watchdog.hpp>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 //==============================================================================
 // FORWARD DECLARATIONS
@@ -52,10 +52,11 @@ private:
     friend class S826;
 
     /// Private constructor used by S826
-    S826Watchdog(S826& daq, Time timeout);
+    S826Watchdog(S826& daq, double timeout);
 
 private:
     S826& s826_;  ///< Reference to parent QDaq
 };
 
-}  // namespace mel
+} // namespace daq
+} // namespace mahi

@@ -1,9 +1,10 @@
 #include <mahi/daq/Quanser/QuanserDaq.hpp>
 #include <mahi/daq/Quanser/QuanserDI.hpp>
-#include <MEL/Logging/Log.hpp>
+
 #include <hil.h>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
     //==============================================================================
     // CLASS DEFINITIONS
@@ -19,7 +20,7 @@ namespace mel {
 
     bool QuanserDI::update() {
         t_error result;
-        result = hil_read_digital(daq_.handle_, &get_channel_numbers()[0], static_cast<uint32>(get_channel_count()), &quanser_values_.get()[0]);
+        result = hil_read_digital(daq_.handle_, &get_channel_numbers()[0], static_cast<ChanNum>(get_channel_count()), &quanser_values_.get()[0]);
         if (result == 0) {
             // convert Quanser t_boolean (aka char) to MEL Logic
             for (auto const& ch : get_channel_numbers())
@@ -27,8 +28,7 @@ namespace mel {
             return true;
         }
         else {
-            LOG(Error) << "Failed to update " << get_name() << " "
-                << QuanserDaq::get_quanser_error_message(result);
+            // LOG(Error) << "Failed to update " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
             return false;
         }
     }
@@ -41,8 +41,7 @@ namespace mel {
             return true;
         }
         else {
-            LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " "
-                << QuanserDaq::get_quanser_error_message(result);
+            // LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " "  << QuanserDaq::get_quanser_error_message(result);
             return false;
         }
     }
@@ -54,4 +53,5 @@ namespace mel {
 
 
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

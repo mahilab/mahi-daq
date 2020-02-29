@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,7 +24,8 @@
 #include <mahi/daq/NI/MyRio/MyRioEncoder.hpp>
 #include <mahi/daq/NI/MyRio/MyRioI2C.hpp>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 class MyRio;
 
@@ -94,7 +94,8 @@ protected:
 
 typedef MyRioConnector MyRioMsp;
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi
 
 // MXP Shared Pins
 // I2C[0] = DIO[14:15]

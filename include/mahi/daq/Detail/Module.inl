@@ -2,7 +2,8 @@
 #pragma warning( disable : 4589 )
 #endif
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 template <typename T>
 Module<T>::Module() :
@@ -60,4 +61,5 @@ void Module<T>::set_value(ChanNum channel_number, T value) {
     values_[channel_number] = value;
 }
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

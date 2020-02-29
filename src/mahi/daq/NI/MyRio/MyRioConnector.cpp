@@ -2,7 +2,7 @@
 #include <mahi/daq/NI/MyRio/MyRio.hpp>
 #include "Detail/MyRioUtil.hpp"
 #include "Detail/MyRioFpga60/MyRio.h"
-#include <MEL/Logging/Log.hpp>
+
 
 namespace mel
 {

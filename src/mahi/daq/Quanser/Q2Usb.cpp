@@ -1,27 +1,27 @@
 #include <mahi/daq/Quanser/Q2Usb.hpp>
-#include <MEL/Utility/System.hpp>
-#include <MEL/Logging/Log.hpp>
 #include <hil.h>
+#include <thread>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 //==============================================================================
 // STATIC VARIABLES
 //==============================================================================
 
- uint32 NEXT_Q2USB_ID = 0;
+ ChanNum NEXT_Q2USB_ID = 0;
 
 //==============================================================================
 // CLASS DEFINITIONS
 //==============================================================================
 
-Q2Usb::Q2Usb(QuanserOptions options, uint32 id) :
+Q2Usb::Q2Usb(QuanserOptions options, ChanNum id) :
     QuanserDaq("q2_usb", id, options),
     AI(*this,     {0,1}),
     AO(*this,     {0,1}),
     DIO(*this,    {0,1,2,3,4,5,6,7,8}),
     encoder(*this,{0,1}, false),
-    watchdog(*this, milliseconds(100))
+    watchdog(*this, 0.1)
 {
     // increment next_id_
     ++NEXT_Q2USB_ID;
@@ -63,7 +63,7 @@ bool Q2Usb::on_open() {
         return false;
     }
     // allow changes to take effect
-    sleep(milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     return true;
 }
 
@@ -73,14 +73,14 @@ bool Q2Usb::on_close() {
     // clear the watchdog (precautionary, ok if fails)
     watchdog.clear();
     // allow changes to take effect
-    sleep(milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     // close as QDaq
     return QuanserDaq::on_close();
 }
 
 bool Q2Usb::on_enable() {
     if (!is_open()) {
-        LOG(Error) << "Unable to enable Q2-USB " << get_name() << " because it is not open";
+        // LOG(Error) << "Unable to enable Q2-USB " << get_name() << " because it is not open";
         return false;
     }
     bool success = true;
@@ -94,13 +94,13 @@ bool Q2Usb::on_enable() {
     if (!encoder.enable())
         success = false;
     // allow changes to take effect
-    sleep(milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     return success;
 }
 
 bool Q2Usb::on_disable() {
     if (!is_open()) {
-        LOG(Error) << "Unable to disable Q2-USB " << get_name() << " because it is not open";
+        // LOG(Error) << "Unable to disable Q2-USB " << get_name() << " because it is not open";
         return false;
     }
     bool success = true;
@@ -118,14 +118,13 @@ bool Q2Usb::on_disable() {
     // clear the watchdog (precautionary, ok if fails)
     watchdog.clear();
     // allow changes to take effect
-    sleep(milliseconds(10));
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
     return success;
 }
 
 bool Q2Usb::update_input() {
     if (!is_open()) {
-        LOG(Error) << "Unable to call " << __FUNCTION__ << " because "
-            << get_name() << " is not open";
+        // LOG(Error) << "Unable to call " << __FUNCTION__ << " because " << get_name() << " is not open";
         return false;
     }
     if (AI.update() && encoder.update() && DIO.update_input())
@@ -137,8 +136,7 @@ bool Q2Usb::update_input() {
 
 bool Q2Usb::update_output() {
     if (!is_open()) {
-        LOG(Error) << "Unable to call " << __FUNCTION__ << " because "
-            << get_name() << " is not open";
+        // LOG(Error) << "Unable to call " << __FUNCTION__ << " because " << get_name() << " is not open";
         return false;
     }
     if (AO.update() && DIO.update_output())
@@ -149,8 +147,7 @@ bool Q2Usb::update_output() {
 
 bool Q2Usb::identify(ChanNum input_channel_number, ChanNum outout_channel_number) {
     if (!is_open()) {
-        LOG(Error) << "Unable to call " << __FUNCTION__ << " because "
-            << get_name() << " is not open";
+        // LOG(Error) << "Unable to call " << __FUNCTION__ << " because " << get_name() << " is not open";
         return false;
     }
     InputOutput<Logic>::Channel di_ch = DIO.get_channel(input_channel_number);
@@ -158,13 +155,13 @@ bool Q2Usb::identify(ChanNum input_channel_number, ChanNum outout_channel_number
     for (int i = 0; i < 5; ++i) {
         do_ch.set_value(High);
         do_ch.update();
-        sleep(milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
         di_ch.update();
         if (di_ch.get_value() != High)
             return false;
         do_ch.set_value(Low);
         do_ch.update();
-        sleep(milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
         di_ch.update();
         if (di_ch.get_value() != Low)
             return false;
@@ -180,9 +177,10 @@ std::size_t Q2Usb::get_q2_usb_count() {
     return QuanserDaq::get_qdaq_count("q2_usb");
 }
 
-uint32 Q2Usb::next_id() {
+ChanNum Q2Usb::next_id() {
     return NEXT_Q2USB_ID;
 }
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi
 

@@ -1,5 +1,5 @@
 #include <mahi/daq/NI/MyRio/MyRio.hpp>
-#include <MEL/Logging/Log.hpp>
+
 #include "Detail/MyRioUtil.hpp"
 #include "Detail/MyRioFpga60/MyRio.h"
 #include <mahi/daq/NI/MyRio/MyRioConnector.hpp>
@@ -7,7 +7,8 @@
 
 extern NiFpga_Session myrio_session;
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 MyRioEncoder::MyRioEncoder(MyRioConnector& connector, const ChanNums& channel_numbers) :
     Encoder(channel_numbers),
@@ -44,10 +45,10 @@ MyRioEncoder::MyRioEncoder(MyRioConnector& connector, const ChanNums& channel_nu
 bool MyRioEncoder::update_channel(ChanNum channel_number) {
     if (!validate_channel_number(channel_number))
         return false;
-    uint32_t counts;
+    ChanNum_t counts;
     NiFpga_Status status = NiFpga_ReadU32(myrio_session, cntr_[channel_number], &counts);
     if (status < 0) {
-        LOG(Error) << "Failed to read counts from encoder register";
+        // LOG(Error) << "Failed to read counts from encoder register";
         return false;
     }
     values_[channel_number] = static_cast<int32>(counts);
@@ -64,7 +65,7 @@ bool MyRioEncoder::reset_count(ChanNum channel_number, int count) {
         return true;
     }
     else  {
-        LOG(Error) << "myRIO Encoder counts can only be reset to zero";
+        // LOG(Error) << "myRIO Encoder counts can only be reset to zero";
         return false;
     }
 }
@@ -81,7 +82,7 @@ void MyRioEncoder::enable_channel(ChanNum ch) {
         connector_.DIO.sync();
     }
     else {
-        LOG(Error) << "Encoder channel number " << ch << " not available on " << get_name();
+        // LOG(Error) << "Encoder channel number " << ch << " not available on " << get_name();
     }
 }
 
@@ -96,7 +97,7 @@ void MyRioEncoder::disable_channel(ChanNum ch) {
         connector_.DIO.sync();
     }
     else {
-        LOG(Error) << "Encoder channel number " << ch << " not available on " << get_name();
+        // LOG(Error) << "Encoder channel number " << ch << " not available on " << get_name();
     }
 }
 
@@ -114,4 +115,5 @@ void MyRioEncoder::sync() {
     set_channel_numbers(chs);
 }
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

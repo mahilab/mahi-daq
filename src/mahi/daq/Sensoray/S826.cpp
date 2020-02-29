@@ -1,11 +1,11 @@
 #include <mahi/daq/Sensoray/S826.hpp>
-#include <MEL/Logging/Log.hpp>
+
 #include <windows.h>
 #include <826api.h> 
 #include <bitset>
 
-namespace mel
-{
+namespace mahi {
+namespace daq {
     
 S826::S826(int board) :
     DaqBase("s826_" + std::to_string(board)),
@@ -14,7 +14,7 @@ S826::S826(int board) :
     AO(*this),
     DIO(*this),
     encoder(*this),
-    watchdog(*this, milliseconds(10))
+    watchdog(*this, 0.01)
 {
 
 }
@@ -31,11 +31,11 @@ bool S826::on_open() {
     bool success = true;
     int detected_boards = S826_SystemOpen();
     if (detected_boards == S826_ERR_DUPADDR) {
-        LOG(Error) << "More than one S826 board with same board number detected.";
+        // LOG(Error) << "More than one S826 board with same board number detected.";
         success = false;
     }
     if (detected_boards == 0) {
-        LOG(Error) << "No S826 boards detected.";
+        // LOG(Error) << "No S826 boards detected.";
         success = false;
     }
     std::bitset<32> board_bits(detected_boards);
@@ -50,7 +50,7 @@ bool S826::on_open() {
         return true;
     }
     else {
-        LOG(Error) << "The requested S826 board " << board_ << " was not detected.";
+        // LOG(Error) << "The requested S826 board " << board_ << " was not detected.";
         success = false;
     }
     return success;
@@ -70,16 +70,15 @@ bool S826::on_disable() {
     return true;
 }
 
-Time S826::get_timestamp() const {
-    uint32 timestamp;
+double S826::get_timestamp() const {
+    unsigned int timestamp;
     int result = S826_TimestampRead(board_, &timestamp);
     if (result != S826_ERR_OK) {
-        LOG(Error) << "Failed to read " << get_name() << " timestamp (" << get_error_message(result) << ").";
-        return Time::Zero;
+        // LOG(Error) << "Failed to read " << get_name() << " timestamp (" << get_error_message(result) << ").";
+        return 0;
     }
-    return microseconds(timestamp);
+    return (double)timestamp / 1000000.0;
 }
-
 
 std::string S826::get_error_message(int error) {
     switch(error) {
@@ -102,4 +101,5 @@ std::string S826::get_error_message(int error) {
     }
 }
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

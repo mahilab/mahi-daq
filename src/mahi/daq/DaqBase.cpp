@@ -1,9 +1,7 @@
 #include <mahi/daq/DaqBase.hpp>
-#include <MEL/Core/Console.hpp>
-#include <MEL/Core/Time.hpp>
-#include <MEL/Logging/Log.hpp>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 //==============================================================================
 // CLASS DEFINITIONS
@@ -23,16 +21,16 @@ DaqBase::~DaqBase() {
 
 bool DaqBase::open() {
     if (open_) {
-        LOG(Warning) << "DAQ " << get_name() << " already open";
+        // LOG(Warning) << "DAQ " << get_name() << " already open";
         return true;
     }
     if (on_open()) {
-        LOG(Info) << "Opened DAQ " << get_name();
+        // LOG(Info) << "Opened DAQ " << get_name();
         open_ = true;
         return true;
     }
     else {
-        LOG(Error) << "Failed to open DAQ " << get_name();
+        // LOG(Error) << "Failed to open DAQ " << get_name();
         open_ = false;
         return false;
     }
@@ -40,16 +38,16 @@ bool DaqBase::open() {
 
 bool DaqBase::close() {
     if (!open_) {
-        LOG(Warning) << "DAQ " << get_name() << " already closed";
+        // LOG(Warning) << "DAQ " << get_name() << " already closed";
         return true;
     }
     if (on_close()) {
-        LOG(Info) << "Closed DAQ " << get_name();
+        // LOG(Info) << "Closed DAQ " << get_name();
         open_ = false;
         return true;
     }
     else {
-        LOG(Error) << "Failed to close DAQ " << get_name();
+        // LOG(Error) << "Failed to close DAQ " << get_name();
         open_ = true;
         return false;
     }
@@ -70,4 +68,5 @@ bool DaqBase::is_open() const {
 }
 
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

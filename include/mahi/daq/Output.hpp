@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,7 +17,8 @@
 #pragma once
 #include <mahi/daq/ChannelBase.hpp>
 #include <mahi/daq/Module.hpp>
-namespace mel {
+namespace mahi {
+namespace daq {
 
 //==============================================================================
 // CLASS DEClARATION
@@ -115,6 +115,7 @@ typedef Output<Voltage> AnalogOutput;
 typedef Output<Logic> DigitalOutput;
 typedef Output<DutyCycle> PwmOutput;
 
-}  // namespace mel
+} // namespace daq
+} // namespace mahi
 
 #include <mahi/daq/Detail/Output.inl>

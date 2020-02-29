@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,7 +20,8 @@
 #include <MEL/Core/Device.hpp>
 #include <bitset>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 class MyRioMxp;
 
@@ -50,16 +50,17 @@ private:
     MyRioMxp& connector_;
 
     // NI FPGA Registers
-    uint32_t sysselect_; ///< system select register
-    uint32_t cnfg_;      ///< configuration register
-    uint32_t addr_;      ///< slave address register
-    uint32_t cntr_;      ///< counter register
-    uint32_t dato_;      ///< data-out reigster
-    uint32_t dati_;      ///< data-in register
-    uint32_t stat_;      ///< status register
-    uint32_t ctrl_;      ///< control reigster
-    uint32_t go_;        ///< execute register
+    ChanNum_t sysselect_; ///< system select register
+    ChanNum_t cnfg_;      ///< configuration register
+    ChanNum_t addr_;      ///< slave address register
+    ChanNum_t cntr_;      ///< counter register
+    ChanNum_t dato_;      ///< data-out reigster
+    ChanNum_t dati_;      ///< data-in register
+    ChanNum_t stat_;      ///< status register
+    ChanNum_t ctrl_;      ///< control reigster
+    ChanNum_t go_;        ///< execute register
 
 };
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi

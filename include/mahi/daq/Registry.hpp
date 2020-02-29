@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -17,11 +16,12 @@
 
 #pragma once
 
-#include <MEL/Core/Types.hpp>
+#include <mahi/daq/Types.hpp>
 #include <iostream>
 #include <algorithm>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 class ModuleBase;
 
@@ -95,6 +95,7 @@ private:
     std::vector<T> values_;  ///< raw values
 };
 
-} // namespace mel
+} // namespace daq
+} // namespace mahi
 
 #include <mahi/daq/Detail/Registry.inl>

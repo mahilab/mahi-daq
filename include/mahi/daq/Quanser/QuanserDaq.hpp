@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,7 +17,6 @@
 #pragma once
 #include <mahi/daq/DaqBase.hpp>
 #include <mahi/daq/Quanser/QuanserOptions.hpp>
-#include <MEL/Core/NonCopyable.hpp>
 
 //==============================================================================
 // FORWARD DECLARATIONS
@@ -27,7 +25,8 @@
 /// Handle for Quanser devices. Must be in global namespace.
 typedef struct tag_card* t_card;
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 class QuanserWatchdog;
 class QuanserAI;
@@ -50,11 +49,11 @@ typedef t_card QuanserHandle;
 //==============================================================================
 
 /// Encapsulates a generic Quanser DAQ
-class QuanserDaq : public DaqBase, NonCopyable {
+class QuanserDaq : public DaqBase {
 public:
     /// Default constructor
     QuanserDaq(const std::string& card_type,
-               uint32 id,
+               unsigned int id,
                QuanserOptions options = QuanserOptions());
 
 public:
@@ -89,9 +88,15 @@ protected:
     friend class QuanserPwm;
 
     std::string card_type_;  ///< The card type string, per Quarc API
-    uint32 id_;              ///< The ID# of this Q8 USB
+    unsigned int id_;              ///< The ID# of this Q8 USB
     QuanserHandle handle_;   ///< Internal handle to the Quanser device
     QuanserOptions options_; ///< The board specific options of this Q8 USB
+
+private:
+
+    QuanserDaq( const QuanserDaq& ) = delete; // non construction-copyable
+    QuanserDaq& operator=( const QuanserDaq& ) = delete; // non copyable
 };
 
-}  // namespace mel
+} // namespace daq
+} // namespace mahi

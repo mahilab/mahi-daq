@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -16,10 +15,11 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <MEL/Core/Types.hpp>
+#include <mahi/daq/Types.hpp>
 #include <string>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 //==============================================================================
 // CLASS DECLARATION
@@ -58,29 +58,29 @@ public:
 
     void set_update_rate(UpdateRate update_rate);
 
-    void set_decimation(uint32 decimation);
+    void set_decimation(ChanNum decimation);
 
-    void set_encoder_direction(uint32 channel_number,
+    void set_encoder_direction(ChanNum channel_number,
                                EncoderDirection direction);
 
-    void set_encoder_filter(uint32 channel_number, EncoderFilter filter);
+    void set_encoder_filter(ChanNum channel_number, EncoderFilter filter);
 
-    void set_encoder_detection_a(uint32 channel_number,
+    void set_encoder_detection_a(ChanNum channel_number,
                                  EncoderDetection detection);
 
-    void set_encoder_detection_b(uint32 channel_number,
+    void set_encoder_detection_b(ChanNum channel_number,
                                  EncoderDetection detection);
 
-    void set_encoder_detection_z(uint32 channel_number,
+    void set_encoder_detection_z(ChanNum channel_number,
                                  EncoderDetection detection);
 
-    void set_encoder_reload(uint32 channel_number, EncoderReload reload);
+    void set_encoder_reload(ChanNum channel_number, EncoderReload reload);
 
-    void set_encoder_velocity(uint32 channel_number, double velocity);
+    void set_encoder_velocity(ChanNum channel_number, double velocity);
 
-    void enable_pwm(uint32 channel_number, bool enable);
+    void enable_pwm(ChanNum channel_number, bool enable);
     
-    void set_analog_output_mode(uint32 channel_number,
+    void set_analog_output_mode(ChanNum channel_number,
                                 AoMode mode,
                                 double kff,
                                 double a0,
@@ -102,6 +102,7 @@ private:
     std::string options_;     ///< the configuration options string
 };
 
-}  // namespace mel
+} // namespace daq
+} // namespace mahi
 
 // http://www.quanser.com/Products/quarc/documentation/q8_usb.html

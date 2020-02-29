@@ -1,6 +1,5 @@
 // MIT License
 //
-// MEL - Mechatronics Engine & Library
 // Copyright (c) 2019 Mechatronics and Haptic Interfaces Lab - Rice University
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,7 +23,8 @@
 #include <mahi/daq/Quanser/QuanserOptions.hpp>
 #include <mahi/daq/Quanser/QuanserWatchdog.hpp>
 
-namespace mel {
+namespace mahi {
+namespace daq {
 
 //==============================================================================
 // CLASS DECLARATION
@@ -36,7 +36,7 @@ public:
     /// Default constructor. Creates Q2 USB with all channels enabled and
     /// default QOptions
     Q2Usb(QuanserOptions options = QuanserOptions(),
-          uint32 id              = 0);
+          ChanNum id              = 0);
 
     /// Default destructor. First calls disable() if the Q2Usb is enabled
     /// then close() if the Q2Usb is open.
@@ -61,7 +61,7 @@ public:
     /// Checks for digital loopback between the input and output channels and
     /// returns true if a connection is found. Usefuly for identifying multiple
     /// Q2USBs
-    bool identify(uint32 input_channel_number, uint32 output_channel_number);
+    bool identify(ChanNum input_channel_number, ChanNum output_channel_number);
 
 public:
     /// Determines how many Q2 USBs are currently connected to host.
@@ -94,9 +94,10 @@ private:
     bool on_disable() override;
 
     /// Returns the next automatic ID# to use
-    static uint32 next_id();
+    static ChanNum next_id();
 };
 
-}  // namespace mel
+} // namespace daq
+} // namespace mahi
 
 /// http://quanser-update.azurewebsites.net/quarc/documentation/Q2_usb.html
