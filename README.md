@@ -1,6 +1,8 @@
-<img src="https://raw.githubusercontent.com/mahilab/mahi-daq/master/mahi-daq.png" width="100"> 
+<p align="center">
+<img src="https://github.com/mahilab/mahi-daq/blob/master/mahi-daq.png" width="256"> 
+</p>
 
-## mahi-gui
+## mahi-daq
 
 This library provides an object oriented hardware abstraction layer for commercial DAQs from Quanser, Sensoray, and National Instruments. 
 
