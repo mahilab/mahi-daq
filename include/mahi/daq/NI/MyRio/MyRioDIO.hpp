@@ -25,7 +25,7 @@ class MyRioEncoder;
 class MyRioI2C;
 
 /// myRIO Digital Input/Output Module
-class MyRioDIO : public DigitalInputOutput, NonCopyable {
+class MyRioDIO : public DigitalInputOutput {
 public:
 
     /// Updates a single channel
@@ -44,15 +44,18 @@ private:
 
     MyRioDIO(MyRioConnector& connector, const ChanNums& channel_numbers);
 
+    MyRioDIO( const MyRioDIO& ) = delete; // non construction-copyable
+    MyRioDIO& operator=( const MyRioDIO& ) = delete; // non copyable
+
 private:
 
     const MyRioConnector& connector_; ///< connector this module is on
 
     // NI FPGA Registers
-    ChanNum_t sysselect_;
-    std::vector<ChanNum_t> dirs_;
-    std::vector<ChanNum_t> ins_;
-    std::vector<ChanNum_t> outs_;
+    uint32_t sysselect_;
+    std::vector<uint32_t> dirs_;
+    std::vector<uint32_t> ins_;
+    std::vector<uint32_t> outs_;
 
 };
 

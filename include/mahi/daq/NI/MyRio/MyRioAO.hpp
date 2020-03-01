@@ -23,7 +23,7 @@ namespace daq {
 class MyRioConnector;
 
 /// myRIO Analog Output Module
-class MyRioAO : public AnalogOutput, NonCopyable {
+class MyRioAO : public AnalogOutput {
 public:
 
     /// Updates a single channel
@@ -34,6 +34,9 @@ private:
     friend class MyRioConnector;
 
     MyRioAO(MyRioConnector& connector, const ChanNums& channel_numbers);
+
+    MyRioAO( const MyRioAO& ) = delete; // non construction-copyable
+    MyRioAO& operator=( const MyRioAO& ) = delete; // non copyable
 
 private:
 

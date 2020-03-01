@@ -29,7 +29,7 @@ namespace daq {
 class MyRio;
 
 /// myRIo Connector
-class MyRioConnector : public DaqBase, NonCopyable {
+class MyRioConnector : public DaqBase {
 public:
 
     /// Types of myRIO connector
@@ -76,6 +76,11 @@ protected:
 protected:
 
     MyRio& myrio_;  ///< reference to myRIO this connector is on
+
+private:
+
+    MyRioConnector( const MyRioConnector& ) = delete; // non construction-copyable
+    MyRioConnector& operator=( const MyRioConnector& ) = delete; // non copyable
 
 };
 

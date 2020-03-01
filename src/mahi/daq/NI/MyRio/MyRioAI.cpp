@@ -1,8 +1,19 @@
 #include <mahi/daq/NI/MyRio/MyRio.hpp>
 #include <mahi/daq/NI/MyRio/MyRioAI.hpp>
-
 #include <mahi/daq/NI/MyRio/MyRioConnector.hpp>
 #include "Detail/MyRioFpga60/MyRio.h"
+
+#if MAHI_DAQ_OUTPUT_LOGS
+    #ifdef MAHI_LOG
+        #include <mahi/log/Log.hpp>
+    #else
+        #include <iostream>
+        #define LOG(severity) std::cout << std::endl << #severity << ": "
+    #endif
+#else
+    #include <iostream>
+    #define LOG(severity) if (true) { } else std::cout 
+#endif
 
 extern NiFpga_Session myrio_session;
 
@@ -12,7 +23,7 @@ namespace daq {
 namespace {
 
 // AI registers
-static const std::vector<std::vector<ChanNum_t>> REGISTERS({
+static const std::vector<std::vector<uint32_t>> REGISTERS({
     {AIA_0VAL, AIA_1VAL, AIA_2VAL, AIA_3VAL},
     {AIB_0VAL, AIB_1VAL, AIB_2VAL, AIB_3VAL},
     {AIC_0VAL, AIC_1VAL}

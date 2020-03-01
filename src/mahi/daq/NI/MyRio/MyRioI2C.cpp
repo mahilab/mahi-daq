@@ -3,6 +3,17 @@
 #include "Detail/MyRioUtil.hpp"
 #include "Detail/MyRioFpga60/MyRio.h"
 
+#if MAHI_DAQ_OUTPUT_LOGS
+    #ifdef MAHI_LOG
+        #include <mahi/log/Log.hpp>
+    #else
+        #include <iostream>
+        #define LOG(severity) std::cout << std::endl << #severity << ": "
+    #endif
+#else
+    #include <iostream>
+    #define LOG(severity) if (true) { } else std::cout 
+#endif
 
 extern NiFpga_Session myrio_session;
 
@@ -72,8 +83,9 @@ void MyRioI2C::execute() {
         bsy = status[0];
     }
     bool err = status[1];
-    if (err)
+    if (err) {
         LOG(Error) << "Error occured during MyRio I2C execute operation.";
+    }
 }
 
 bool MyRioI2C::on_enable() {

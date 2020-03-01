@@ -1,8 +1,21 @@
 #include <mahi/daq/NI/MyRio/MyRio.hpp>
 #include "Detail/MyRioFpga60/MyRio.h"
-
 #include "Detail/MyRioFpga60/MyRio.h"
 #include "Detail/MyRioUtil.hpp"
+#include <thread>
+#include <chrono>
+
+#if MAHI_DAQ_OUTPUT_LOGS
+    #ifdef MAHI_LOG
+        #include <mahi/log/Log.hpp>
+    #else
+        #include <iostream>
+        #define LOG(severity) std::cout << std::endl << #severity << ": "
+    #endif
+#else
+    #include <iostream>
+    #define LOG(severity) if (true) { } else std::cout 
+#endif
 
 #define MyRio_DefaultFolder "/var/local/natinst/bitfiles/"
 #define MyRio_BitfilePath MyRio_DefaultFolder MyRio_Bitfile
@@ -16,7 +29,6 @@ namespace {
 
 /// Custom open function adapted from NI version
 bool open_myrio(bool reset) {
-    Time timeout = seconds(5);
     NiFpga_Status status;
     NiFpga_Bool sysReady;
     // init
@@ -59,9 +71,10 @@ bool open_myrio(bool reset) {
     }
     LOG(Verbose) << "Running myRIO FPGA";
     // wait for the FPGA to signal ready
-    Clock clock;
+    std::chrono::seconds timeout(5);
+    auto begin = std::chrono::high_resolution_clock::now();
     sysReady = NiFpga_False;    
-    while (clock.get_elapsed_time() < timeout && !MyRio_IsNotSuccess(status) && !sysReady) {
+    while (std::chrono::high_resolution_clock::now() - begin < timeout && !MyRio_IsNotSuccess(status) && !sysReady) {
         NiFpga_MergeStatus(&status, NiFpga_ReadBool(myrio_session, SYSRDY, &sysReady));
     }
     if (MyRio_IsNotSuccess(status)) {

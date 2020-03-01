@@ -24,7 +24,7 @@ namespace daq {
 class MyRioConnector;
 
 /// myRIO Encoder Module
-class MyRioEncoder : public Encoder, NonCopyable {
+class MyRioEncoder : public Encoder {
 public:
 
     /// Updates a single channel
@@ -46,17 +46,19 @@ private:
     void sync();
 
     MyRioEncoder(MyRioConnector& connector, const ChanNums& channel_numbers);
+    MyRioEncoder( const MyRioEncoder& ) = delete; // non construction-copyable
+    MyRioEncoder& operator=( const MyRioEncoder& ) = delete; // non copyable
 
 private:
 
     MyRioConnector& connector_;
 
     // NI FPGA Registers
-    ChanNum_t              sysselect_;
+    uint32_t              sysselect_;
     std::vector<int>      bits_;
-    std::vector<ChanNum_t> stat_;
-    std::vector<ChanNum_t> cntr_;
-    std::vector<ChanNum_t> cnfg_;
+    std::vector<uint32_t> stat_;
+    std::vector<uint32_t> cntr_;
+    std::vector<uint32_t> cnfg_;
 
     ChanNums              allowed_;  ///< allowed channels
 };

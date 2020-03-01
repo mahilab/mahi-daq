@@ -1,9 +1,20 @@
 #include <mahi/daq/NI/MyRio/MyRio.hpp>
-
 #include "Detail/MyRioUtil.hpp"
 #include "Detail/MyRioFpga60/MyRio.h"
 #include <mahi/daq/NI/MyRio/MyRioConnector.hpp>
 #include <algorithm>
+
+#if MAHI_DAQ_OUTPUT_LOGS
+    #ifdef MAHI_LOG
+        #include <mahi/log/Log.hpp>
+    #else
+        #include <iostream>
+        #define LOG(severity) std::cout << std::endl << #severity << ": "
+    #endif
+#else
+    #include <iostream>
+    #define LOG(severity) if (true) { } else std::cout 
+#endif
 
 extern NiFpga_Session myrio_session;
 
@@ -45,13 +56,13 @@ MyRioEncoder::MyRioEncoder(MyRioConnector& connector, const ChanNums& channel_nu
 bool MyRioEncoder::update_channel(ChanNum channel_number) {
     if (!validate_channel_number(channel_number))
         return false;
-    ChanNum_t counts;
+    uint32_t counts;
     NiFpga_Status status = NiFpga_ReadU32(myrio_session, cntr_[channel_number], &counts);
     if (status < 0) {
         LOG(Error) << "Failed to read counts from encoder register";
         return false;
     }
-    values_[channel_number] = static_cast<int32>(counts);
+    values_[channel_number] = static_cast<int>(counts);
     return true;
 }
 

@@ -21,7 +21,7 @@ namespace mahi {
 namespace daq {
 
 /// National Instruments myRIO embedded system
-class MyRio : public DaqBase, NonCopyable {
+class MyRio : public DaqBase {
 
 public:
 
@@ -52,6 +52,9 @@ private:
     bool on_close() override;
     bool on_enable() override;
     bool on_disable() override;
+
+    MyRio( const MyRio& ) = delete; // non construction-copyable
+    MyRio& operator=( const MyRio& ) = delete; // non copyable
 
 public:
 
