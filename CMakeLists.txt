@@ -21,12 +21,11 @@ project(mahi-daq VERSION 1.0.0 LANGUAGES C CXX)
 
 # tell user they can't have shared version if they try
 if (BUILD_SHARED_LIBS)
-    message(FATAL_ERROR "MAHI does not yet support shared libaries")
+    message(FATAL_ERROR "mahi::daq does not support shared libaries")
 endif()
 
 # add ./cmake to CMake module path so our .cmake files can be found
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-include(Macros) # macros
 include(GNUInstallDirs) # defines conventional GNU isntallation directories
 
 # Enable IDE folders and set them for predefined CMake projects
@@ -40,65 +39,55 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 endif()
 
 #===============================================================================
-# CREATE COMMON LIBRARY
+# CREATE LIBRARY
 #===============================================================================
 
-# create core mahi::daq library
-set(MAHI_DAQ_HEADERS
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/ChannelBase.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/DaqBase.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Device.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Encoder.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Input.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/InputOutput.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Module.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Output.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Buffer.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/VirtualDaq.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Watchdog.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Detail/ChannelBase.inl"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Detail/Input.inl"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Detail/InputOutput.inl"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Detail/Module.inl"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Detail/Output.inl"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Detail/Buffer.inl"
-)
+add_library(mahi-daq "")
+add_library(mahi::daq ALIAS mahi-daq)
+set_target_properties(mahi-daq PROPERTIES DEBUG_POSTFIX -d)
+target_compile_features(mahi-daq PUBLIC cxx_std_11)
+install(TARGETS mahi-daq EXPORT mahi-daq-targets LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-set(MAHI_DAQ_SRC
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/DaqBase.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Device.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Encoder.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Module.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Buffer.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/VirtualDaq.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Watchdog.cpp"
-)
+# defines
+target_compile_definitions(mahi-daq PUBLIC MAHI_DAQ) # for compatibility checks
+if (MAHI_DAQ_OUTPUT_LOGS)    
+    target_compile_definitions(mahi-daq PUBLIC MAHI_DAQ_OUTPUT_LOGS)
+endif()
 
-mahi_daq_add_library(daq SOURCES ${MAHI_DAQ_SRC} ${MAHI_DAQ_HEADERS})
+# add source files
+add_subdirectory(src/mahi/daq)
+
+# add include files
+file(GLOB_RECURSE MAHI_DAQ_HEADERS "include/*.hpp" "include/*.h" "include/*.inl")
+target_sources(mahi-daq PRIVATE ${MAHI_DAQ_HEADERS}) # for intellisense
+target_include_directories(mahi-daq
+    PUBLIC
+        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
 
 #===============================================================================
 # WINDOWS ONLY
 #===============================================================================
 
 if(WIN32)
-    target_compile_definitions(daq
+
+    target_compile_definitions(mahi-daq
         PUBLIC
             -D_CRT_SECURE_NO_WARNINGS          # remove secure warnings (e.g sprinft_s)
             -DNOMINMAX                         # remove min/max macros
             -D_WINSOCK_DEPRECATED_NO_WARNINGS  # remove winsock deprecated warnings
     )
 
-    if (MAHI_DAQ_OUTPUT_LOGS)    
-        target_compile_definitions(daq PUBLIC MAHI_DAQ_OUTPUT_LOGS)
-    endif()
-
-
     # the following only compile under MSVC
     if (MSVC)
+
         #=======================================================================
         # HIL / QUANSER
         #=======================================================================
+
         find_package(HIL)
         if (HIL_FOUND)
             option(MAHI_QUANSER "Turn ON to build Quanser support"  ON) 
@@ -106,63 +95,7 @@ if(WIN32)
             option(MAHI_QUANSER "Turn ON to build Quanser support"  OFF) 
         endif()
         if (MAHI_QUANSER)
-
-            set(MAHI_QAUNSER_HEADERS 
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Quanser/Q2Usb.hpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Quanser/Q8Usb.hpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Quanser/QPid.hpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Quanser/QuanserAI.hpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Quanser/QuanserAO.hpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Quanser/QuanserDaq.hpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Quanser/QuanserDI.hpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Quanser/QuanserDIO.hpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Quanser/QuanserDO.hpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Quanser/QuanserEncoder.hpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Quanser/QuanserPwm.hpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Quanser/QuanserOptions.hpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Quanser/QuanserWatchdog.hpp"
-            )
-
-            set(MAHI_QUANSER_SRC
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Quanser/Q2Usb.cpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Quanser/Q8Usb.cpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Quanser/QPid.cpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Quanser/QuanserAI.cpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Quanser/QuanserAO.cpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Quanser/QuanserDaq.cpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Quanser/QuanserDI.cpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Quanser/QuanserDIO.cpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Quanser/QuanserDO.cpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Quanser/QuanserEncoder.cpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Quanser/QuanserPwm.cpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Quanser/QuanserOptions.cpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Quanser/QuanserWatchdog.cpp"        
-            )
-
-            # create Quanser library module
-            mahi_daq_add_library(quanser SOURCES ${MAHI_QUANSER_SRC} ${MAHI_QUANSER_HEADERS})
-            target_link_libraries(quanser
-                PUBLIC
-                    mahi::daq
-                PRIVATE
-                    HIL::HIL                 # HIL SDK
-                    HIL::quanser_runtime     # HIL quanser_runtime
-                    HIL::quanser_common      # HIL quanser_common
-                    legacy_stdio_definitions # needed for _vsnprintf in quanser_common
-            )
-        endif()
-
-        #=======================================================================
-        # NI DAQMX
-        #=======================================================================
-        find_package(NIDAQmx)
-        if (NIDAQmx_FOUND)
-            option(MAHI_NIDAQMX "Turn ON to build NI DAQmx support" ON)  
-        else()
-            option(MAHI_NIDAQMX "Turn ON to build NI DAQmx support" OFF)
-        endif() 
-        if(MAHI_NIDAQMX)
-            message("mahi::daq does not yet support NI DAQmx. This option serves as placeholder.")
+            add_subdirectory(src/mahi/daq/Quanser)
         endif()
 
         #=======================================================================
@@ -176,27 +109,20 @@ if(WIN32)
             option(MAHI_SENSORAY826 "Turn ON to build Sensoray 826 support" OFF)
         endif() 
         if (MAHI_SENSORAY826)
+            add_subdirectory(src/mahi/daq/Sensoray)
+        endif()
 
-            set(MAHI_SENSORAY_HEADERS
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Sensoray/S826.hpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Sensoray/S826AI.hpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Sensoray/S826AO.hpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Sensoray/S826DIO.hpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Sensoray/S826Encoder.hpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Sensoray/S826Watchdog.hpp"
-            )
-
-            set(MAHI_SENSORAY_SRC
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Sensoray/S826.cpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Sensoray/S826AI.cpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Sensoray/S826AO.cpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Sensoray/S826DIO.cpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Sensoray/S826Encoder.cpp"
-                "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Sensoray/S826Watchdog.cpp"
-            )
-
-            mahi_daq_add_library(sensoray SOURCES ${MAHI_SENSORAY_SRC} ${MAHI_SENSORAY_HEADERS})
-            target_link_libraries(sensoray PUBLIC mahi::daq PRIVATE Sensoray::Sensoray826)
+        #=======================================================================
+        # NI DAQMX
+        #=======================================================================
+        find_package(NIDAQmx)
+        if (NIDAQmx_FOUND)
+            option(MAHI_NIDAQMX "Turn ON to build NI DAQmx support" ON)  
+        else()
+            option(MAHI_NIDAQMX "Turn ON to build NI DAQmx support" OFF)
+        endif() 
+        if(MAHI_NIDAQMX)
+            message("mahi::daq does not yet support NI DAQmx. This option serves as placeholder for future work.")
         endif()
 
     endif(MSVC)
@@ -207,58 +133,15 @@ endif(WIN32)
 # NI LINUX REAL-TIME ONLY
 #===============================================================================
 
-# detect incompatible options
-mahi_incompatible(NI_LRT MAHI_QUANSER)
-mahi_incompatible(NI_LRT MAHI_SENSORAY826)
-mahi_incompatible(NI_LRT MAHI_NIDAQMX)
-
 if (NI_LRT)
     set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
-    target_link_libraries(daq
+    target_link_libraries(mahi-daq
         PRIVATE
             dl # Dynamic Linking Library
             rt # Realtime Extensions library
     )
     if (CMAKE_SYSTEM_PROCESSOR MATCHES ARM)
-
-        set(MAHI_MYRIO_HEADERS
-            "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/NI/myRIO/MyRio.hpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/NI/myRIO/MyRioAI.hpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/NI/myRIO/MyRioAO.hpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/NI/myRIO/MyRioConnector.hpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/NI/myRIO/MyRioDIO.hpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/NI/myRIO/MyRioEncoder.hpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/NI/myRIO/MyRioI2C.hpp"
-        )
-
-        set(MAHI_MYRIO_SRC
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/NI/myRIO/MyRio.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/NI/myRIO/MyRioAI.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/NI/myRIO/MyRioAO.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/NI/myRIO/MyRioConnector.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/NI/myRIO/MyRioDIO.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/NI/myRIO/MyRioEncoder.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/NI/myRIO/MyRioI2C.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/NI/myRIO/Detail/MyRioUtil.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/NI/myRIO/Detail/MyRioUtil.hpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/NI/myRIO/Detail/MyRioFpga60/IRQConfigure.c"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/NI/myRIO/Detail/MyRioFpga60/IRQConfigure.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/NI/myRIO/Detail/MyRioFpga60/libvisa.so"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/NI/myRIO/Detail/MyRioFpga60/MyRio.c"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/NI/myRIO/Detail/MyRioFpga60/MyRio.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/NI/myRIO/Detail/MyRioFpga60/MyRio1900.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/NI/myRIO/Detail/MyRioFpga60/MyRio1950.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/NI/myRIO/Detail/MyRioFpga60/NiFpga.c"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/NI/myRIO/Detail/MyRioFpga60/NiFpga.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/NI/myRIO/Detail/MyRioFpga60/NiFpga_MyRio1900Fpga60.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/NI/myRIO/Detail/MyRioFpga60/NiFpga_MyRio1950Fpga60.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/NI/myRIO/Detail/MyRioFpga60/visa.h"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/NI/myRIO/Detail/MyRioFpga60/visatype.h"        
-        )
-
-        mahi_daq_add_library(myrio SOURCES ${MAHI_MYRIO_SRC} ${MAHI_MYRIO_HEADERS})
-        target_link_libraries(myrio PUBLIC daq)
-        target_compile_definitions(myrio PRIVATE MyRio_1900) # needed by NI src
+        add_subdirectory(src/mahi/daq/NI/MyRio)
     endif()
 endif()
 

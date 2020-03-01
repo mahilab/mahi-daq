@@ -1,0 +1,10 @@
+target_sources(mahi-daq
+    PRIVATE
+    Buffer.cpp
+    DaqBase.cpp
+    Device.cpp
+    Encoder.cpp
+    Module.cpp
+    VirtualDaq.cpp
+    Watchdog.cpp
+)

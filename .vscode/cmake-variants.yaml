@@ -21,10 +21,10 @@ examples:
    short: Examples
    long: "Build examples"
    settings: 
-    MAHI_GUI_EXAMPLES: ON
+    MAHI_DAQ_EXAMPLES: ON
   off: 
    short: "No Examples"
    long: "Do not build examples"
    settings: 
-    MAHI_GUI_EXAMPLES: OFF
+    MAHI_DAQ_EXAMPLES: OFF
 
