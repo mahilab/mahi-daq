@@ -80,8 +80,8 @@ void ModuleBase::remove_channel_number(ChanNum channel_number) {
 void ModuleBase::update_map() {
     ChanMap old_map = channel_map_;
     channel_map_ = make_channel_map(channel_numbers_);
-    for (std::size_t i = 0; i < registries_.size(); i++)
-        registries_[i]->change_channel_numbers(old_map, channel_map_);    
+    for (std::size_t i = 0; i < buffers_.size(); i++)
+        buffers_[i]->change_channel_numbers(old_map, channel_map_);    
 }
 
 const ChanNums& ModuleBase::get_channel_numbers() const {
@@ -110,8 +110,8 @@ bool ModuleBase::validate_channel_count(std::size_t size, bool quiet) const {
     return false;
 }
 
-void ModuleBase::add_registry(RegistryBase* registry) {
-    registries_.push_back(registry);
+void ModuleBase::add_buffer(BufferBase* buffer) {
+    buffers_.push_back(buffer);
 }
 
 std::size_t ModuleBase::index(ChanNum channel_number) const {

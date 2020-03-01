@@ -42,7 +42,7 @@ public:
 
 private:
     QuanserDaq& daq_;  ///< Reference to parent QDaq
-    Registry<char> quanser_values_;
+    Buffer<char> quanser_values_;
 
     QuanserDI( const QuanserDI& ) = delete; // non construction-copyable
     QuanserDI& operator=( const QuanserDI& ) = delete; // non copyable

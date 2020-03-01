@@ -94,7 +94,7 @@ protected:
     virtual void sort_input_output_channel_numbers() const;
 
 protected:
-    Registry<Direction> directions_;           ///< The I/O directions of each channel
+    Buffer<Direction> directions_;           ///< The I/O directions of each channel
     mutable ChanNums input_channel_numbers_;   ///< the channel numbers that are inputs
     mutable ChanNums output_channel_numbers_;  ///< the channel numbers that are outputs
 

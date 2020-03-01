@@ -16,7 +16,7 @@
 
 #pragma once
 #include <mahi/daq/Device.hpp>
-#include <mahi/daq/Registry.hpp>
+#include <mahi/daq/Buffer.hpp>
 #include <map>
 
 namespace mahi {
@@ -72,10 +72,10 @@ protected:
 
 private:
 
-    friend class RegistryBase;
+    friend class BufferBase;
 
     /// Adds a Registry to this Module
-    void add_registry(RegistryBase* registry);
+    void add_buffer(BufferBase* buffer);
 
     /// Updates the channel Map and notifies Registries
     void update_map();
@@ -85,9 +85,9 @@ private:
 
 private:
 
-    ChanNums channel_numbers_;              ///< The channel numbers used by this ModuleBase
-    ChanMap  channel_map_;                  ///< Maps a channel number with a vector index position
-    std::vector<RegistryBase*> registries_; ///< Registries needed by this Module
+    ChanNums channel_numbers_;         ///< The channel numbers used by this ModuleBase
+    ChanMap  channel_map_;             ///< Maps a channel number with a vector index position
+    std::vector<BufferBase*> buffers_; ///< Buffers needed by this Module
 
 };
 
@@ -128,9 +128,9 @@ public:
 
 protected:
 
-    Registry<T> values_;      ///< The real-world values of the channels in this Module
-    Registry<T> min_values_;  ///< The minimum possible values of each channel
-    Registry<T> max_values_;  ///< The maximum possible values of each channel
+    Buffer<T> values_;      ///< The real-world values of the channels in this Module
+    Buffer<T> min_values_;  ///< The minimum possible values of each channel
+    Buffer<T> max_values_;  ///< The maximum possible values of each channel
 
 };
 

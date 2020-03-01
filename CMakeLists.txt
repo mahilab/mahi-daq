@@ -53,7 +53,7 @@ set(MAHI_DAQ_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/InputOutput.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Module.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Output.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Registry.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Buffer.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/VirtualDaq.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Watchdog.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Detail/ChannelBase.inl"
@@ -61,7 +61,7 @@ set(MAHI_DAQ_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Detail/InputOutput.inl"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Detail/Module.inl"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Detail/Output.inl"
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Detail/Registry.inl"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Detail/Buffer.inl"
 )
 
 set(MAHI_DAQ_SRC
@@ -69,7 +69,7 @@ set(MAHI_DAQ_SRC
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Device.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Encoder.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Module.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Registry.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Buffer.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/VirtualDaq.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Watchdog.cpp"
 )

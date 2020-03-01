@@ -76,9 +76,9 @@ private:
 
     S826& s826_;
     
-    Registry<double> timestamps_;
-    Registry<double> values_per_sec_;
-    Registry<double> velocities_;
+    Buffer<double> timestamps_;
+    Buffer<double> values_per_sec_;
+    Buffer<double> velocities_;
 
     S826Encoder( const S826Encoder& ) = delete; // non construction-copyable
     S826Encoder& operator=( const S826Encoder& ) = delete; // non copyable

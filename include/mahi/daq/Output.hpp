@@ -79,9 +79,9 @@ protected:
     virtual bool on_disable();
 
 protected:
-    Registry<T> enable_values_;   ///< The initial values set when the Module is enabled
-    Registry<T> disable_values_;  ///< The final values set when the Module is disabled
-    Registry<T> expire_values_;   ///< The expire values when the Module expires
+    Buffer<T> enable_values_;   ///< The initial values set when the Module is enabled
+    Buffer<T> disable_values_;  ///< The final values set when the Module is disabled
+    Buffer<T> expire_values_;   ///< The expire values when the Module expires
 
 public:
     /// Encapsulates a Module channel

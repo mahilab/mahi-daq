@@ -88,10 +88,10 @@ protected:
 
 protected:
 
-    Registry<QuadFactor> factors_;      ///< The encoder quadrature factors (default X4)
-    Registry<double> units_per_count_;  ///< The number of counts per unit of travel of the Encoder
-    Registry<double> positions_;        ///< The calculated positions of the Encoder channels
-    Registry<double> conversions_;      ///< Conversion scalars used to convert to positions
+    Buffer<QuadFactor> factors_;      ///< The encoder quadrature factors (default X4)
+    Buffer<double> units_per_count_;  ///< The number of counts per unit of travel of the Encoder
+    Buffer<double> positions_;        ///< The calculated positions of the Encoder channels
+    Buffer<double> conversions_;      ///< Conversion scalars used to convert to positions
 
 public:
     /// Encapsulates and Encoder channel (can be used as a PositionSensor)

@@ -46,7 +46,7 @@ public:
 
 private:
     QuanserDaq& daq_;  ///< Reference to parent QDaq
-    Registry<char> quanser_values_;
+    Buffer<char> quanser_values_;
 
     QuanserDO( const QuanserDO& ) = delete; // non construction-copyable
     QuanserDO& operator=( const QuanserDO& ) = delete; // non copyable

@@ -36,7 +36,7 @@ public:
     VirtualAI(VirtualDaq& daq, const ChanNums& channel_numbers);
     bool update_channel(ChanNum channel_number) override;
 public:
-    Registry<std::function<Voltage(double)>> sources;
+    Buffer<std::function<Voltage(double)>> sources;
 private:
     VirtualDaq& daq_;
 };
@@ -62,7 +62,7 @@ public:
     VirtualDI(VirtualDaq& daq, const ChanNums& channel_numbers);
     bool update_channel(ChanNum channel_number) override;
 public:
-    Registry<std::function<Logic(double)>> sources;
+    Buffer<std::function<Logic(double)>> sources;
 private:
     VirtualDaq& daq_;
 };
@@ -89,7 +89,7 @@ public:
     bool update_channel(ChanNum channel_number) override;
     bool reset_count(ChanNum channel_number, int count);
 public:
-    Registry<std::function<int(double)>> sources;
+    Buffer<std::function<int(double)>> sources;
 private:
     VirtualDaq& daq_;
 };

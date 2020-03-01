@@ -82,9 +82,9 @@ public:
 private:
 
     QuanserDaq& daq_;                            ///< Reference to parent QDaq
-    Registry<ChanNum> velocity_channel_numbes_;  ///< Converted channel numbers
-    Registry<double> values_per_sec_;            ///< Counts per second if Encoder has velocity
-    Registry<double> velocities_;                ///< The calculated velocities of the Encoder channels
+    Buffer<ChanNum> velocity_channel_numbes_;  ///< Converted channel numbers
+    Buffer<double> values_per_sec_;            ///< Counts per second if Encoder has velocity
+    Buffer<double> velocities_;                ///< The calculated velocities of the Encoder channels
     bool has_velocity_;                          ///< True if Encoder module has velocity estimation
 
 public:
