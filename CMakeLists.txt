@@ -47,6 +47,7 @@ set(MAHI_DAQ_HEADERS
     "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/ChannelBase.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/DaqBase.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Device.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Encoder.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/Input.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/include/mahi/daq/InputOutput.hpp"
@@ -65,6 +66,7 @@ set(MAHI_DAQ_HEADERS
 
 set(MAHI_DAQ_SRC
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/DaqBase.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Device.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Encoder.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Module.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/mahi/daq/Registry.cpp"
