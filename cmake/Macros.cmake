@@ -33,21 +33,18 @@ macro(mahi_incompatible first second)
 endmacro(mahi_incompatible)
 
 #==============================================================================
-# mahi_add_library
+# mahi_daq_add_library
 #==============================================================================
-macro(mahi_add_library target)
+macro(mahi_daq_add_library target)
     # parse the arguments
     cmake_parse_arguments(THIS "" "" "SOURCES" ${ARGN})
     if (NOT "${THIS_UNPARSED_ARGUMENTS}" STREQUAL "")
-        message(FATAL_ERROR "Extra unparsed arguments when calling mahi_add_library: ${THIS_UNPARSED_ARGUMENTS}")
+        message(FATAL_ERROR "Extra unparsed arguments when calling mahi_daq_add_library: ${THIS_UNPARSED_ARGUMENTS}")
     endif()
     message("Building mahi::${target}")
     add_library(${target} STATIC "")
-    target_compile_definitions(${target} PUBLIC)    
     # change filename of sub-libaries
-    if (NOT ${target} MATCHES "mahi")
-      set_target_properties(${target} PROPERTIES OUTPUT_NAME "mahi-${target}")
-    endif()
+    set_target_properties(${target} PROPERTIES OUTPUT_NAME "mahi-${target}")
     # add alias so that find_package() and add_subdirectory() provide the same targets and namespaces
     add_library(mahi::${target} ALIAS ${target})
     # add sources
@@ -69,30 +66,30 @@ macro(mahi_add_library target)
         PRIVATE
     )
     # add install rule
-    install(TARGETS ${target} EXPORT mahi-targets
+    install(TARGETS ${target} EXPORT mahi-daq-targets
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
     # add misc properties
     set_target_properties(${target} PROPERTIES EXPORT_NAME ${target})
-    set_target_properties(${target} PROPERTIES FOLDER "mahi")
+    set_target_properties(${target} PROPERTIES FOLDER "mahi-daq")
     set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
-endmacro(mahi_add_library)
+endmacro(mahi_daq_add_library)
 
 #==============================================================================
-# mahi_example
+# mahi_daq_example
 #==============================================================================
-macro(mahi_example target)
+macro(mahi_daq_example target)
     cmake_parse_arguments(THIS "" "" "DEPENDS" ${ARGN})
     # create executable
     add_executable(${target} "ex_${target}.cpp")
     # set dependencies
-    target_link_libraries(${target} PRIVATE ${THIS_DEPENDS})
+    target_link_libraries(${target} PRIVATE mahi::daq ${THIS_DEPENDS})
     # add install rule
     install(TARGETS ${target}
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
     set_target_properties(${target} PROPERTIES FOLDER "Examples")
     set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
-endmacro(mahi_example)
+endmacro(mahi_daq_example)

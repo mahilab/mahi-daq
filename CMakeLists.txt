@@ -1,7 +1,5 @@
 # mahi::daq CMakeLists.txt
-# Evan Pezent     (epezent@rice.edu)
-# Craig McDonalod (craig.g.mcdonald@gmail.com)
-# Nathan Dunkelberger (nbd2@rice.edu)
+# Evan Pezent (epezent@rice.edu)
 # Updated: 2/2020
 
 cmake_minimum_required(VERSION 3.13.0)
@@ -27,13 +25,18 @@ endif()
 
 # add ./cmake to CMake module path so our .cmake files can be found
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake)
-
-include(MahiMacros)         # MAHI macros
+include(Macros) # macros
 include(GNUInstallDirs) # defines conventional GNU isntallation directories
 
 # Enable IDE folders and set them for predefined CMake projects
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -O3") # ALL WARNINGS
+elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
+    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /MP")    # MULTICORE BUILDS
+endif()
 
 #===============================================================================
 # CREATE COMMON LIBRARY
@@ -69,7 +72,7 @@ set(MAHI_DAQ_SRC
     "${CMAKE_SOURCE_DIR}/src/mahi/daq/Watchdog.cpp"
 )
 
-mahi_add_library(daq SOURCES ${MAHI_DAQ_SRC} ${MAHI_DAQ_HEADERS})
+mahi_daq_add_library(daq SOURCES ${MAHI_DAQ_SRC} ${MAHI_DAQ_HEADERS})
 
 #===============================================================================
 # WINDOWS ONLY
@@ -129,7 +132,7 @@ if(WIN32)
             )
 
             # create Quanser library module
-            mahi_add_library(quanser SOURCES ${MAHI_QUANSER_SRC} ${MAHI_QUANSER_HEADERS})
+            mahi_daq_add_library(quanser SOURCES ${MAHI_QUANSER_SRC} ${MAHI_QUANSER_HEADERS})
             target_link_libraries(quanser
                 PUBLIC
                     mahi::daq
@@ -184,7 +187,7 @@ if(WIN32)
                 "${CMAKE_SOURCE_DIR}/src/mahi/daq/Sensoray/S826Watchdog.cpp"
             )
 
-            mahi_add_library(sensoray SOURCES ${MAHI_SENSORAY_SRC} ${MAHI_SENSORAY_HEADERS})
+            mahi_daq_add_library(sensoray SOURCES ${MAHI_SENSORAY_SRC} ${MAHI_SENSORAY_HEADERS})
             target_link_libraries(sensoray PUBLIC mahi::daq PRIVATE Sensoray::Sensoray826)
         endif()
 
@@ -245,7 +248,7 @@ if (NI_LRT)
             "${CMAKE_SOURCE_DIR}/src/mahi/daq/NI/myRIO/Detail/MyRioFpga60/visatype.h"        
         )
 
-        mahi_add_library(myrio SOURCES ${MAHI_MYRIO_SRC} ${MAHI_MYRIO_HEADERS})
+        mahi_daq_add_library(myrio SOURCES ${MAHI_MYRIO_SRC} ${MAHI_MYRIO_HEADERS})
         target_link_libraries(myrio PUBLIC daq)
         target_compile_definitions(myrio PRIVATE MyRio_1900) # needed by NI src
     endif()
@@ -285,7 +288,7 @@ install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 set(INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/mahi-daq)
 
 # export the targets to a script
-install(EXPORT mahi-targets
+install(EXPORT mahi-daq-targets
 	FILE
 		mahi-daq-targets.cmake
 	NAMESPACE
@@ -324,7 +327,7 @@ install(FILES
 )
 
 # export from the build tree
-export(EXPORT mahi-targets
+export(EXPORT mahi-daq-targets
 	   NAMESPACE mahi::
-	   FILE ${CMAKE_CURRENT_BINARY_DIR}/mahi-targets.cmake)
+	   FILE ${CMAKE_CURRENT_BINARY_DIR}/mahi-daq-targets.cmake)
 
