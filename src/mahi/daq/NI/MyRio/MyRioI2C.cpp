@@ -40,7 +40,7 @@ MyRioI2C::MyRioI2C(MyRioMxp& connector) :
 
 void MyRioI2C::set_slave(const std::string& address) {
     if (address.length() != 7)
-        // LOG(Error) << "I2C slave address must be a 7 digit binary value (e.g. \"0110010\")";
+        LOG(Error) << "I2C slave address must be a 7 digit binary value (e.g. \"0110010\")";
     else {
         std::bitset<7> bits(address);
         set_slave(bits);
@@ -73,7 +73,7 @@ void MyRioI2C::execute() {
     }
     bool err = status[1];
     if (err)
-        // LOG(Error) << "Error occured during MyRio I2C execute operation.";
+        LOG(Error) << "Error occured during MyRio I2C execute operation.";
 }
 
 bool MyRioI2C::on_enable() {

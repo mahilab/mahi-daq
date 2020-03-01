@@ -48,7 +48,7 @@ bool MyRioEncoder::update_channel(ChanNum channel_number) {
     ChanNum_t counts;
     NiFpga_Status status = NiFpga_ReadU32(myrio_session, cntr_[channel_number], &counts);
     if (status < 0) {
-        // LOG(Error) << "Failed to read counts from encoder register";
+        LOG(Error) << "Failed to read counts from encoder register";
         return false;
     }
     values_[channel_number] = static_cast<int32>(counts);
@@ -65,7 +65,7 @@ bool MyRioEncoder::reset_count(ChanNum channel_number, int count) {
         return true;
     }
     else  {
-        // LOG(Error) << "myRIO Encoder counts can only be reset to zero";
+        LOG(Error) << "myRIO Encoder counts can only be reset to zero";
         return false;
     }
 }
@@ -82,7 +82,7 @@ void MyRioEncoder::enable_channel(ChanNum ch) {
         connector_.DIO.sync();
     }
     else {
-        // LOG(Error) << "Encoder channel number " << ch << " not available on " << get_name();
+        LOG(Error) << "Encoder channel number " << ch << " not available on " << get_name();
     }
 }
 
@@ -97,7 +97,7 @@ void MyRioEncoder::disable_channel(ChanNum ch) {
         connector_.DIO.sync();
     }
     else {
-        // LOG(Error) << "Encoder channel number " << ch << " not available on " << get_name();
+        LOG(Error) << "Encoder channel number " << ch << " not available on " << get_name();
     }
 }
 

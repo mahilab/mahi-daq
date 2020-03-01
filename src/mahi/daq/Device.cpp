@@ -1,5 +1,17 @@
 #include <mahi/daq/Device.hpp>
 
+#if MAHI_DAQ_OUTPUT_LOGS
+    #ifdef MAHI_LOG
+        #include <mahi/log/Log.hpp>
+    #else
+        #include <iostream>
+        #define LOG(severity) std::cout << std::endl << #severity << ": "
+    #endif
+#else
+    #include <iostream>
+    #define LOG(severity) if (true) { } else std::cout 
+#endif
+
 namespace mahi {
 namespace daq {
 
@@ -21,16 +33,16 @@ Device::~Device() { }
 
 bool Device::enable() {
     if (enabled_) {
-        // LOG(Warning) << get_name() << " already enabled";
+        LOG(Warning) << get_name() << " already enabled";
         return true;
     }
     if (on_enable()) {
-        // LOG(Verbose) << "Enabled " << get_name();
+        LOG(Verbose) << "Enabled " << get_name();
         enabled_ = true;
         return true;
     }
     else {
-        // LOG(Error) << "Failed to enabled " << get_name();
+        LOG(Error) << "Failed to enabled " << get_name();
         enabled_ = false;
         return false;
     }
@@ -38,16 +50,16 @@ bool Device::enable() {
 
 bool Device::disable() {
     if (!enabled_) {
-        // LOG(Warning) << get_name() << " already disabled";
+        LOG(Warning) << get_name() << " already disabled";
         return true;
     }
     if (on_disable()) {
-        // LOG(Verbose) << "Disabled " << get_name();
+        LOG(Verbose) << "Disabled " << get_name();
         enabled_ = false;
         return true;
     }
     else {
-        // LOG(Error) << "Failed to disable " << get_name();
+        LOG(Error) << "Failed to disable " << get_name();
         enabled_ = true;
         return false;
     }

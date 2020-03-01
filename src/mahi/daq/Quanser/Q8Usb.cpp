@@ -2,6 +2,18 @@
 #include <hil.h>
 #include <thread>
 
+#if MAHI_DAQ_OUTPUT_LOGS
+    #ifdef MAHI_LOG
+        #include <mahi/log/Log.hpp>
+    #else
+        #include <iostream>
+        #define LOG(severity) std::cout << std::endl << #severity << ": "
+    #endif
+#else
+    #include <iostream>
+    #define LOG(severity) if (true) { } else std::cout 
+#endif
+
 namespace mahi {
 namespace daq {
 
@@ -87,7 +99,7 @@ bool Q8Usb::on_close() {
 
 bool Q8Usb::on_enable() {
     if (!is_open()) {
-        // LOG(Error) << "Unable to enable Q8-USB " << get_name() << " because it is not open";
+        LOG(Error) << "Unable to enable Q8-USB " << get_name() << " because it is not open";
         return false;
     }
     bool success = true;
@@ -109,7 +121,7 @@ bool Q8Usb::on_enable() {
 
 bool Q8Usb::on_disable() {
     if (!is_open()) {
-        // LOG(Error) << "Unable to disable Q8-USB " << get_name() << " because it is not open";
+        LOG(Error) << "Unable to disable Q8-USB " << get_name() << " because it is not open";
         return false;
     }
     bool success = true;
@@ -131,7 +143,7 @@ bool Q8Usb::on_disable() {
 
 bool Q8Usb::update_input() {
     if (!is_enabled()) {
-        // LOG(Error) << "Unable to update " << get_name() << " input because it is disabled";
+        LOG(Error) << "Unable to update " << get_name() << " input because it is disabled";
         return false;
     }
     t_error result;
@@ -153,14 +165,14 @@ bool Q8Usb::update_input() {
     if (result == 0)
         return true;
     else {
-        // LOG(Error) << "Failed to update " << get_name() << " input " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to update " << get_name() << " input " << QuanserDaq::get_quanser_error_message(result);
         return false;
     }
 }
 
 bool Q8Usb::update_output() {
     if (!is_enabled()) {
-        // LOG(Error) << "Unable to update " << get_name() << " output because it is disabled";
+        LOG(Error) << "Unable to update " << get_name() << " output because it is disabled";
         return false;
     }
     // convert digitals
@@ -181,14 +193,14 @@ bool Q8Usb::update_output() {
     if (result == 0)
         return true;
     else {
-        // LOG(Error) << "Failed to update " << get_name() << " output " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to update " << get_name() << " output " << QuanserDaq::get_quanser_error_message(result);
         return false;
     }
 }
 
 bool Q8Usb::identify(ChanNum channel_number) {
     if (!is_open()) {
-        // LOG(Error) << "Unable to call " << __FUNCTION__ << " because " << get_name() << " is not open";
+        LOG(Error) << "Unable to call " << __FUNCTION__ << " because " << get_name() << " is not open";
         return false;
     }
     Input<Logic>::Channel di_ch = DI.get_channel(channel_number);
@@ -227,12 +239,12 @@ bool Q8Usb::sanity_check() {
     for (auto it = velocities.begin(); it != velocities.end(); ++it) {
         if (*it != 0.0) {
             sane = false;
-            // LOG(Warning) << "Sanity check on " << get_name() << " failed";
+            LOG(Warning) << "Sanity check on " << get_name() << " failed";
             break;
         }
     }
     if (sane)
-        // LOG(Verbose) << "Sanity check on " << get_name() << " passed";
+        LOG(Verbose) << "Sanity check on " << get_name() << " passed";
     return sane;
 }
 

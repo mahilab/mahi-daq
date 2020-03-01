@@ -61,13 +61,13 @@ bool MyRioAO::update_channel(ChanNum channel_number) {
 
     status = NiFpga_WriteU16(myrio_session, REGISTERS[connector_.type][channel_number], valueScaled);
     if (status < 0) {
-        // LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number;
+        LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number;
         return false;
     }
 
     status = NiFpga_WriteU16(myrio_session, AOSYSGO, 1);
     if (status < 0) {
-        // LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number;
+        LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number;
         return false;
     }
     return true;

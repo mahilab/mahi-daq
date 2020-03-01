@@ -2,6 +2,17 @@
 #include <mahi/daq/Quanser/QuanserDaq.hpp>
 #include <mahi/daq/Quanser/QuanserWatchdog.hpp>
 
+#if MAHI_DAQ_OUTPUT_LOGS
+    #ifdef MAHI_LOG
+        #include <mahi/log/Log.hpp>
+    #else
+        #include <iostream>
+        #define LOG(severity) std::cout << std::endl << #severity << ": "
+    #endif
+#else
+    #include <iostream>
+    #define LOG(severity) if (true) { } else std::cout 
+#endif
 
 namespace mahi {
 namespace daq {
@@ -23,11 +34,11 @@ bool QuanserWatchdog::start() {
     t_error result;
     result = hil_watchdog_start(daq_.handle_, timeout_);
     if (result == 0) {
-        // LOG(Verbose) << "Started watchdog on " << daq_.get_name();
+        LOG(Verbose) << "Started watchdog on " << daq_.get_name();
         return true;
     }
     else {
-        // LOG(Error) << "Failed to start watchdog on " << daq_.get_name() << " " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to start watchdog on " << daq_.get_name() << " " << QuanserDaq::get_quanser_error_message(result);
 
         return false;
     }
@@ -40,12 +51,12 @@ bool QuanserWatchdog::kick() {
         return true;
     }
     else if (result == 0) {
-        // LOG(Warning) << "Watchdog on " << daq_.get_name() << " expired";
+        LOG(Warning) << "Watchdog on " << daq_.get_name() << " expired";
         watching_ = false;
         return false;
     }
     else {
-        // LOG(Error) << "Failed to kick watchdog on " << daq_.get_name() << " "  << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to kick watchdog on " << daq_.get_name() << " "  << QuanserDaq::get_quanser_error_message(result);
         return false;
     }
 }
@@ -54,12 +65,12 @@ bool QuanserWatchdog::stop() {
     t_error result;
     result = hil_watchdog_stop(daq_.handle_);
     if (result == 0) {
-        // LOG(Verbose) << "Stopped watchdog on " << daq_.get_name();
+        LOG(Verbose) << "Stopped watchdog on " << daq_.get_name();
         watching_ = false;
         return true;
     }
     else {
-        // LOG(Error) << "Failed to stop watchdog on " << daq_.get_name() << " "  << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to stop watchdog on " << daq_.get_name() << " "  << QuanserDaq::get_quanser_error_message(result);
         return false;
     }
 }
@@ -75,7 +86,7 @@ bool QuanserWatchdog::is_expired() {
         return false;
     }
     else {
-        // LOG(Error) << "Failed to check expiration of watchdog on " << daq_.get_name() << " " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to check expiration of watchdog on " << daq_.get_name() << " " << QuanserDaq::get_quanser_error_message(result);
         return false;
     }
 }
@@ -84,11 +95,11 @@ bool QuanserWatchdog::clear() {
     t_error result;
     result = hil_watchdog_clear(daq_.handle_);
     if (result == 0) {
-        // LOG(Verbose) << "Cleared watchdog on " << daq_.get_name();
+        LOG(Verbose) << "Cleared watchdog on " << daq_.get_name();
         return true;
     }
     else {
-        // LOG(Error) << "Failed to clear watchdog on " << daq_.get_name() << " " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to clear watchdog on " << daq_.get_name() << " " << QuanserDaq::get_quanser_error_message(result);
         return false;
     }
 }

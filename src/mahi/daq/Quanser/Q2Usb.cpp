@@ -2,6 +2,18 @@
 #include <hil.h>
 #include <thread>
 
+#if MAHI_DAQ_OUTPUT_LOGS
+    #ifdef MAHI_LOG
+        #include <mahi/log/Log.hpp>
+    #else
+        #include <iostream>
+        #define LOG(severity) std::cout << std::endl << #severity << ": "
+    #endif
+#else
+    #include <iostream>
+    #define LOG(severity) if (true) { } else std::cout 
+#endif
+
 namespace mahi {
 namespace daq {
 
@@ -80,7 +92,7 @@ bool Q2Usb::on_close() {
 
 bool Q2Usb::on_enable() {
     if (!is_open()) {
-        // LOG(Error) << "Unable to enable Q2-USB " << get_name() << " because it is not open";
+        LOG(Error) << "Unable to enable Q2-USB " << get_name() << " because it is not open";
         return false;
     }
     bool success = true;
@@ -100,7 +112,7 @@ bool Q2Usb::on_enable() {
 
 bool Q2Usb::on_disable() {
     if (!is_open()) {
-        // LOG(Error) << "Unable to disable Q2-USB " << get_name() << " because it is not open";
+        LOG(Error) << "Unable to disable Q2-USB " << get_name() << " because it is not open";
         return false;
     }
     bool success = true;
@@ -124,7 +136,7 @@ bool Q2Usb::on_disable() {
 
 bool Q2Usb::update_input() {
     if (!is_open()) {
-        // LOG(Error) << "Unable to call " << __FUNCTION__ << " because " << get_name() << " is not open";
+        LOG(Error) << "Unable to call " << __FUNCTION__ << " because " << get_name() << " is not open";
         return false;
     }
     if (AI.update() && encoder.update() && DIO.update_input())
@@ -136,7 +148,7 @@ bool Q2Usb::update_input() {
 
 bool Q2Usb::update_output() {
     if (!is_open()) {
-        // LOG(Error) << "Unable to call " << __FUNCTION__ << " because " << get_name() << " is not open";
+        LOG(Error) << "Unable to call " << __FUNCTION__ << " because " << get_name() << " is not open";
         return false;
     }
     if (AO.update() && DIO.update_output())
@@ -147,7 +159,7 @@ bool Q2Usb::update_output() {
 
 bool Q2Usb::identify(ChanNum input_channel_number, ChanNum outout_channel_number) {
     if (!is_open()) {
-        // LOG(Error) << "Unable to call " << __FUNCTION__ << " because " << get_name() << " is not open";
+        LOG(Error) << "Unable to call " << __FUNCTION__ << " because " << get_name() << " is not open";
         return false;
     }
     InputOutput<Logic>::Channel di_ch = DIO.get_channel(input_channel_number);

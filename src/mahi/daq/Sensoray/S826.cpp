@@ -1,8 +1,19 @@
 #include <mahi/daq/Sensoray/S826.hpp>
-
 #include <windows.h>
 #include <826api.h> 
 #include <bitset>
+
+#if MAHI_DAQ_OUTPUT_LOGS
+    #ifdef MAHI_LOG
+        #include <mahi/log/Log.hpp>
+    #else
+        #include <iostream>
+        #define LOG(severity) std::cout << std::endl << #severity << ": "
+    #endif
+#else
+    #include <iostream>
+    #define LOG(severity) if (true) { } else std::cout 
+#endif
 
 namespace mahi {
 namespace daq {
@@ -31,11 +42,11 @@ bool S826::on_open() {
     bool success = true;
     int detected_boards = S826_SystemOpen();
     if (detected_boards == S826_ERR_DUPADDR) {
-        // LOG(Error) << "More than one S826 board with same board number detected.";
+        LOG(Error) << "More than one S826 board with same board number detected.";
         success = false;
     }
     if (detected_boards == 0) {
-        // LOG(Error) << "No S826 boards detected.";
+        LOG(Error) << "No S826 boards detected.";
         success = false;
     }
     std::bitset<32> board_bits(detected_boards);
@@ -50,7 +61,7 @@ bool S826::on_open() {
         return true;
     }
     else {
-        // LOG(Error) << "The requested S826 board " << board_ << " was not detected.";
+        LOG(Error) << "The requested S826 board " << board_ << " was not detected.";
         success = false;
     }
     return success;
@@ -74,7 +85,7 @@ double S826::get_timestamp() const {
     unsigned int timestamp;
     int result = S826_TimestampRead(board_, &timestamp);
     if (result != S826_ERR_OK) {
-        // LOG(Error) << "Failed to read " << get_name() << " timestamp (" << get_error_message(result) << ").";
+        LOG(Error) << "Failed to read " << get_name() << " timestamp (" << get_error_message(result) << ").";
         return 0;
     }
     return (double)timestamp / 1000000.0;

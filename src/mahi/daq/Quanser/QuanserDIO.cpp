@@ -2,6 +2,17 @@
 #include <mahi/daq/Quanser/QuanserDaq.hpp>
 #include <mahi/daq/Quanser/QuanserDIO.hpp>
 
+#if MAHI_DAQ_OUTPUT_LOGS
+    #ifdef MAHI_LOG
+        #include <mahi/log/Log.hpp>
+    #else
+        #include <iostream>
+        #define LOG(severity) std::cout << std::endl << #severity << ": "
+    #endif
+#else
+    #include <iostream>
+    #define LOG(severity) if (true) { } else std::cout 
+#endif
 
 namespace mahi {
 namespace daq {
@@ -21,11 +32,11 @@ namespace daq {
     bool QuanserDIO::on_enable() {
         set_values(enable_values_.get());
         if (update()) {
-            // LOG(Verbose) << "Set " << get_name() << " enable values to " << enable_values_;
+            LOG(Verbose) << "Set " << get_name() << " enable values to " << enable_values_;
             return true;
         }
         else {
-            // LOG(Error) << "Failed to set " << get_name() << " enable values to " << enable_values_;
+            LOG(Error) << "Failed to set " << get_name() << " enable values to " << enable_values_;
             return false;
         }
     }
@@ -33,11 +44,11 @@ namespace daq {
     bool QuanserDIO::on_disable() {
         set_values(disable_values_.get());
         if (update()) {
-            // LOG(Verbose) << "Set " << get_name() << " disable values to " << disable_values_;
+            LOG(Verbose) << "Set " << get_name() << " disable values to " << disable_values_;
             return true;
         }
         else {
-            // LOG(Error) << "Failed to set " << get_name() << " disable values to " << disable_values_;
+            LOG(Error) << "Failed to set " << get_name() << " disable values to " << disable_values_;
             return false;
         }
     }
@@ -54,7 +65,7 @@ namespace daq {
         if (result == 0)
             return true;
         else {
-            // LOG(Error) << "Failed to update " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
+            LOG(Error) << "Failed to update " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
             return false;
         }
     }
@@ -66,7 +77,7 @@ namespace daq {
         if (result == 0)
             return true;
         else {
-            // LOG(Error) << "Failed to update inputs on " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
+            LOG(Error) << "Failed to update inputs on " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
             return false;
         }
     }
@@ -78,7 +89,7 @@ namespace daq {
         if (result == 0)
             return true;
         else {
-            // LOG(Error) << "Failed to update outputs on " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
+            LOG(Error) << "Failed to update outputs on " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
             return false;
         }
     }
@@ -97,7 +108,7 @@ namespace daq {
         if (result == 0)
             return true;
         else {
-            // LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " "  << QuanserDaq::get_quanser_error_message(result);
+            LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " "  << QuanserDaq::get_quanser_error_message(result);
             return false;
         }
     }
@@ -110,11 +121,11 @@ namespace daq {
             &input_channel_numbers_[0], static_cast<ChanNum>(get_input_channel_count()),
             &output_channel_numbers_[0], static_cast<ChanNum>(get_output_channel_count()));
         if (result == 0) {
-            // LOG(Verbose) << "Set " << get_name() << " directions";
+            LOG(Verbose) << "Set " << get_name() << " directions";
             return true;
         }
         else {
-            // LOG(Error) << "Failed to set " << get_name() << " directions " << QuanserDaq::get_quanser_error_message(result);
+            LOG(Error) << "Failed to set " << get_name() << " directions " << QuanserDaq::get_quanser_error_message(result);
             return false;
         }
     }
@@ -139,11 +150,11 @@ namespace daq {
         t_error result;
         result = hil_watchdog_set_digital_expiration_state(daq_.handle_, &get_channel_numbers()[0], static_cast<ChanNum>(get_channel_count()), &converted_expire_values[0]);
         if (result == 0) {
-            // LOG(Verbose) << "Set " << get_name() << " expire values to " << expire_values_;
+            LOG(Verbose) << "Set " << get_name() << " expire values to " << expire_values_;
             return true;
         }
         else {
-            // LOG(Error) << "Failed to set " << get_name() << " expire values " << QuanserDaq::get_quanser_error_message(result);
+            LOG(Error) << "Failed to set " << get_name() << " expire values " << QuanserDaq::get_quanser_error_message(result);
             return false;
         }
     }
@@ -160,11 +171,11 @@ namespace daq {
         t_error result;
         result = hil_watchdog_set_digital_expiration_state(daq_.handle_, &channel_number, 1, &converted_expire_value);
         if (result == 0) {
-            // LOG(Verbose) << "Set " << get_name() << " channel number " << channel_number << " expire value to " << expire_value;
+            LOG(Verbose) << "Set " << get_name() << " channel number " << channel_number << " expire value to " << expire_value;
             return true;
         }
         else {
-            // LOG(Error) << "Failed to set " << get_name() << " channel number " << channel_number << " expire value " << QuanserDaq::get_quanser_error_message(result);
+            LOG(Error) << "Failed to set " << get_name() << " channel number " << channel_number << " expire value " << QuanserDaq::get_quanser_error_message(result);
             return false;
         }
     }

@@ -1,7 +1,18 @@
 #include <mahi/daq/Quanser/QuanserDaq.hpp>
 #include <mahi/daq/Quanser/QuanserDI.hpp>
-
 #include <hil.h>
+
+#if MAHI_DAQ_OUTPUT_LOGS
+    #ifdef MAHI_LOG
+        #include <mahi/log/Log.hpp>
+    #else
+        #include <iostream>
+        #define LOG(severity) std::cout << std::endl << #severity << ": "
+    #endif
+#else
+    #include <iostream>
+    #define LOG(severity) if (true) { } else std::cout 
+#endif
 
 namespace mahi {
 namespace daq {
@@ -28,7 +39,7 @@ namespace daq {
             return true;
         }
         else {
-            // LOG(Error) << "Failed to update " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
+            LOG(Error) << "Failed to update " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
             return false;
         }
     }
@@ -41,7 +52,7 @@ namespace daq {
             return true;
         }
         else {
-            // LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " "  << QuanserDaq::get_quanser_error_message(result);
+            LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " "  << QuanserDaq::get_quanser_error_message(result);
             return false;
         }
     }

@@ -1,8 +1,19 @@
 #include <mahi/daq/Sensoray/S826.hpp>
 #include <mahi/daq/Sensoray/S826AO.hpp>
-
 #include <windows.h>
 #include <826api.h> 
+
+#if MAHI_DAQ_OUTPUT_LOGS
+    #ifdef MAHI_LOG
+        #include <mahi/log/Log.hpp>
+    #else
+        #include <iostream>
+        #define LOG(severity) std::cout << std::endl << #severity << ": "
+    #endif
+#else
+    #include <iostream>
+    #define LOG(severity) if (true) { } else std::cout 
+#endif
 
 namespace mahi {
 namespace daq {
@@ -19,7 +30,7 @@ bool S826AO::update_channel(ChanNum channel_number) {
     ChanNum setpoint = (uint)(volts * 0xFFFF / 20) + 0x8000; // -10V to +10V
     int result = S826_DacDataWrite(s826_.board_, channel_number, setpoint, 0);
     if (result != S826_ERR_OK) {
-        // LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " (" << S826::get_error_message(result) << ")";
+        LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " (" << S826::get_error_message(result) << ")";
         return false;
     }
     return true;
@@ -32,7 +43,7 @@ bool S826AO::on_open() {
     for (auto& c : get_channel_numbers()) {
         result = S826_DacRangeWrite(s826_.board_, c, S826_DAC_SPAN_10_10, 0);
         if (result != S826_ERR_OK) {
-            // LOG(Error) << "Failed to set " << get_name() << " channel number " << c << " output range (" << S826::get_error_message(result) << ")";
+            LOG(Error) << "Failed to set " << get_name() << " channel number " << c << " output range (" << S826::get_error_message(result) << ")";
             success = false;
         }
     }

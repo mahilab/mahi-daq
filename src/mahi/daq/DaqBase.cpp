@@ -1,5 +1,17 @@
 #include <mahi/daq/DaqBase.hpp>
 
+#if MAHI_DAQ_OUTPUT_LOGS
+    #ifdef MAHI_LOG
+        #include <mahi/log/Log.hpp>
+    #else
+        #include <iostream>
+        #define LOG(severity) std::cout << std::endl << #severity << ": "
+    #endif
+#else
+    #include <iostream>
+    #define LOG(severity) if (true) { } else std::cout 
+#endif
+
 namespace mahi {
 namespace daq {
 
@@ -21,16 +33,16 @@ DaqBase::~DaqBase() {
 
 bool DaqBase::open() {
     if (open_) {
-        // LOG(Warning) << "DAQ " << get_name() << " already open";
+        LOG(Warning) << "DAQ " << get_name() << " already open";
         return true;
     }
     if (on_open()) {
-        // LOG(Info) << "Opened DAQ " << get_name();
+        LOG(Info) << "Opened DAQ " << get_name();
         open_ = true;
         return true;
     }
     else {
-        // LOG(Error) << "Failed to open DAQ " << get_name();
+        LOG(Error) << "Failed to open DAQ " << get_name();
         open_ = false;
         return false;
     }
@@ -38,16 +50,16 @@ bool DaqBase::open() {
 
 bool DaqBase::close() {
     if (!open_) {
-        // LOG(Warning) << "DAQ " << get_name() << " already closed";
+        LOG(Warning) << "DAQ " << get_name() << " already closed";
         return true;
     }
     if (on_close()) {
-        // LOG(Info) << "Closed DAQ " << get_name();
+        LOG(Info) << "Closed DAQ " << get_name();
         open_ = false;
         return true;
     }
     else {
-        // LOG(Error) << "Failed to close DAQ " << get_name();
+        LOG(Error) << "Failed to close DAQ " << get_name();
         open_ = true;
         return false;
     }

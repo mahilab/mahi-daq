@@ -2,6 +2,18 @@
 #include <hil.h>
 #include <thread>
 
+#if MAHI_DAQ_OUTPUT_LOGS
+    #ifdef MAHI_LOG
+        #include <mahi/log/Log.hpp>
+    #else
+        #include <iostream>
+        #define LOG(severity) std::cout << std::endl << #severity << ": "
+    #endif
+#else
+    #include <iostream>
+    #define LOG(severity) if (true) { } else std::cout 
+#endif
+
 namespace mahi {
 namespace daq {
 
@@ -70,7 +82,7 @@ bool QPid::on_open() {
     std::vector<double> pwm_exp_vals(8, 0.0);
     t_error result = hil_watchdog_set_pwm_expiration_state(handle_, &pwm_channels[0], 8, &pwm_exp_vals[0]);
     if (result != 0)
-        // LOG(Error) << "Failed to set PWM expiration states on QPID " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to set PWM expiration states on QPID " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
 
     // allow changes to take effect
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -90,7 +102,7 @@ bool QPid::on_close() {
 
 bool QPid::on_enable() {
     if (!is_open()) {
-        // LOG(Error) << "Unable to enable Q8-USB " << get_name() << " because it is not open";
+        LOG(Error) << "Unable to enable Q8-USB " << get_name() << " because it is not open";
         return false;
     }
     bool success = true;
@@ -110,7 +122,7 @@ bool QPid::on_enable() {
 
 bool QPid::on_disable() {
     if (!is_open()) {
-        // LOG(Error) << "Unable to disable Q8-USB " << get_name() << " because it is not open";
+        LOG(Error) << "Unable to disable Q8-USB " << get_name() << " because it is not open";
         return false;
     }
     bool success = true;
@@ -130,7 +142,7 @@ bool QPid::on_disable() {
 
 bool QPid::update_input() {
     if (!is_enabled()) {
-        // LOG(Error) << "Unable to update " << get_name() << " input because it is disabled";
+        LOG(Error) << "Unable to update " << get_name() << " input because it is disabled";
         return false;
     }
     t_error result;
@@ -151,14 +163,14 @@ bool QPid::update_input() {
     if (result == 0)
         return true;
     else {
-        // LOG(Error) << "Failed to update " << get_name() << " input " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to update " << get_name() << " input " << QuanserDaq::get_quanser_error_message(result);
         return false;
     }
 }
 
 bool QPid::update_output() {
     if (!is_enabled()) {
-        // LOG(Error) << "Unable to update " << get_name() << " output because it is disabled";
+        LOG(Error) << "Unable to update " << get_name() << " output because it is disabled";
         return false;
     }
     // convert digitals
@@ -178,7 +190,7 @@ bool QPid::update_output() {
     if (result == 0)
         return true;
     else {
-        // LOG(Error) << "Failed to update " << get_name() << " output " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to update " << get_name() << " output " << QuanserDaq::get_quanser_error_message(result);
         return false;
     }
 }

@@ -3,6 +3,18 @@
 #include <mahi/daq/Quanser/QuanserEncoder.hpp>
 #include <thread>
 
+#if MAHI_DAQ_OUTPUT_LOGS
+    #ifdef MAHI_LOG
+        #include <mahi/log/Log.hpp>
+    #else
+        #include <iostream>
+        #define LOG(severity) std::cout << std::endl << #severity << ": "
+    #endif
+#else
+    #include <iostream>
+    #define LOG(severity) if (true) { } else std::cout 
+#endif
+
 namespace mahi {
 namespace daq {
 
@@ -32,7 +44,7 @@ bool QuanserEncoder::update() {
     if (result == 0)
         return true;
     else {
-        // LOG(Error) << "Failed to update " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to update " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
         return false;
     }
 }
@@ -48,7 +60,7 @@ bool QuanserEncoder::update_channel(ChanNum channel_number) {
     if (result == 0)
         return true;
     else {
-        // LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " " << QuanserDaq::get_quanser_error_message(result);
         return false;
     }
 }
@@ -60,11 +72,11 @@ bool QuanserEncoder::reset_counts(const std::vector<int>& counts) {
     result = hil_set_encoder_counts(daq_.handle_, &get_channel_numbers()[0], static_cast<ChanNum>(get_channel_count()), &counts[0]);
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
     if (result == 0) {
-        // LOG(Verbose) << "Reset " << get_name() << " counts to " << counts;
+        LOG(Verbose) << "Reset " << get_name() << " counts"; // to " << counts;
         return true;
     }
     else {
-        // LOG(Error) << "Failed to reset " << get_name() << " counts " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to reset " << get_name() << " counts " << QuanserDaq::get_quanser_error_message(result);
         return false;
     }
 }
@@ -76,11 +88,11 @@ bool QuanserEncoder::reset_count(ChanNum channel_number, int count) {
     result = hil_set_encoder_counts(daq_.handle_, &channel_number, 1, &count);
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
     if (result == 0) {
-        // LOG(Verbose) << "Reset " << get_name() << " channel number " << channel_number << " count to " << count;
+        LOG(Verbose) << "Reset " << get_name() << " channel number " << channel_number << " count to " << count;
         return true;
     }
     else {
-        // LOG(Error) << "Failed to reset " << get_name() << " channel number " << channel_number << " count " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to reset " << get_name() << " channel number " << channel_number << " count " << QuanserDaq::get_quanser_error_message(result);
         return false;
     }
 }
@@ -101,7 +113,7 @@ bool QuanserEncoder::set_quadrature_factors(const std::vector<QuadFactor>& facto
         else if (*it == QuadFactor::X4)
             converted_factors.push_back(ENCODER_QUADRATURE_4X);
         else {
-            // LOG(Error) << "QuadFactor X" << static_cast<ChanNum>(*it) << " not supported by Quanser";
+            LOG(Error) << "QuadFactor X" << static_cast<ChanNum>(*it) << " not supported by Quanser";
             return false;
         }
     }
@@ -109,11 +121,11 @@ bool QuanserEncoder::set_quadrature_factors(const std::vector<QuadFactor>& facto
     result = hil_set_encoder_quadrature_mode(daq_.handle_, &get_channel_numbers()[0], static_cast<ChanNum>(get_channel_count()), &converted_factors[0]);
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
     if (result == 0) {
-        // LOG(Verbose) << "Set " << get_name() << " quadrature factors";
+        LOG(Verbose) << "Set " << get_name() << " quadrature factors";
         return true;
     }
     else {
-        // LOG(Error) << "Failed to set " << get_name() << " quadrature factors " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to set " << get_name() << " quadrature factors " << QuanserDaq::get_quanser_error_message(result);
         return false;
     }
 }
@@ -132,32 +144,32 @@ bool QuanserEncoder::set_quadrature_factor(ChanNum channel_number, QuadFactor fa
     else if (factor == QuadFactor::X4)
         converted_factor = ENCODER_QUADRATURE_4X;
     else {
-        // LOG(Error) << "QuadFactor X" << static_cast<ChanNum>(factor) << " not supported by Quanser";
+        LOG(Error) << "QuadFactor X" << static_cast<ChanNum>(factor) << " not supported by Quanser";
         return false;
     }
     t_error result;
     result = hil_set_encoder_quadrature_mode(daq_.handle_, &channel_number, 1, &converted_factor);
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
     if (result == 0) {
-        // LOG(Verbose) << "Set " << get_name() << " channel number " << channel_number << " quadrature factor";
+        LOG(Verbose) << "Set " << get_name() << " channel number " << channel_number << " quadrature factor";
         return true;
     }
     else {
-        // LOG(Error) << "Failed to set " << get_name() << " channel number " << channel_number << " quadrature factor" << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to set " << get_name() << " channel number " << channel_number << " quadrature factor" << QuanserDaq::get_quanser_error_message(result);
         return false;
     }
 }
 
 std::vector<double>& QuanserEncoder::get_values_per_sec() {
     if (!has_velocity_) {
-        // LOG(Warning) << "QuanserEncoder module " << get_name() << " has no velocity estimation";
+        LOG(Warning) << "QuanserEncoder module " << get_name() << " has no velocity estimation";
     }
     return values_per_sec_.get();
 }
 
 double QuanserEncoder::get_value_per_sec(ChanNum channel_number) {
     if (!has_velocity_) {
-        // LOG(Warning) << "QuanserEncoder module " << get_name() << " has no velocity estimation";
+        LOG(Warning) << "QuanserEncoder module " << get_name() << " has no velocity estimation";
     }
     if (validate_channel_number(channel_number))
         return values_per_sec_[channel_number];
@@ -167,7 +179,7 @@ double QuanserEncoder::get_value_per_sec(ChanNum channel_number) {
 
 const std::vector<double>& QuanserEncoder::get_velocities() {
     if (!has_velocity_) {
-        // LOG(Warning) << "QuanserEncoder module " << get_name() << " has no velocity estimation";
+        LOG(Warning) << "QuanserEncoder module " << get_name() << " has no velocity estimation";
     }
     for (auto const& ch : get_channel_numbers())
         velocities_[ch] = values_per_sec_[ch] * conversions_[ch];
@@ -176,7 +188,7 @@ const std::vector<double>& QuanserEncoder::get_velocities() {
 
 double QuanserEncoder::get_velocity(ChanNum channel_number) {
     if (!has_velocity_) {
-        // LOG(Warning) << "QuanserEncoder module " << get_name() << " has no velocity estimation";
+        LOG(Warning) << "QuanserEncoder module " << get_name() << " has no velocity estimation";
     }
     if (validate_channel_number(channel_number)) {
         return values_per_sec_[channel_number] * conversions_[channel_number];

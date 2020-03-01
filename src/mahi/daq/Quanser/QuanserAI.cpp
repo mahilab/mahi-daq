@@ -1,7 +1,18 @@
 #include <mahi/daq/Quanser/QuanserDaq.hpp>
 #include <mahi/daq/Quanser/QuanserAI.hpp>
-
 #include <hil.h>
+
+#if MAHI_DAQ_OUTPUT_LOGS
+    #ifdef MAHI_LOG
+        #include <mahi/log/Log.hpp>
+    #else
+        #include <iostream>
+        #define LOG(severity) std::cout << std::endl << #severity << ": "
+    #endif
+#else
+    #include <iostream>
+    #define LOG(severity) if (true) { } else std::cout 
+#endif
 
 namespace mahi {
 namespace daq {
@@ -23,7 +34,7 @@ bool QuanserAI::update() {
     if (result == 0)
         return true;
     else {
-        // LOG(Error) << "Failed to update " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to update " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
         return false;
     }
 }
@@ -34,7 +45,7 @@ bool QuanserAI::update_channel(ChanNum channel_number) {
     if (result == 0)
         return true;
     else {
-        // LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " " << QuanserDaq::get_quanser_error_message(result);
         return false;
     }
 }
@@ -45,11 +56,11 @@ bool QuanserAI::set_ranges(const std::vector<Voltage>& min_values, const std::ve
     t_error result;
     result = hil_set_analog_input_ranges(daq_.handle_, &get_channel_numbers()[0], static_cast<ChanNum>(get_channel_count()), &min_values_.get()[0], &max_values_.get()[0]);
     if (result == 0) {
-        // LOG(Verbose) << "Set " << get_name() << "ranges to min=" << min_values << ", max=" << max_values;
+        LOG(Verbose) << "Set " << get_name() << "ranges"; // to min=" << min_values << ", max=" << max_values;
         return true;
     }
     else {
-        // LOG(Error) << "Failed to set " << get_name() << " ranges " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to set " << get_name() << " ranges " << QuanserDaq::get_quanser_error_message(result);
         return false;
     }
 }
@@ -60,11 +71,11 @@ bool QuanserAI::set_range(ChanNum channel_number, Voltage min_value, Voltage max
     t_error result;
     result = hil_set_analog_input_ranges(daq_.handle_, &channel_number, 1, &min_values_[channel_number], &max_values_[channel_number]);
     if (result == 0) {
-        // LOG(Verbose) << "Set " << get_name() << " channel number " << channel_number << " range to min=" << min_value << ", max=" << max_value;
+        LOG(Verbose) << "Set " << get_name() << " channel number " << channel_number << " range to min=" << min_value << ", max=" << max_value;
         return true;
     }
     else {
-        // LOG(Error) << "Failed to set " << get_name() << " channel number " << channel_number << " range " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to set " << get_name() << " channel number " << channel_number << " range " << QuanserDaq::get_quanser_error_message(result);
         return false;
     }
 }

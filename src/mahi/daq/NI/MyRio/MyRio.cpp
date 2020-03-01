@@ -22,42 +22,42 @@ bool open_myrio(bool reset) {
     // init
     status = NiFpga_Initialize();
     if (MyRio_IsNotSuccess(status)) {
-        // LOG(Error) << "Failed to initializae myRIO FPGA " << get_nifpga_error_message(status);
+        LOG(Error) << "Failed to initializae myRIO FPGA " << get_nifpga_error_message(status);
         return false;
     }
-    // LOG(Verbose) << "Initialized myRIO FPGA";
+    LOG(Verbose) << "Initialized myRIO FPGA";
     // open but don't run yet
     status = NiFpga_Open(MyRio_BitfilePath, MyRio_Signature, "RIO0", NiFpga_OpenAttribute_NoRun, &myrio_session);
     if (MyRio_IsNotSuccess(status)) {
-        // LOG(Error) << "Failed to open myRIO FPGA " << get_nifpga_error_message(status);
+        LOG(Error) << "Failed to open myRIO FPGA " << get_nifpga_error_message(status);
         if (status == NiFpga_Status_BitfileReadError) {
-            // LOG(Error) << "Ensure NiFpga_MyRio1900Fpga60.lvbitx is in " <<  MyRio_DefaultFolder;
+            LOG(Error) << "Ensure NiFpga_MyRio1900Fpga60.lvbitx is in " <<  MyRio_DefaultFolder;
         }
         return false;
     }
-    // LOG(Verbose) << "Opened myRIO FPGA";
+    LOG(Verbose) << "Opened myRIO FPGA";
     // reset FPGA if requested
     if (reset) {
         status = NiFpga_Reset(myrio_session);
         if (MyRio_IsNotSuccess(status)) {
-            // LOG(Error) << "Failed to reset myRIO FGPA " << get_nifpga_error_message(status);
+            LOG(Error) << "Failed to reset myRIO FGPA " << get_nifpga_error_message(status);
             return false;
         }
-        // LOG(Verbose) << "Reset myRIO FPGA";
+        LOG(Verbose) << "Reset myRIO FPGA";
     }
     // run FPGA
     status = NiFpga_Run(myrio_session, 0);
     if (MyRio_IsNotSuccess(status)) {
         if (status == -NiFpga_Status_FpgaAlreadyRunning) {
-            // LOG(Info) << "myRIO FPGA was already running";
+            LOG(Info) << "myRIO FPGA was already running";
             return true;
         }
         else {
-            // LOG(Error) << "Failed to run myRIO FPGA " << get_nifpga_error_message(status);
+            LOG(Error) << "Failed to run myRIO FPGA " << get_nifpga_error_message(status);
             return false;
         }
     }
-    // LOG(Verbose) << "Running myRIO FPGA";
+    LOG(Verbose) << "Running myRIO FPGA";
     // wait for the FPGA to signal ready
     Clock clock;
     sysReady = NiFpga_False;    
@@ -65,14 +65,14 @@ bool open_myrio(bool reset) {
         NiFpga_MergeStatus(&status, NiFpga_ReadBool(myrio_session, SYSRDY, &sysReady));
     }
     if (MyRio_IsNotSuccess(status)) {
-        // LOG(Error) << "Failed to read SYSRDY register " << get_nifpga_error_message(status);
+        LOG(Error) << "Failed to read SYSRDY register " << get_nifpga_error_message(status);
         return false;
     }
     if (!sysReady) {
-        // LOG(Error) << "Timeout while waiting for system ready";
+        LOG(Error) << "Timeout while waiting for system ready";
         return false;
     }
-    // LOG(Verbose) << "myRIO FPGA system ready";    
+    LOG(Verbose) << "myRIO FPGA system ready";    
     return true;
 }
 
@@ -82,18 +82,18 @@ bool close_myrio(bool reset) {
     // close FPGA
     status = reset ? NiFpga_Close(myrio_session, 0) : NiFpga_Close(myrio_session, NiFpga_CloseAttribute_NoResetIfLastSession);
     if (MyRio_IsNotSuccess(status)) {
-        // LOG(Error) << "Failed to close myRIO FPGA " << get_nifpga_error_message(status);
+        LOG(Error) << "Failed to close myRIO FPGA " << get_nifpga_error_message(status);
         return false;
     }
-    // LOG(Verbose) << "Closed myRIO FPGA";
+    LOG(Verbose) << "Closed myRIO FPGA";
     // unload the NiFpga library
     status = NiFpga_Finalize();
     if (MyRio_IsNotSuccess(status)) {
         MyRio_PrintStatus(status);
-        // LOG(Error) << "Failed to unload myRIO FPGA library " << get_nifpga_error_message(status);
+        LOG(Error) << "Failed to unload myRIO FPGA library " << get_nifpga_error_message(status);
         return false;
     }
-    // LOG(Verbose) << "Finalized myRIO FPGA";
+    LOG(Verbose) << "Finalized myRIO FPGA";
     return true;
 }
 
@@ -120,15 +120,15 @@ bool MyRio::reset() {
             mxpA.reset();
             mxpB.reset();
             mspC.reset();
-            // LOG(Info) << "Reset myRIO FPGA to default state";
+            LOG(Info) << "Reset myRIO FPGA to default state";
         }
         else {
-            // LOG(Info) << "Failed to reset myRIO FPGA to default state";
+            LOG(Info) << "Failed to reset myRIO FPGA to default state";
         }
         return true;
     }
     else {
-        // LOG(Error) << "Could not reset myRIO FPGA because the myRIO is not open";
+        LOG(Error) << "Could not reset myRIO FPGA because the myRIO is not open";
         return false;
     }    
 }
@@ -143,7 +143,7 @@ bool MyRio::on_close() {
 
 bool MyRio::on_enable() {
     if (!is_open()) {
-        // LOG(Error) << "Unable to enable myRIO " << get_name() << " because it is not open";
+        LOG(Error) << "Unable to enable myRIO " << get_name() << " because it is not open";
         return false;
     }
     // enable each connector
@@ -157,7 +157,7 @@ bool MyRio::on_enable() {
 
 bool MyRio::on_disable() {
     if (!is_open()) {
-        // LOG(Error) << "Unable to disable myRIO " << get_name() << " because it is not open";
+        LOG(Error) << "Unable to disable myRIO " << get_name() << " because it is not open";
         return false;
     }
     // disable each connect

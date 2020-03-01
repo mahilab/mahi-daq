@@ -1,9 +1,20 @@
 #include <mahi/daq/Sensoray/S826.hpp>
 #include <mahi/daq/Sensoray/S826AI.hpp>
-
 #include <windows.h>
 #include <826api.h> 
 #include <bitset>
+
+#if MAHI_DAQ_OUTPUT_LOGS
+    #ifdef MAHI_LOG
+        #include <mahi/log/Log.hpp>
+    #else
+        #include <iostream>
+        #define LOG(severity) std::cout << std::endl << #severity << ": "
+    #endif
+#else
+    #include <iostream>
+    #define LOG(severity) if (true) { } else std::cout 
+#endif
 
 namespace mahi {
 namespace daq {
@@ -24,7 +35,7 @@ bool S826AI::update() {
         remaining &= ~slotlist;
     } while (result == S826_ERR_NOTREADY);
     if (result != S826_ERR_OK) {
-        // LOG(Error) << "Failed to update " << get_name() << " (" << S826::get_error_message(result) << ")";
+        LOG(Error) << "Failed to update " << get_name() << " (" << S826::get_error_message(result) << ")";
         return false;
     }
     // convert adc buffer to voltages
@@ -46,7 +57,7 @@ bool S826AI::update_channel(ChanNum channel_number) {
         result = S826_AdcRead(s826_.board_, adc_buffer_, NULL, &slotlist, 0); // note: tmax=0
     } while (result == S826_ERR_NOTREADY);
     if (result != S826_ERR_OK) {
-        // LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " (" << S826::get_error_message(result) << ")";
+        LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " (" << S826::get_error_message(result) << ")";
         return false;
     }
     int slot = adc_buffer_[channel_number];
@@ -63,7 +74,7 @@ bool S826AI::set_settling_time(double t) {
     for (auto& c : get_channel_numbers()) {
         int result = S826_AdcSlotConfigWrite(s826_.board_, c, c, tsettle, S826_ADC_GAIN_1);
         if (result != S826_ERR_OK) {
-            // LOG(Error) << "Failed to set " << get_name() << " channel number " << c << " input range (" << S826::get_error_message(result) << ")";
+            LOG(Error) << "Failed to set " << get_name() << " channel number " << c << " input range (" << S826::get_error_message(result) << ")";
             success = false;
         }
     }
@@ -79,19 +90,19 @@ bool S826AI::on_open() {
     // configure ADC slotlist
     result = S826_AdcSlotlistWrite(s826_.board_, 0xFFFF, S826_BITWRITE);
     if (result != S826_ERR_OK) {
-        // LOG(Error) << "Failed to write slotlist of " << get_name() << " (" << S826::get_error_message(result) << ")";
+        LOG(Error) << "Failed to write slotlist of " << get_name() << " (" << S826::get_error_message(result) << ")";
         success = false;
     }
     // select free-running mode
     result = S826_AdcTrigModeWrite(s826_.board_, 0);
     if (result != S826_ERR_OK) {
-        // LOG(Error) << "Failed to set ADC trigger mode of " << get_name() << " (" << S826::get_error_message(result) << ")";
+        LOG(Error) << "Failed to set ADC trigger mode of " << get_name() << " (" << S826::get_error_message(result) << ")";
         success = false;
     }
     // start conversions
     result = S826_AdcEnableWrite(s826_.board_, 1);
     if (result != S826_ERR_OK) {
-        // LOG(Error) << "Failed to enable ADC conversions of " << get_name() << " (" << S826::get_error_message(result) << ")";
+        LOG(Error) << "Failed to enable ADC conversions of " << get_name() << " (" << S826::get_error_message(result) << ")";
         success = false;
     }
     return success;

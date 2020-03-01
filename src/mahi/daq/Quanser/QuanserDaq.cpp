@@ -1,5 +1,4 @@
 #include <mahi/daq/Quanser/QuanserDaq.hpp>
-
 #include <quanser_messages.h>
 #include <hil.h>
 #include <tchar.h>
@@ -7,6 +6,17 @@
 #include <stdexcept>
 #include <thread>
 
+#if MAHI_DAQ_OUTPUT_LOGS
+    #ifdef MAHI_LOG
+        #include <mahi/log/Log.hpp>
+    #else
+        #include <iostream>
+        #define LOG(severity) std::cout << std::endl << #severity << ": "
+    #endif
+#else
+    #include <iostream>
+    #define LOG(severity) if (true) { } else std::cout 
+#endif
 
 namespace mahi {
 namespace daq {
@@ -40,11 +50,11 @@ bool QuanserDaq::on_open() {
         }
         else {
             // unsuccesful open, continue
-            // LOG(Error) << "Failed to open " << get_name() << " (Attempt " << attempt + 1 << "/" << 5 << ") " << get_quanser_error_message(result);
+            LOG(Error) << "Failed to open " << get_name() << " (Attempt " << attempt + 1 << "/" << 5 << ") " << get_quanser_error_message(result);
         }
     }
     // all attempts to open were unsuccessful
-    // LOG(Error) << "Exhausted all attempts to open " << get_name();
+    LOG(Error) << "Exhausted all attempts to open " << get_name();
     return false;
 }
 
@@ -56,7 +66,7 @@ bool QuanserDaq::on_close() {
         return true;
     }
     else {
-        // LOG(Error) << get_quanser_error_message(result);
+        LOG(Error) << get_quanser_error_message(result);
         return false;
     }
 }
@@ -69,11 +79,11 @@ bool QuanserDaq::set_options(const QuanserOptions& options) {
     result = hil_set_card_specific_options(handle_, options_str, std::strlen(options_str));
     std::this_thread::sleep_for(std::chrono::milliseconds(10));
     if (result == 0) {
-        // LOG(Verbose) << "Set " << get_name() << " options to: \"" << options_.get_string() << "\"";
+        LOG(Verbose) << "Set " << get_name() << " options to: \"" << options_.get_string() << "\"";
         return true;
     }
     else {
-        // LOG(Error) << "Failed to set " << get_name() << " options to: \"" << options_.get_string() << "\" " << get_quanser_error_message(result);
+        LOG(Error) << "Failed to set " << get_name() << " options to: \"" << options_.get_string() << "\" " << get_quanser_error_message(result);
         return false;
     }
 }

@@ -43,13 +43,13 @@ MyRioAI::MyRioAI(MyRioConnector& connector, const ChanNums& channel_numbers) :
 
 bool MyRioAI::update_channel(ChanNum channel_number) {
     if (!connector_.is_open()) {
-        // LOG(Error) << "Failed to update channel because" << connector_.get_name() << " is not open";
+        LOG(Error) << "Failed to update channel because" << connector_.get_name() << " is not open";
         return false;
     }
     uint16_t value = 0;
     NiFpga_Status status = NiFpga_ReadU16(myrio_session, REGISTERS[connector_.type][channel_number], &value);
     if (status < 0) {
-        // LOG(Error) << "Failed to update " << get_name() << " channel number "  << channel_number;
+        LOG(Error) << "Failed to update " << get_name() << " channel number "  << channel_number;
         return false;
     }
     else {

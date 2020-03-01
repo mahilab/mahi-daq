@@ -10,6 +10,7 @@ cmake_minimum_required(VERSION 3.13.0)
 
 # General
 option(MAHI_DAQ_EXAMPLES "Turn ON to build example executable(s)" OFF)
+option(MAHI_DAQ_OUTPUT_LOGS "Turn ON to output log messages" ON)
 
 #===============================================================================
 # FRONT MATTER
@@ -87,6 +88,11 @@ if(WIN32)
             -DNOMINMAX                         # remove min/max macros
             -D_WINSOCK_DEPRECATED_NO_WARNINGS  # remove winsock deprecated warnings
     )
+
+    if (MAHI_DAQ_OUTPUT_LOGS)    
+        target_compile_definitions(daq PUBLIC MAHI_DAQ_OUTPUT_LOGS)
+    endif()
+
 
     # the following only compile under MSVC
     if (MSVC)
