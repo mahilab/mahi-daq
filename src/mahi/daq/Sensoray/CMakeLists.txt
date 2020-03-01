@@ -8,5 +8,5 @@ target_sources(daq
     S826Watchdog.cpp
 )
 
-target_link_libraries(daq PRIVATE Sensoray::Sensoray826)
+target_link_libraries(daq PUBLIC Sensoray::Sensoray826)
 target_compile_definitions(daq PUBLIC MAHI_SENSORAY)

@@ -214,6 +214,7 @@ install(FILES
 # install find modules
 install(FILES 
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindHIL.cmake
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindSensoray826.cmake
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindNIDAQmx.cmake
     DESTINATION ${INSTALL_CONFIGDIR}/Modules
 )
