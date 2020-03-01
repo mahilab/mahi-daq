@@ -1,4 +1,4 @@
-target_sources(mahi-daq
+target_sources(daq
     PRIVATE
     S826.cpp
     S826AI.cpp
@@ -8,5 +8,5 @@ target_sources(mahi-daq
     S826Watchdog.cpp
 )
 
-target_link_libraries(mahi-daq PRIVATE Sensoray::Sensoray826)
-target_compile_definitions(mahi-daq PUBLIC MAHI_SENSORAY)
+target_link_libraries(daq PRIVATE Sensoray::Sensoray826)
+target_compile_definitions(daq PUBLIC MAHI_SENSORAY)

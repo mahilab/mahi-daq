@@ -1,4 +1,4 @@
-target_sources(mahi-daq
+target_sources(daq
     PRIVATE
     Buffer.cpp
     DaqBase.cpp

@@ -1,4 +1,4 @@
-target_sources(mahi-daq
+target_sources(daq
     PRIVATE
     Q2Usb.cpp
     Q8Usb.cpp
@@ -15,11 +15,11 @@ target_sources(mahi-daq
     QuanserWatchdog.cpp
 )
 
-target_link_libraries(mahi-daq
+target_link_libraries(daq
 PRIVATE
     HIL::HIL                 # HIL SDK
     HIL::quanser_runtime     # HIL quanser_runtime
     HIL::quanser_common      # HIL quanser_common
     legacy_stdio_definitions # needed for _vsnprintf in quanser_common
 )
-target_compile_definitions(mahi-daq PUBLIC MAHI_QUANSER)
+target_compile_definitions(daq PUBLIC MAHI_QUANSER)

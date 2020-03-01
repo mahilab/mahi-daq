@@ -1,4 +1,4 @@
-target_sources(mahi-daq
+target_sources(daq
     PRIVATE
     MyRio.cpp
     MyRioAI.cpp
@@ -24,4 +24,4 @@ target_sources(mahi-daq
     Detail/MyRioFpga60/visatype.h
 )
 
-target_compile_definitions(mahi-daq PUBLIC MAHI_MYRIO PRIVATE MyRio_1900) # MyRio_1900 needed by NI src
+target_compile_definitions(daq PUBLIC MAHI_MYRIO PRIVATE MyRio_1900) # MyRio_1900 needed by NI src

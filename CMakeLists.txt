@@ -42,16 +42,17 @@ endif()
 # CREATE LIBRARY
 #===============================================================================
 
-add_library(mahi-daq "")
-add_library(mahi::daq ALIAS mahi-daq)
-set_target_properties(mahi-daq PROPERTIES DEBUG_POSTFIX -d)
-target_compile_features(mahi-daq PUBLIC cxx_std_11)
-install(TARGETS mahi-daq EXPORT mahi-daq-targets LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+add_library(daq "")
+add_library(mahi::daq ALIAS daq)
+set_target_properties(daq PROPERTIES DEBUG_POSTFIX -d)
+target_compile_features(daq PUBLIC cxx_std_11)
+install(TARGETS daq EXPORT mahi-daq-targets LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+set_target_properties(daq PROPERTIES OUTPUT_NAME "mahi-daq")
 
 # defines
-target_compile_definitions(mahi-daq PUBLIC MAHI_DAQ) # for compatibility checks
+target_compile_definitions(daq PUBLIC MAHI_DAQ) # for compatibility checks
 if (MAHI_DAQ_OUTPUT_LOGS)    
-    target_compile_definitions(mahi-daq PUBLIC MAHI_DAQ_OUTPUT_LOGS)
+    target_compile_definitions(daq PUBLIC MAHI_DAQ_OUTPUT_LOGS)
 endif()
 
 # add source files
@@ -59,8 +60,8 @@ add_subdirectory(src/mahi/daq)
 
 # add include files
 file(GLOB_RECURSE MAHI_DAQ_HEADERS "include/*.hpp" "include/*.h" "include/*.inl")
-target_sources(mahi-daq PRIVATE ${MAHI_DAQ_HEADERS}) # for intellisense
-target_include_directories(mahi-daq
+target_sources(daq PRIVATE ${MAHI_DAQ_HEADERS}) # for intellisense
+target_include_directories(daq
     PUBLIC
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -74,7 +75,7 @@ target_include_directories(mahi-daq
 
 if(WIN32)
 
-    target_compile_definitions(mahi-daq
+    target_compile_definitions(daq
         PUBLIC
             -D_CRT_SECURE_NO_WARNINGS          # remove secure warnings (e.g sprinft_s)
             -DNOMINMAX                         # remove min/max macros
@@ -135,7 +136,7 @@ endif(WIN32)
 
 if (NI_LRT)
     set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
-    target_link_libraries(mahi-daq
+    target_link_libraries(daq
         PRIVATE
             dl # Dynamic Linking Library
             rt # Realtime Extensions library
