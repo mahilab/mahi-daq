@@ -1,16 +1,7 @@
-#include <MEL/Daq/Sensoray/S826.hpp>
-#include <MEL/Core/Console.hpp>
-#include <MEL/Core/Timer.hpp>
-#include <MEL/Math/Waveform.hpp>
-#include <MEL/Communications/MelShare.hpp>
-#include <bitset>
-#include <MEL/Math/Differentiator.hpp>
-#include <MEL/Math/Functions.hpp>
-#include <MEL/Utility/System.hpp>
-#include <MEL/Daq/Quanser/Q8Usb.hpp>
-#include <MEL/Math/Butterworth.hpp>
+#include <Mahi/Daq.hpp>
 
-using namespace mel;
+using namespace mahi::daq;
+using namespace mahi::util;
 
 ctrl_bool g_stop_flag(false);
 
@@ -40,7 +31,6 @@ int main(int argc, char const *argv[])
     //  s826.encoder[0].reset_count(0);
      s826.encoder[0].set_units_per_count(360.0 / 512);
 
-     MelShare ms("s826");
      std::vector<double> buffer(5);
 
      Differentiator diff1;
@@ -55,11 +45,10 @@ int main(int argc, char const *argv[])
         buffer[1] = s826.AI[0].get_value();
         buffer[2] = s826.encoder[0].get_position();
         buffer[3] = s826.encoder[0].get_velocity();
-        double vel = filt.update(buffer[3],t); 
+        double vel = filt.update(buffer[3]); 
         buffer[4] = vel;
         s826.AO[0].set_value(buffer[0]);
         s826.AO.update();
-        ms.write_data(buffer);
         t = timer.wait();
     }
 

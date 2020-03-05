@@ -19,6 +19,10 @@ if (MAHI_QUANSER)
     mahi_daq_example(quanser_performance)
 endif()
 
+if (MAHI_SENSORAY826)
+    mahi_daq_example(s826)
+endif()
+
 if (MAHI_MYRIO)
     mahi_daq_example(myrio)
 endif()
