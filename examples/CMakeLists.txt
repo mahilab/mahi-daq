@@ -12,5 +12,5 @@ macro(mahi_daq_example target)
 endmacro(mahi_daq_example)
 
 if (MAHI_QUANSER)
-    mahi_daq_example(q8usb)
+    # mahi_daq_example(q8usb)
 endif()

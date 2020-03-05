@@ -10,7 +10,6 @@ cmake_minimum_required(VERSION 3.13.0)
 
 # General
 option(MAHI_DAQ_EXAMPLES "Turn ON to build example executable(s)" OFF)
-option(MAHI_DAQ_OUTPUT_LOGS "Turn ON to output log messages" ON)
 
 #===============================================================================
 # FRONT MATTER
@@ -39,6 +38,14 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
 endif()
 
 #===============================================================================
+# MAHI UTIL
+#===============================================================================
+
+include(FetchContent) 
+FetchContent_Declare(mahi-util GIT_REPOSITORY https://github.com/mahilab/mahi-util.git) 
+FetchContent_MakeAvailable(mahi-util)
+
+#===============================================================================
 # CREATE LIBRARY
 #===============================================================================
 
@@ -51,9 +58,6 @@ set_target_properties(daq PROPERTIES OUTPUT_NAME "mahi-daq")
 
 # defines
 target_compile_definitions(daq PUBLIC MAHI_DAQ) # for compatibility checks
-if (MAHI_DAQ_OUTPUT_LOGS)    
-    target_compile_definitions(daq PUBLIC MAHI_DAQ_OUTPUT_LOGS)
-endif()
 
 # add source files
 add_subdirectory(src/mahi/daq)
@@ -68,6 +72,9 @@ target_include_directories(daq
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
+
+# link libraries
+target_link_libraries(daq PUBLIC mahi::util)
 
 #===============================================================================
 # WINDOWS ONLY
