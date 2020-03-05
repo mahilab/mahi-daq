@@ -51,7 +51,7 @@ int main(int argc, char* argv[]) {
     Waveform sqrwave3(Waveform::Square, seconds(3), 0.5, 0.5);
     Waveform sqrwave4(Waveform::Square, seconds(4), 0.5, 0.5);
 
-    Timer timer(hertz(1000));
+    Timer timer(1000_Hz);
     Time t;
 
     // enable Q8Usb

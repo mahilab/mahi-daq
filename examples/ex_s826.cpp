@@ -1,3 +1,19 @@
+// MIT License
+//
+// Copyright (c) 2020 Mechatronics and Haptic Interfaces Lab - Rice University
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// Author(s): Evan Pezent (epezent@rice.edu)
+
 #include <Mahi/Daq.hpp>
 
 using namespace mahi::daq;
@@ -22,7 +38,7 @@ int main(int argc, char const *argv[])
     // s826.AI.set_settling_time(microseconds(3));
     s826.encoder[0].zero();
 
-    Timer timer(hertz(1000));
+    Timer timer(1000_Hz);
     timer.disable_warnings();
     Time t;
 
@@ -34,7 +50,7 @@ int main(int argc, char const *argv[])
      std::vector<double> buffer(5);
 
      Differentiator diff1;
-     Butterworth filt(2, hertz(100), hertz(1000));
+     Butterworth filt(2, 100_Hz, 1000_Hz);
     //  Differentiator diff2;
 
     while (!g_stop_flag)

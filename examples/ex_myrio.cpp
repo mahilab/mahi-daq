@@ -125,7 +125,7 @@ int main(int argc, char** argv) {
     Waveform sinwave(Waveform::Sin, seconds(1), 10);
 
     // create 1000Hz loop Timer and Time t
-    Timer timer(hertz(1000), Timer::Sleep);
+    Timer timer(1000_Hz, Timer::Sleep);
     Time t;
 
     // control loop
