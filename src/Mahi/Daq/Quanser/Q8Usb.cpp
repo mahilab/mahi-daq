@@ -28,7 +28,7 @@ Q8Usb::Q8Usb(QuanserOptions options,
     DI(*this, { 0, 1, 2, 3, 4, 5, 6, 7 }),
     DO(*this, { 0, 1, 2, 3, 4, 5, 6, 7 }),
     encoder(*this, { 0, 1, 2, 3, 4, 5, 6, 7 }, true), // has velocity estimation
-    watchdog(*this, 0.1)
+    watchdog(*this, 100_ms)
 {
     // increment NEXT_ID
     ++NEXT_Q8USB_ID;

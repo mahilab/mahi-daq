@@ -24,7 +24,7 @@ Q2Usb::Q2Usb(QuanserOptions options, ChanNum id) :
     AO(*this,     {0,1}),
     DIO(*this,    {0,1,2,3,4,5,6,7,8}),
     encoder(*this,{0,1}, false),
-    watchdog(*this, 0.1)
+    watchdog(*this, 100_ms)
 {
     // increment next_id_
     ++NEXT_Q2USB_ID;

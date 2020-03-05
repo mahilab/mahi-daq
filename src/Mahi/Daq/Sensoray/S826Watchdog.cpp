@@ -10,14 +10,14 @@ using namespace mahi::util;
 namespace mahi {
 namespace daq {
 
-S826Watchdog::S826Watchdog(S826& s826, double timeout) : Watchdog(timeout), s826_(s826) {}
+S826Watchdog::S826Watchdog(S826& s826, util::Time timeout) : Watchdog(timeout), s826_(s826) {}
 
 S826Watchdog::~S826Watchdog() {
     
 }
 
 bool S826Watchdog::start() {
-    unsigned int microseconds = (unsigned int)(timeout_ * 1000000);
+    unsigned int microseconds = (unsigned int)timeout_.as_microseconds();
     unsigned int wdtiming[5] = {microseconds * 50, 1, 1, 0, 0};
     int result;
     result = S826_SafeWrenWrite(s826_.board_, S826_SAFEN_SWE);

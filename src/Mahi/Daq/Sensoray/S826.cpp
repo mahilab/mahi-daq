@@ -16,7 +16,7 @@ S826::S826(int board) :
     AO(*this),
     DIO(*this),
     encoder(*this),
-    watchdog(*this, 0.01)
+    watchdog(*this, 10_ms)
 {
 
 }
@@ -72,14 +72,14 @@ bool S826::on_disable() {
     return true;
 }
 
-double S826::get_timestamp() const {
+util::Time S826::get_time() const {
     unsigned int timestamp;
     int result = S826_TimestampRead(board_, &timestamp);
     if (result != S826_ERR_OK) {
         LOG(Error) << "Failed to read " << get_name() << " timestamp (" << get_error_message(result) << ").";
-        return 0;
+        return Time::Zero;
     }
-    return (double)timestamp / 1000000.0;
+    return util::microseconds(timestamp);
 }
 
 std::string S826::get_error_message(int error) {

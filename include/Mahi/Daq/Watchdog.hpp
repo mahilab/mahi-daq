@@ -15,6 +15,7 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
+#include <Mahi/Util/Timing/Time.hpp>
 
 namespace mahi {
 namespace daq {
@@ -27,7 +28,7 @@ namespace daq {
 class Watchdog {
 public:
     /// Default constructor
-    Watchdog(double timeout);
+    Watchdog(util::Time timeout);
 
     /// Default destructor
     virtual ~Watchdog();
@@ -55,10 +56,10 @@ public:
     virtual bool clear() = 0;
 
     /// Sets the timeout period this Watchdog should operate on
-    virtual void set_timeout(double timeout);
+    virtual void set_timeout(util::Time timeout);
 
 protected:
-    double timeout_; ///< The timeout period for this Watchdog
+    util::Time timeout_; ///< The timeout period for this Watchdog
     bool watching_;  ///< True if watchdog has been started, false if stopped
 
 private:

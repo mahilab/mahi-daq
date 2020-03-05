@@ -38,7 +38,7 @@ public:
     virtual bool on_disable() override;
 
     /// Returns the current board time
-    double get_timestamp() const;
+    util::Time get_time() const;
 
 public:
 

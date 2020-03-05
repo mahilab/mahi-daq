@@ -34,7 +34,7 @@ class QuanserDaq;
 class QuanserWatchdog : public Watchdog {
 public:
     /// Default constructor
-    QuanserWatchdog(QuanserDaq& daq, double timeout);
+    QuanserWatchdog(QuanserDaq& daq, util::Time timeout);
 
     /// Default destructor. Stops the watchdog if watching
     ~QuanserWatchdog();

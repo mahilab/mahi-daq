@@ -30,7 +30,7 @@ QPid::QPid(QuanserOptions options,
                  40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
                  50, 51, 52, 53, 54, 55  }),
     encoder(*this, { 0, 1, 2, 3, 4, 5, 6, 7 }, true), // has velocity estimation
-    watchdog(*this, 0.1)
+    watchdog(*this, 100_ms)
 {
     // increment NEXT_ID
     ++NEXT_QPID_ID;

@@ -7,7 +7,7 @@ namespace daq {
 // CLASS DEFINTIONS
 //==============================================================================
 
-Watchdog::Watchdog(double timeout) :
+Watchdog::Watchdog(util::Time timeout) :
     timeout_(timeout),
     watching_(false)
 {
@@ -17,7 +17,7 @@ Watchdog::~Watchdog() {
 
 }
 
-void Watchdog::set_timeout(double timeout) {
+void Watchdog::set_timeout(util::Time timeout) {
     timeout_ = timeout;
 }
 

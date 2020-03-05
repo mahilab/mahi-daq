@@ -12,7 +12,7 @@ namespace daq {
 // CLASS DEFINITIONS
 //==============================================================================
 
-QuanserWatchdog::QuanserWatchdog(QuanserDaq& daq, double timeout) :
+QuanserWatchdog::QuanserWatchdog(QuanserDaq& daq, util::Time timeout) :
     Watchdog(timeout),
     daq_(daq)
 { }
@@ -23,7 +23,7 @@ QuanserWatchdog::~QuanserWatchdog() {
 
 bool QuanserWatchdog::start() {
     t_error result;
-    result = hil_watchdog_start(daq_.handle_, timeout_);
+    result = hil_watchdog_start(daq_.handle_, timeout_.as_seconds());
     if (result == 0) {
         LOG(Verbose) << "Started watchdog on " << daq_.get_name();
         return true;

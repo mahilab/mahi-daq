@@ -52,7 +52,7 @@ private:
     friend class S826;
 
     /// Private constructor used by S826
-    S826Watchdog(S826& daq, double timeout);
+    S826Watchdog(S826& daq, util::Time timeout);
 
 private:
     S826& s826_;  ///< Reference to parent QDaq

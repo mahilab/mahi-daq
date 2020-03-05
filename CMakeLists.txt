@@ -149,6 +149,7 @@ if (NI_LRT)
             rt # Realtime Extensions library
     )
     if (CMAKE_SYSTEM_PROCESSOR MATCHES ARM)
+        set(MAHI_MYRIO ON)
         add_subdirectory(src/mahi/daq/NI/MyRio)
     endif()
 endif()

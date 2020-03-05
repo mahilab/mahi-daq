@@ -63,3 +63,5 @@
     #include <mahi/daq/NI/MyRio/MyRioEncoder.hpp>
     #include <mahi/daq/NI/MyRio/MyRioI2C.hpp>
 #endif
+
+#include <Mahi/Util.hpp>
