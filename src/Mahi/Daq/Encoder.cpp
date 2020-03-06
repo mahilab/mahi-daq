@@ -39,7 +39,7 @@ bool Encoder::on_enable() {
 
 bool Encoder::reset_counts(const std::vector<int>& counts) {
     if (validate_channel_count(counts.size())) {
-        auto ch_nums = get_channel_numbers();
+        auto ch_nums = channel_numbers();
         for (std::size_t i = 0; i < ch_nums.size(); ++i) {
             reset_count(ch_nums[i], counts[i]);
         }
@@ -57,7 +57,7 @@ bool Encoder::reset_count(ChanNum channel_number, int count) {
 
 
 bool Encoder::set_quadrature_factors(const std::vector<QuadFactor>& factors) {
-    factors_.set(factors);
+    factors_.set_raw(factors);
     compute_conversions();
     return true;
 }
@@ -72,7 +72,7 @@ bool Encoder::set_quadrature_factor(ChanNum channel_number, QuadFactor factor) {
 }
 
 bool Encoder::zero() {
-    std::vector<int> zero(get_channel_count(), 0);
+    std::vector<int> zero(channel_count(), 0);
     return reset_counts(zero);
 }
 
@@ -82,7 +82,7 @@ bool Encoder::zero_channel(ChanNum channel_number) {
 }
 
 void Encoder::set_units_per_count(const std::vector<double>& units_per_count) {
-    units_per_count_.set(units_per_count);
+    units_per_count_.set_raw(units_per_count);
     compute_conversions();
 }
 
@@ -94,9 +94,9 @@ void Encoder::set_units_per_count(ChanNum channel_number, double units_per_count
 }
 
 const std::vector<double>& Encoder::get_positions() {
-    for (auto const& ch : get_channel_numbers())
+    for (auto const& ch : channel_numbers())
         positions_[ch] = values_[ch] * conversions_[ch];
-    return positions_.get();
+    return positions_.get_raw();
 }
 
 double Encoder::get_position(ChanNum channel_number) {
@@ -107,31 +107,23 @@ double Encoder::get_position(ChanNum channel_number) {
         return double();
 }
 
-Encoder::Channel Encoder::get_channel(ChanNum channel_number) {
+Encoder::Channel Encoder::channel(ChanNum channel_number) {
     if (validate_channel_number(channel_number))
         return Channel(this, channel_number);
     else
         return Channel();
 }
 
-std::vector<Encoder::Channel> Encoder::get_channels(const ChanNums& channel_numbers) {
+std::vector<Encoder::Channel> Encoder::channels(const ChanNums& channel_numbers) {
     std::vector<Channel> channels;
     for (std::size_t i = 0; i < channel_numbers.size(); ++i)
-        channels.push_back(get_channel(channel_numbers[i]));
+        channels.push_back(channel(channel_numbers[i]));
     return channels;
 }
 
-Encoder::Channel Encoder::operator[](ChanNum channel_number) {
-    return get_channel(channel_number);
-}
-
-std::vector<Encoder::Channel> Encoder::operator[](const ChanNums& channel_numbers) {
-    return get_channels(channel_numbers);
-}
-
 void Encoder::compute_conversions() {
-    for (std::size_t i = 0; i < get_channel_count(); ++i) {
-        ChanNum ch = get_channel_numbers()[i];
+    for (std::size_t i = 0; i < channel_count(); ++i) {
+        ChanNum ch = channel_numbers()[i];
         conversions_[ch] = units_per_count_[ch] / static_cast<double>(factors_[ch]);
     }
 }

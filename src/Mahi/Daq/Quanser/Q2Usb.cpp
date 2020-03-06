@@ -153,27 +153,27 @@ bool Q2Usb::identify(ChanNum input_channel_number, ChanNum outout_channel_number
         LOG(Error) << "Unable to call " << __FUNCTION__ << " because " << get_name() << " is not open";
         return false;
     }
-    InputOutput<Logic>::Channel di_ch = DIO.get_channel(input_channel_number);
-    InputOutput<Logic>::Channel do_ch = DIO.get_channel(outout_channel_number);
+    InputOutput<Logic>::Channel di_ch = DIO.channel(input_channel_number);
+    InputOutput<Logic>::Channel do_ch = DIO.channel(outout_channel_number);
     for (int i = 0; i < 5; ++i) {
-        do_ch.set_value(High);
+        do_ch.set(High);
         do_ch.update();
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         di_ch.update();
-        if (di_ch.get_value() != High)
+        if (di_ch.get() != High)
             return false;
-        do_ch.set_value(Low);
+        do_ch.set(Low);
         do_ch.update();
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         di_ch.update();
-        if (di_ch.get_value() != Low)
+        if (di_ch.get() != Low)
             return false;
     }
     return true;
 }
 
 void Q2Usb::set_led(Logic value) {
-    DIO[8].set_value(value);
+    DIO.set(8, value);
 }
 
 std::size_t Q2Usb::get_q2_usb_count() {

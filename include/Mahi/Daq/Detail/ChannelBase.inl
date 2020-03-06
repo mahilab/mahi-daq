@@ -17,27 +17,22 @@ bool ChannelBase<T>::update() {
 }
 
 template <typename T>
-T ChannelBase<T>::get_value() const {
-    return module_->get_value(channel_number_);
+const T& ChannelBase<T>::get() const {
+    return module_->get(channel_number_);
 }
 
 template <typename T>
-void ChannelBase<T>::set_value(T value) {
-    module_->set_value(channel_number_, value);
+T& ChannelBase<T>::get() {
+    return module_->get(channel_number_);
 }
 
 template <typename T>
-void ChannelBase<T>::operator= (const T& value) {
-    set_value(value);
+void ChannelBase<T>::set(T value) {
+    module_->set(channel_number_, value);
 }
 
 template <typename T>
-ChannelBase<T>::operator T() const {
-    return get_value();
-}
-
-template <typename T>
-ChanNum ChannelBase<T>::get_channel_number() const {
+ChanNum ChannelBase<T>::channel_number() const {
     return channel_number_;
 }
 

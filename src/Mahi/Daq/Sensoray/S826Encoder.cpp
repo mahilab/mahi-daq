@@ -23,7 +23,7 @@ bool S826Encoder::on_open() {
     // program all counters to be incremental encoders
     int result;
     bool success = true;
-    for (auto& c : get_channel_numbers()) {
+    for (auto& c : channel_numbers()) {
         result = S826_CounterModeWrite(s826_.board_, c, S826_CM_K_QUADX4);
         if (result != S826_ERR_OK) {
             LOG(Error) << "Failed to writer counter mode of " << get_name() << " channel number " << c << " (" << S826::get_error_message(result) << ")";
@@ -112,7 +112,7 @@ bool S826Encoder::set_quadrature_factor(ChanNum channel_number, QuadFactor facto
 }
 
 std::vector<double>& S826Encoder::get_values_per_sec() {
-    return values_per_sec_.get();
+    return values_per_sec_.get_raw();
 }
 
 double S826Encoder::get_value_per_sec(ChanNum channel_number) {
@@ -123,9 +123,9 @@ double S826Encoder::get_value_per_sec(ChanNum channel_number) {
 }
 
 const std::vector<double>& S826Encoder::get_velocities() {
-    for (auto const& ch : get_channel_numbers())
+    for (auto const& ch : channel_numbers())
         velocities_[ch] = values_per_sec_[ch] * conversions_[ch];
-    return velocities_.get();
+    return velocities_.get_raw();
 }
 
 double S826Encoder::get_velocity(ChanNum channel_number) {
@@ -143,31 +143,23 @@ double S826Encoder::get_timestamp(ChanNum channel_number) {
 }
 
 std::vector<double>& S826Encoder::get_timestamps() {
-    return timestamps_.get();
+    return timestamps_.get_raw();
 }
 
 //=============================================================================
 
-S826Encoder::Channel S826Encoder::get_channel(ChanNum channel_number) {
+S826Encoder::Channel S826Encoder::channel(ChanNum channel_number) {
     if (validate_channel_number(channel_number))
         return Channel(this, channel_number);
     else
         return Channel();
 }
 
-std::vector<S826Encoder::Channel> S826Encoder::get_channels(const ChanNums& channel_numbers) {
+std::vector<S826Encoder::Channel> S826Encoder::channels(const ChanNums& channel_numbers) {
     std::vector<Channel> channels;
     for (std::size_t i = 0; i < channel_numbers.size(); ++i)
-        channels.push_back(get_channel(channel_numbers[i]));
+        channels.push_back(channel(channel_numbers[i]));
     return channels;
-}
-
-S826Encoder::Channel S826Encoder::operator[](ChanNum channel_number) {
-    return get_channel(channel_number);
-}
-
-std::vector<S826Encoder::Channel> S826Encoder::operator[](const ChanNums& channel_numbers) {
-    return get_channels(channel_numbers);
 }
 
 S826Encoder::Channel::Channel() :

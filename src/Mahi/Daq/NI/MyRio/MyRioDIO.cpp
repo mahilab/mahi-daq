@@ -110,7 +110,7 @@ void MyRioDIO::sync() {
     // set module channels
     set_channel_numbers(chs);
     // update directions
-    chs = get_channel_numbers();
+    chs = channel_numbers();
     for (auto& ch : chs) {
         Direction dir = get_register_bit(dirs_[ch / 8], ch % 8) ? Out : In;
         set_direction(ch, dir);

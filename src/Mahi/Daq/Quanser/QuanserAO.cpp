@@ -21,7 +21,7 @@ QuanserAO::QuanserAO(QuanserDaq& daq, const ChanNums& channel_numbers) :
 
 bool QuanserAO::update() {
     t_error result;
-    result = hil_write_analog(daq_.handle_, &get_channel_numbers()[0], static_cast<ChanNum>(get_channel_count()), &values_.get()[0]);
+    result = hil_write_analog(daq_.handle_, &channel_numbers()[0], static_cast<ChanNum>(channel_count()), &values_.get_raw()[0]);
     if (result == 0)
         return true;
     else {
@@ -45,7 +45,7 @@ bool QuanserAO::set_ranges(const std::vector<Voltage>& min_values, const std::ve
     if (!Module::set_ranges(min_values, max_values))
         return false;
     t_error result;
-    result = hil_set_analog_output_ranges(daq_.handle_, &get_channel_numbers()[0], static_cast<ChanNum>(get_channel_count()), &min_values_.get()[0], &max_values_.get()[0]);
+    result = hil_set_analog_output_ranges(daq_.handle_, &channel_numbers()[0], static_cast<ChanNum>(channel_count()), &min_values_.get_raw()[0], &max_values_.get_raw()[0]);
     if (result == 0) {
         LOG(Verbose) << "Set " << get_name() << " ranges"; // to min=" << min_values << ", max=" << max_values;
         return true;
@@ -75,7 +75,7 @@ bool QuanserAO::set_expire_values(const std::vector<Voltage>& expire_values) {
     if (!Output::set_expire_values(expire_values))
         return false;
     t_error result;
-    result = hil_watchdog_set_analog_expiration_state(daq_.handle_, &get_channel_numbers()[0], static_cast<ChanNum>(get_channel_count()), &expire_values_.get()[0]);
+    result = hil_watchdog_set_analog_expiration_state(daq_.handle_, &channel_numbers()[0], static_cast<ChanNum>(channel_count()), &expire_values_.get_raw()[0]);
     if (result == 0) {
         LOG(Verbose) << "Set " << get_name() << " expire values to " << expire_values_;
         return true;

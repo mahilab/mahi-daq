@@ -1,29 +1,53 @@
 #include <mahi/daq/VirtualDaq.hpp>
-#include <chrono>
+#include <Mahi/Util/Timing/Clock.hpp>
+#include <Mahi/Util/Math/Constants.hpp>
 #include <cmath>
 
 namespace mahi {
 namespace daq {
 
+namespace {
+    static Voltage default_ai_source() {
+        static util::Clock clk;
+        return std::sin(2.0 * util::TWOPI * clk.get_elapsed_time().as_seconds());
+    }
+
+    static void default_ao_sink(Voltage v) {
+        v = v;
+    }
+
+    static Logic default_di_source() {
+        static util::Clock clk;
+        if (sin(2.0 * 3.14159265358979 * clk.get_elapsed_time().as_seconds()) > 0.0)
+            return High;
+        else
+            return Low;
+    }
+
+    static void default_do_sink(Logic logic) {
+        logic = logic;
+    }
+
+    int default_encoder_source() {
+        static util::Clock clk;
+        return static_cast<int>(1024.0 * (sin(2.0 * 3.14159265358979 * clk.get_elapsed_time().as_seconds())));
+    }
+}
+
 //==============================================================================
 // VIRTUAL AI
 //==============================================================================
 
-static Voltage DEFAULT_AI_SOURCE(double t) {
-    return std::sin(2.0 * 3.14159265358979 * t);
-}
-
 VirtualAI::VirtualAI(VirtualDaq& daq, const ChanNums& channel_numbers) :
     AnalogInput(channel_numbers),
-    sources(this, DEFAULT_AI_SOURCE),
+    sources(this, default_ai_source),
     daq_(daq)
 {
     set_name(daq.get_name() + "_AI");
 }
 
 bool VirtualAI::update_channel(ChanNum channel_number) {
-    double t = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
-    values_[channel_number] = sources[channel_number](t);
+    values_[channel_number] = sources[channel_number]();
     return true;
 }
 
@@ -33,12 +57,14 @@ bool VirtualAI::update_channel(ChanNum channel_number) {
 
 VirtualAO::VirtualAO(VirtualDaq& daq, const ChanNums& channel_numbers) : 
     AnalogOutput(channel_numbers),
+    sinks(this, default_ao_sink),
     daq_(daq) 
 {
     set_name(daq.get_name() + "_AO");
 }
 
 bool VirtualAO::update_channel(ChanNum channel_number) {
+    sinks[channel_number](values_[channel_number]);
     return true;
 }
 
@@ -46,24 +72,17 @@ bool VirtualAO::update_channel(ChanNum channel_number) {
 // VIRTUAL DI
 //==============================================================================
 
-static Logic DEFAULT_DI_SOURCE(double t) {
-    if (sin(2.0 * 3.14159265358979 * t) > 0.0)
-        return High;
-    else
-        return Low;
-}
 
 VirtualDI::VirtualDI(VirtualDaq& daq, const ChanNums& channel_numbers) :
     DigitalInput(channel_numbers),
-    sources(this, DEFAULT_DI_SOURCE),
+    sources(this, default_di_source),
     daq_(daq)
 {
     set_name(daq.get_name() + "_DI");
 }
 
 bool VirtualDI::update_channel(ChanNum channel_number) {
-    double t = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
-    values_[channel_number] = sources[channel_number](t);
+    values_[channel_number] = sources[channel_number]();
     return true;
 }
 
@@ -73,12 +92,14 @@ bool VirtualDI::update_channel(ChanNum channel_number) {
 
 VirtualDO::VirtualDO(VirtualDaq& daq, const ChanNums& channel_numbers) : 
     DigitalOutput(channel_numbers),
+    sinks(this, default_do_sink),
     daq_(daq)
 {
     set_name(daq.get_name() + "_DO");
 }
 
 bool VirtualDO::update_channel(ChanNum channel_number) {
+    sinks[channel_number](values_[channel_number]);
     return true;
 }
 
@@ -86,21 +107,17 @@ bool VirtualDO::update_channel(ChanNum channel_number) {
 // VIRTUAL ENCODER
 //==============================================================================
 
-int DEFAULT_ENCODER_SOURCE(double t) {
-    return static_cast<int>(1024.0 * (sin(2.0 * 3.14159265358979 * t)));
-}
 
 VirtualEncoder::VirtualEncoder(VirtualDaq& daq, const ChanNums& channel_numbers) :
     Encoder(channel_numbers),
-    sources(this, DEFAULT_ENCODER_SOURCE),
+    sources(this, default_encoder_source),
     daq_(daq)
 {
     set_name(daq.get_name() + "_encoder");
 }
 
 bool VirtualEncoder::update_channel(ChanNum channel_number) {
-    double t = std::chrono::duration<double>(std::chrono::system_clock::now().time_since_epoch()).count();
-    values_[channel_number] = sources[channel_number](t);
+    values_[channel_number] = sources[channel_number]();
     return true;
 }
 

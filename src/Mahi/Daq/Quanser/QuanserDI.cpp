@@ -22,10 +22,10 @@ namespace daq {
 
     bool QuanserDI::update() {
         t_error result;
-        result = hil_read_digital(daq_.handle_, &get_channel_numbers()[0], static_cast<ChanNum>(get_channel_count()), &quanser_values_.get()[0]);
+        result = hil_read_digital(daq_.handle_, &channel_numbers()[0], static_cast<ChanNum>(channel_count()), &quanser_values_.get_raw()[0]);
         if (result == 0) {
             // convert Quanser t_boolean (aka char) to Logic
-            for (auto const& ch : get_channel_numbers())
+            for (auto const& ch : channel_numbers())
                 values_[ch] = static_cast<Logic>(quanser_values_[ch]);
             return true;
         }
@@ -49,7 +49,7 @@ namespace daq {
     }
 
     std::vector<char>& QuanserDI::get_quanser_values() {
-        return quanser_values_.get();
+        return quanser_values_.get_raw();
     }
 
 

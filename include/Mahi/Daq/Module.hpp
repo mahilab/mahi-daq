@@ -40,10 +40,12 @@ public:
     virtual bool update();
 
     /// Gets the vector of channel numbers this Module maintains
-    const ChanNums& get_channel_numbers() const;
+    const ChanNums& channel_numbers() const;
 
     /// Returns the number of channels on this Module
-    std::size_t get_channel_count() const;
+    std::size_t channel_count() const;
+
+protected:
 
     /// Checks if a channel number is a number defined on this Module.
     /// If quiet is false, an error log will be thrown.
@@ -62,13 +64,14 @@ public:
     /// Removes a channel number from current channel numbers
     virtual void remove_channel_number(ChanNum channel_number);
 
-protected:
-
     /// Called when the user enables the Module
     virtual bool on_enable() override;
 
     /// Called when the user disables the Module
     virtual bool on_disable() override;
+
+    /// Called when channel numbers are changed
+    virtual void on_channels_changed(const ChanNums& old_channels, const ChanNums& new_channels);
 
 private:
 
@@ -105,26 +108,34 @@ public:
     /// Destructor
     virtual ~Module();
 
+    /// Read access indexed by channel number
+    const T& operator[](ChanNum channel_number) const;
+
+    /// Write access indexed by channel number
+    T& operator[](ChanNum channel_number);
+
+    /// Gets non-const reference to the current channel values of this Module
+    std::vector<T>& get();
+
+    /// Gets the current value of a single channel.
+    const T& get(ChanNum channel_number) const;
+
+    /// Gets the current value of a single channel.
+    T& get(ChanNum channel_number);
+
+    /// Sets the current channel values of this Module. If the incorrect number
+    /// of values is pass, no values are set.
+    void set(const std::vector<T>& values);
+
+    /// Sets the current value of a single channel. If an invalid channel number
+    /// is passed, non value is set
+    void set(ChanNum channel_number, T value);
+
     /// Sets the min and max possible values of each channel
     virtual bool set_ranges(const std::vector<T>& min_values, const std::vector<T>& max_values);
 
     /// Sets the min and max possible value of a single channel
     virtual bool set_range(ChanNum channel_number, T min_value, T max_value);
-
-    /// Gets non-const reference to the current channel values of this Module
-    std::vector<T>& get_values();
-
-    /// Gets the current value of a a single channel. If an invalid channel number
-    /// is passed, the default value of the underlying channel type is returned.
-    T get_value(ChanNum channel_number) const;
-
-    /// Sets the current channel values of this Module. If the incorrect number
-    /// of values is pass, no values are set.
-    void set_values(const std::vector<T>& values);
-
-    /// Sets the current value of a single channel. If an invalid channel number
-    /// is passed, non value is set
-    void set_value(ChanNum channel_number, T value);
 
 protected:
 

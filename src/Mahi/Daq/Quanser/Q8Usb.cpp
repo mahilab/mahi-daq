@@ -139,20 +139,20 @@ bool Q8Usb::update_input() {
     }
     t_error result;
     result = hil_read(handle_,
-        AI.get_channel_count() > 0 ? &(AI.get_channel_numbers())[0] : NULL,
-        static_cast<ChanNum>(AI.get_channel_count()),
-        encoder.get_channel_count() > 0 ? &(encoder.get_channel_numbers())[0] : NULL,
-        static_cast<ChanNum>(encoder.get_channel_count()),
-        DI.get_channel_count() > 0 ? &(DI.get_channel_numbers())[0] : NULL,
-        static_cast<ChanNum>(DI.get_channel_count()),
-        encoder.get_channel_count() > 0 ? &(encoder.get_quanser_velocity_channels())[0] : NULL,
-        static_cast<ChanNum>(encoder.get_channel_count()),
-        AI.get_channel_count() > 0 ? &(AI.get_values())[0] : NULL,
-        encoder.get_channel_count() > 0 ? &(encoder.get_values())[0] : NULL,
-        DI.get_channel_count() > 0 ? &(DI.get_quanser_values())[0] : NULL,
-        encoder.get_channel_count() > 0 ? &(encoder.get_values_per_sec())[0] : NULL);
-    for (std::size_t i = 0; i < DI.get_channel_count(); ++i)
-        DI.get_values()[i] = static_cast<Logic>(DI.get_quanser_values()[i]);
+        AI.channel_count() > 0 ? &(AI.channel_numbers())[0] : NULL,
+        static_cast<ChanNum>(AI.channel_count()),
+        encoder.channel_count() > 0 ? &(encoder.channel_numbers())[0] : NULL,
+        static_cast<ChanNum>(encoder.channel_count()),
+        DI.channel_count() > 0 ? &(DI.channel_numbers())[0] : NULL,
+        static_cast<ChanNum>(DI.channel_count()),
+        encoder.channel_count() > 0 ? &(encoder.get_quanser_velocity_channels())[0] : NULL,
+        static_cast<ChanNum>(encoder.channel_count()),
+        AI.channel_count() > 0 ? &(AI.get())[0] : NULL,
+        encoder.channel_count() > 0 ? &(encoder.get())[0] : NULL,
+        DI.channel_count() > 0 ? &(DI.get_quanser_values())[0] : NULL,
+        encoder.channel_count() > 0 ? &(encoder.get_values_per_sec())[0] : NULL);
+    for (std::size_t i = 0; i < DI.channel_count(); ++i)
+        DI.get()[i] = static_cast<Logic>(DI.get_quanser_values()[i]);
     if (result == 0)
         return true;
     else {
@@ -167,19 +167,19 @@ bool Q8Usb::update_output() {
         return false;
     }
     // convert digitals
-    for (std::size_t i = 0; i < DO.get_channel_count(); ++i)
-        DO.get_quanser_values()[i] = static_cast<char>(DO.get_values()[i]);
+    for (std::size_t i = 0; i < DO.channel_count(); ++i)
+        DO.get_quanser_values()[i] = static_cast<char>(DO.get()[i]);
     t_error result;
     result = hil_write(handle_,
-        AO.get_channel_count() > 0 ? &(AO.get_channel_numbers())[0] : NULL,
-        static_cast<ChanNum>(AO.get_channel_count()),
+        AO.channel_count() > 0 ? &(AO.channel_numbers())[0] : NULL,
+        static_cast<ChanNum>(AO.channel_count()),
         NULL, 0,
-        DO.get_channel_count() > 0 ? &(DO.get_channel_numbers())[0] : NULL,
-        static_cast<ChanNum>(DO.get_channel_count()),
+        DO.channel_count() > 0 ? &(DO.channel_numbers())[0] : NULL,
+        static_cast<ChanNum>(DO.channel_count()),
         NULL, 0,
-        AO.get_channel_count() > 0 ? &(AO.get_values())[0] : NULL,
+        AO.channel_count() > 0 ? &(AO.get())[0] : NULL,
         NULL,
-        DO.get_channel_count() > 0 ? &(DO.get_quanser_values())[0] : NULL,
+        DO.channel_count() > 0 ? &(DO.get_quanser_values())[0] : NULL,
         NULL);
     if (result == 0)
         return true;
@@ -194,21 +194,21 @@ bool Q8Usb::identify(ChanNum channel_number) {
         LOG(Error) << "Unable to call " << __FUNCTION__ << " because " << get_name() << " is not open";
         return false;
     }
-    Input<Logic>::Channel di_ch = DI.get_channel(channel_number);
-    Output<Logic>::Channel do_ch = DO.get_channel(channel_number);
+    Input<Logic>::Channel di_ch = DI.channel(channel_number);
+    Output<Logic>::Channel do_ch = DO.channel(channel_number);
     for (int i = 0; i < 5; ++i) {
-        do_ch.set_value(High);
+        do_ch.set(High);
         do_ch.update();
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         di_ch.update();
-        if (di_ch.get_value() != High) {
+        if (di_ch.get() != High) {
             return false;
         }
-        do_ch.set_value(Low);
+        do_ch.set(Low);
         do_ch.update();
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         di_ch.update();
-        if (di_ch.get_value() != Low) {
+        if (di_ch.get() != Low) {
             return false;
         }
     }

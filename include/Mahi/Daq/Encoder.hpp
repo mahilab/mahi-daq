@@ -61,16 +61,10 @@ public:
     const std::vector<double>& get_positions();
 
     /// Returns a Encoder::Channel
-    Channel get_channel(ChanNum channel_number);
+    Channel channel(ChanNum channel_number);
 
     /// Returns multiple Encoder::Channels
-    std::vector<Channel> get_channels(const ChanNums& channel_numbers);
-
-    /// Returns a Encoder::Channel
-    Channel operator[](ChanNum channel_number);
-
-    /// Returns multiple Encoder::Channels
-    std::vector<Channel> operator[](const ChanNums& channel_numbers);
+    std::vector<Channel> channels(const ChanNums& channel_numbers);
 
 protected:
 

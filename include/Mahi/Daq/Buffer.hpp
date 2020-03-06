@@ -68,13 +68,13 @@ public:
     std::size_t size() const;
 
     /// Gets non-const reference to raw values array
-    std::vector<T>& get();
+    std::vector<T>& get_raw();
 
     /// Gets a const reference to raw values array
-    const std::vector<T>& get() const;
+    const std::vector<T>& get_raw() const;
 
     /// Sets raw values array
-    void set(const std::vector<T>& values);
+    void set_raw(const std::vector<T>& values);
 
     /// Sets the default value subsequent new values should be instantied with
     void set_default_value(T default_value);
@@ -86,13 +86,12 @@ public:
 private:
 
     /// Called by ModuleBase when channel numbers change
-    void change_channel_numbers(const ChanMap& old_map,
-                                const ChanMap& new_map) override;
+    void change_channel_numbers(const ChanMap& old_map, const ChanMap& new_map) override;
 
 private:
 
-    T default_value_;        ///< default value
-    std::vector<T> values_;  ///< raw values
+    T default_value_;             ///< default value
+    std::vector<T> raw_values_;  ///< raw values
 };
 
 } // namespace daq

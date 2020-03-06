@@ -60,7 +60,7 @@ bool MyRioConnector::update_output() {
 }
 
 void MyRioConnector::reset() {
-    for (auto& ch : encoder.get_channel_numbers())
+    for (auto& ch : encoder.channel_numbers())
         encoder.disable_channel(ch);
     DIO.sync();
 }

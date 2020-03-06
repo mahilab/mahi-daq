@@ -22,7 +22,7 @@ namespace daq {
 
     template <typename T>
     bool InputOutput<T>::set_directions(const std::vector<Direction>& directions) {
-        directions_.set(directions);
+        directions_.set_raw(directions);
         sort_input_output_channel_numbers();
         return true;
     }
@@ -39,7 +39,7 @@ namespace daq {
 
     template <typename T>
     bool InputOutput<T>::update_input() {
-        auto chnums = get_input_channel_numbers();
+        auto chnums = input_channel_numbers();
         bool success = true;
         for (auto& c : chnums)
             success = this->update_channel(c) ? success : false;
@@ -49,7 +49,7 @@ namespace daq {
     template <typename T>
     bool InputOutput<T>::update_output() {
         
-        auto chnums = get_output_channel_numbers();
+        auto chnums = output_channel_numbers();
         bool success = true;
         for (auto& c : chnums)
             success = this->update_channel(c) ? success : false;
@@ -57,27 +57,27 @@ namespace daq {
     }
 
     template <typename T>
-    std::size_t InputOutput<T>::get_input_channel_count() const {
+    std::size_t InputOutput<T>::input_channel_count() const {
         return input_channel_numbers_.size();
     }
 
     template <typename T>
-    std::size_t InputOutput<T>::get_output_channel_count() const {
+    std::size_t InputOutput<T>::output_channel_count() const {
         return output_channel_numbers_.size();
     }
 
     template <typename T>
-    const ChanNums& InputOutput<T>::get_input_channel_numbers() const {
+    const ChanNums& InputOutput<T>::input_channel_numbers() const {
         return input_channel_numbers_;
     }
 
     template <typename T>
-    const ChanNums& InputOutput<T>::get_output_channel_numbers() const {
+    const ChanNums& InputOutput<T>::output_channel_numbers() const {
         return output_channel_numbers_;
     }
 
     template <typename T>
-    typename InputOutput<T>::Channel InputOutput<T>::get_channel(ChanNum channel_number) {
+    typename InputOutput<T>::Channel InputOutput<T>::channel(ChanNum channel_number) {
         if (this->validate_channel_number(channel_number))
             return Channel(this, channel_number);
         else
@@ -85,23 +85,12 @@ namespace daq {
     }
 
     template <typename T>
-    std::vector<typename InputOutput<T>::Channel> InputOutput<T>::get_channels(
+    std::vector<typename InputOutput<T>::Channel> InputOutput<T>::channels(
         const ChanNums& channel_numbers) {
         std::vector<Channel> channels;
         for (std::size_t i = 0; i < channel_numbers.size(); ++i)
-            channels.push_back(get_channel(channel_numbers[i]));
+            channels.push_back(channel(channel_numbers[i]));
         return channels;
-    }
-
-    template <typename T>
-    typename InputOutput<T>::Channel InputOutput<T>::operator[](ChanNum channel_number) {
-        return get_channel(channel_number);
-    }
-
-    template <typename T>
-    std::vector<typename InputOutput<T>::Channel> InputOutput<T>::operator[](
-        const ChanNums& channel_numbers) {
-        return get_channels(channel_numbers);
     }
 
     template <typename T>
@@ -126,11 +115,11 @@ namespace daq {
     void InputOutput<T>::sort_input_output_channel_numbers() const {
         input_channel_numbers_.clear();
         output_channel_numbers_.clear();
-        for (std::size_t i = 0; i < this->get_channel_count(); ++i) {
-            if (directions_.get()[i] == In)
-                input_channel_numbers_.push_back(this->get_channel_numbers()[i]);
-            else if (directions_.get()[i] == Out)
-                output_channel_numbers_.push_back(this->get_channel_numbers()[i]);
+        for (std::size_t i = 0; i < this->channel_count(); ++i) {
+            if (directions_.get_raw()[i] == In)
+                input_channel_numbers_.push_back(this->channel_numbers()[i]);
+            else if (directions_.get_raw()[i] == Out)
+                output_channel_numbers_.push_back(this->channel_numbers()[i]);
         }
     }
 

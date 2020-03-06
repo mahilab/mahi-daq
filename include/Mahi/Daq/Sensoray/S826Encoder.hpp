@@ -51,16 +51,10 @@ public:
     double get_timestamp(ChanNum channel_number);
 
     /// Returns a S826Encoder::Channel
-    Channel get_channel(ChanNum channel_number);
+    Channel channel(ChanNum channel_number);
 
     /// Returns multiple S826Encoder::Channels
-    std::vector<Channel> get_channels(const ChanNums& channel_numbers);
-
-    /// Returns a S826Encoder::Channel
-    Channel operator[](ChanNum channel_number);
-
-    /// Returns multiple S826Encoder::Channels
-    std::vector<Channel> operator[](const ChanNums& channel_numbers);
+    std::vector<Channel> channels(const ChanNums& channel_numbers);
 
 private:
 

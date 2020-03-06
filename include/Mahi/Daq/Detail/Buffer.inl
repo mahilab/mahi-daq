@@ -10,39 +10,39 @@ namespace daq {
         BufferBase(module),
         default_value_(default_value)
     { 
-        values_.resize(this->module_->get_channel_count());        
-        std::fill(values_.begin(), values_.end(), default_value_);
+        raw_values_.resize(this->module_->channel_count());        
+        std::fill(raw_values_.begin(), raw_values_.end(), default_value_);
     }
 
     template <typename T>
     const T& Buffer<T>::operator[](ChanNum channel_number) const {
-        return values_[index(channel_number)];
+        return raw_values_[index(channel_number)];
     }
 
     template <typename T>
     T& Buffer<T>::operator[](ChanNum channel_number) {
-        return values_[index(channel_number)];
+        return raw_values_[index(channel_number)];
     }
 
     template <typename T>
     std::size_t Buffer<T>::size() const {
-        return values_.size();
+        return raw_values_.size();
     }
 
     template <typename T>
-    std::vector<T>& Buffer<T>::get() {
-        return values_;
+    std::vector<T>& Buffer<T>::get_raw() {
+        return raw_values_;
     }
 
     template <typename T>
-    const std::vector<T> &Buffer<T>::get() const {
-        return values_;
+    const std::vector<T> &Buffer<T>::get_raw() const {
+        return raw_values_;
     }
 
     template <typename T>
-    void Buffer<T>::set(const std::vector<T>& values) {
-        if (values_.size() == values.size())
-            values_ = values;
+    void Buffer<T>::set_raw(const std::vector<T>& values) {
+        if (raw_values_.size() == values.size())
+            raw_values_ = values;
     }
 
     template <typename T>
@@ -57,9 +57,9 @@ namespace daq {
         std::vector<T> new_values(new_map.size(), default_value_);
         for (auto it = old_map.begin(); it != old_map.end(); ++it) {
             if (new_map.count(it->first))
-                new_values[new_map.at(it->first)] = values_[old_map.at(it->first)];
+                new_values[new_map.at(it->first)] = raw_values_[old_map.at(it->first)];
         }
-        values_ = new_values;
+        raw_values_ = new_values;
     }
 
     /// Overload stream operator for Buffer
@@ -68,10 +68,10 @@ namespace daq {
         if (buffer.size() > 0) {
             os << "{";
             for (std::size_t i = 0; i < buffer.size() - 1; i++) {
-                ChanNum ch = buffer.module_->get_channel_numbers()[i];
+                ChanNum ch = buffer.module_->channel_numbers()[i];
                 os << "[" << ch << "]:" << buffer[ch] << ", ";
             }
-            ChanNum ch = buffer.module_->get_channel_numbers()[buffer.size() - 1];
+            ChanNum ch = buffer.module_->channel_numbers()[buffer.size() - 1];
             os << "[" << ch << "]:" << buffer[ch] << "}";
         }
         else {

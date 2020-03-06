@@ -41,16 +41,10 @@ public:
     virtual ~Input();
 
     /// Gets a handle to a channel on this module
-    Channel get_channel(ChanNum channel_number);
+    Channel channel(ChanNum channel_number);
 
     /// Gets a vector of handles to channels on this module
-    std::vector<Channel> get_channels(const ChanNums& channel_numbers);
-
-    /// Gets a handle to a channel on this module
-    Channel operator[](ChanNum channel_number);
-
-    /// Gets a vector of handles to channels on this module
-    std::vector<Channel> operator[](const ChanNums& channel_numbers);
+    std::vector<Channel> channels(const ChanNums& channel_numbers);
 
     /// Encapsulates a Module channel
     class Channel : virtual public ChannelBase<T> {

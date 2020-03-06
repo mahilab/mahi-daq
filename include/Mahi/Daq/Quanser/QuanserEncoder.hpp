@@ -68,16 +68,10 @@ public:
     const ChanNums get_quanser_velocity_channels();
 
     /// Returns a QuanserEncoder::Channel
-    Channel get_channel(ChanNum channel_number);
+    Channel channel(ChanNum channel_number);
 
     /// Returns multiple QuanserEncoder::Channels
-    std::vector<Channel> get_channels(const ChanNums& channel_numbers);
-
-    /// Returns a QuanserEncoder::Channel
-    Channel operator[](ChanNum channel_number);
-
-    /// Returns multiple QuanserEncoder::Channels
-    std::vector<Channel> operator[](const ChanNums& channel_numbers);
+    std::vector<Channel> channels(const ChanNums& channel_numbers);
 
 private:
 

@@ -138,18 +138,18 @@ bool QPid::update_input() {
     }
     t_error result;
     result = hil_read(handle_,
-        AI.get_channel_count() > 0 ? &(AI.get_channel_numbers())[0] : NULL,
-        static_cast<ChanNum>(AI.get_channel_count()),
-        encoder.get_channel_count() > 0 ? &(encoder.get_channel_numbers())[0] : NULL,
-        static_cast<ChanNum>(encoder.get_channel_count()),
-        DIO.get_input_channel_count() > 0 ? &(DIO.get_input_channel_numbers())[0] : NULL,
-        static_cast<ChanNum>(DIO.get_input_channel_count()),
-        encoder.get_channel_count() > 0 ? &(encoder.get_quanser_velocity_channels())[0] : NULL,
-        static_cast<ChanNum>(encoder.get_channel_count()),
-        AI.get_channel_count() > 0 ? &(AI.get_values())[0] : NULL,
-        encoder.get_channel_count() > 0 ? &(encoder.get_values())[0] : NULL,
-        DIO.get_input_channel_count() > 0 ? &(DIO.quanser_input_buffer_)[0] : NULL,
-        encoder.get_channel_count() > 0 ? &(encoder.get_values_per_sec())[0] : NULL);   
+        AI.channel_count() > 0 ? &(AI.channel_numbers())[0] : NULL,
+        static_cast<ChanNum>(AI.channel_count()),
+        encoder.channel_count() > 0 ? &(encoder.channel_numbers())[0] : NULL,
+        static_cast<ChanNum>(encoder.channel_count()),
+        DIO.input_channel_count() > 0 ? &(DIO.input_channel_numbers())[0] : NULL,
+        static_cast<ChanNum>(DIO.input_channel_count()),
+        encoder.channel_count() > 0 ? &(encoder.get_quanser_velocity_channels())[0] : NULL,
+        static_cast<ChanNum>(encoder.channel_count()),
+        AI.channel_count() > 0 ? &(AI.get())[0] : NULL,
+        encoder.channel_count() > 0 ? &(encoder.get())[0] : NULL,
+        DIO.input_channel_count() > 0 ? &(DIO.quanser_input_buffer_)[0] : NULL,
+        encoder.channel_count() > 0 ? &(encoder.get_values_per_sec())[0] : NULL);   
     DIO.buffer_to_input();
     if (result == 0)
         return true;
@@ -168,15 +168,15 @@ bool QPid::update_output() {
     DIO.output_to_buffer();
     t_error result;
     result = hil_write(handle_,
-        AO.get_channel_count() > 0 ? &(AO.get_channel_numbers())[0] : NULL,
-        static_cast<ChanNum>(AO.get_channel_count()),
+        AO.channel_count() > 0 ? &(AO.channel_numbers())[0] : NULL,
+        static_cast<ChanNum>(AO.channel_count()),
         NULL, 0,
-        DIO.get_output_channel_count() > 0 ? &(DIO.get_output_channel_numbers())[0] : NULL,
-        static_cast<ChanNum>(DIO.get_output_channel_count()),
+        DIO.output_channel_count() > 0 ? &(DIO.output_channel_numbers())[0] : NULL,
+        static_cast<ChanNum>(DIO.output_channel_count()),
         NULL, 0,
-        AO.get_channel_count() > 0 ? &(AO.get_values())[0] : NULL,
+        AO.channel_count() > 0 ? &(AO.get())[0] : NULL,
         NULL,
-        DIO.get_output_channel_count() > 0 ? &(DIO.quanser_output_buffer_)[0] : NULL,
+        DIO.output_channel_count() > 0 ? &(DIO.quanser_output_buffer_)[0] : NULL,
         NULL);
     if (result == 0)
         return true;

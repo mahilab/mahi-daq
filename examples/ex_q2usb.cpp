@@ -62,7 +62,7 @@ int main() {
     // start encoder loop
     while (timer.get_elapsed_time() < seconds(5) && !stop) {
         q2.update_input();
-        print_var(q2.encoder.get_value(0));
+        print_var(q2.encoder.get(0));
         timer.wait();
     }
 
@@ -78,9 +78,9 @@ int main() {
     timer.restart();
     while (timer.get_elapsed_time() < seconds(5) && !stop) {
         q2.update_input();
-        print_var(q2.AI.get_value(0));
+        print_var(q2.AI.get(0));
         double voltage = wave.evaluate(timer.get_elapsed_time());
-        q2.AO.set_value(0, voltage);
+        q2.AO.set(0, voltage);
         q2.update_output();
         timer.wait();
     }
@@ -98,9 +98,9 @@ int main() {
     timer.restart();
     while (timer.get_elapsed_time() < seconds(5) && !stop) {
         q2.DIO.update();
-        print_var((int)q2.DIO[0].get_value());
+        print_var((int)q2.DIO[0]);
         signal = (Logic)(High - signal);
-        q2.DIO[7].set_value(signal);
+        q2.DIO[7] = signal;
         q2.DIO.update();
         timer.wait();
     }

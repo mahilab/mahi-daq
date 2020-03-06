@@ -36,7 +36,7 @@ int main(int argc, char const *argv[])
     s826.open();
     s826.enable();
     // s826.AI.set_settling_time(microseconds(3));
-    s826.encoder[0].zero();
+    s826.encoder.channel(0).zero();
 
     Timer timer(1000_Hz);
     timer.disable_warnings();
@@ -45,7 +45,7 @@ int main(int argc, char const *argv[])
     Waveform sinewave(Waveform::Sin, seconds(1));
 
     //  s826.encoder[0].reset_count(0);
-     s826.encoder[0].set_units_per_count(360.0 / 512);
+     s826.encoder.channel(0).set_units_per_count(360.0 / 512);
 
      std::vector<double> buffer(5);
 
@@ -58,12 +58,12 @@ int main(int argc, char const *argv[])
         s826.AI.update();
         s826.encoder.update();
         buffer[0] = sinewave(t);
-        buffer[1] = s826.AI[0].get_value();
-        buffer[2] = s826.encoder[0].get_position();
-        buffer[3] = s826.encoder[0].get_velocity();
+        buffer[1] = s826.AI[0];
+        buffer[2] = s826.encoder.channel(0).get_position();
+        buffer[3] = s826.encoder.channel(0).get_velocity();
         double vel = filt.update(buffer[3]); 
         buffer[4] = vel;
-        s826.AO[0].set_value(buffer[0]);
+        s826.AO[0] = buffer[0];
         s826.AO.update();
         t = timer.wait();
     }

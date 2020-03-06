@@ -22,7 +22,7 @@ namespace daq {
 
     template <typename T>
     bool Output<T>::set_expire_values(const std::vector<T>& expire_values) {
-        expire_values_.set(expire_values);
+        expire_values_.set_raw(expire_values);
         return true;
     }
 
@@ -38,7 +38,7 @@ namespace daq {
     template <typename T>
     void Output<T>::set_enable_values(const std::vector<T>& enable_values) {
         if (this->validate_channel_count(enable_values.size()))
-            enable_values_.set(enable_values);
+            enable_values_.set_raw(enable_values);
     }
 
     template <typename T>
@@ -50,7 +50,7 @@ namespace daq {
     template <typename T>
     void Output<T>::set_disable_values(const std::vector<T>& disable_values) {
         if (this->validate_channel_count(disable_values.size()))
-            disable_values_.set(disable_values);
+            disable_values_.set_raw(disable_values);
     }
 
     template <typename T>
@@ -60,7 +60,7 @@ namespace daq {
     }
 
     template <typename T>
-    typename Output<T>::Channel Output<T>::get_channel(ChanNum channel_number) {
+    typename Output<T>::Channel Output<T>::channel(ChanNum channel_number) {
         if (Module<T>::validate_channel_number(channel_number))
             return Channel(this, channel_number);
         else
@@ -68,34 +68,23 @@ namespace daq {
     }
 
     template <typename T>
-    std::vector<typename Output<T>::Channel> Output<T>::get_channels(
+    std::vector<typename Output<T>::Channel> Output<T>::channels(
         const ChanNums& channel_numbers) {
         std::vector<Channel> channels;
         for (std::size_t i = 0; i < channel_numbers.size(); ++i)
-            channels.push_back(get_channel(channel_numbers[i]));
+            channels.push_back(channel(channel_numbers[i]));
         return channels;
     }
 
     template <typename T>
-    typename Output<T>::Channel Output<T>::operator[](ChanNum channel_number) {
-        return get_channel(channel_number);
-    }
-
-    template <typename T>
-    std::vector<typename Output<T>::Channel> Output<T>::operator[](
-        const ChanNums& channel_numbers) {
-        return get_channels(channel_numbers);
-    }
-
-    template <typename T>
     bool Output<T>::on_enable() {
-        this->set_values(enable_values_.get());
+        this->set(enable_values_.get_raw());
         return this->update();
     }
 
     template <typename T>
     bool Output<T>::on_disable() {
-        this->set_values(disable_values_.get());
+        this->set(disable_values_.get_raw());
         return this->update();
     }
 

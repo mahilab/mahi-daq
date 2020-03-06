@@ -56,28 +56,24 @@ public:
 public:
 
     /// Returns the number of input channels on this Module
-    std::size_t get_input_channel_count() const;
+    std::size_t input_channel_count() const;
 
     /// Returns the number of output channels on this Module
-    std::size_t get_output_channel_count() const;
+    std::size_t output_channel_count() const;
     
     /// Gets the vector of input channel numbers this Module maintains
-    const ChanNums& get_input_channel_numbers() const;
+    const ChanNums& input_channel_numbers() const;
 
     /// Gets the vector of output channel numbers this Module maintains
-    const ChanNums& get_output_channel_numbers() const;
+    const ChanNums& output_channel_numbers() const;
 
     /// Gets a handle to a channel on this module
-    Channel get_channel(ChanNum channel_number);
+    Channel channel(ChanNum channel_number);
 
     /// Gets a vector of handles to channels on this module
-    std::vector<Channel> get_channels(const ChanNums& channel_numbers);
+    std::vector<Channel> channels(const ChanNums& channel_numbers);
 
-    /// Gets a handle to a channel on this module
-    Channel operator[](ChanNum channel_number);
-
-    /// Gets a vector of handles to channels on this module
-    std::vector<Channel> operator[](const ChanNums& channel_numbers);
+protected:
 
     /// Sets the channel numbers this Module maintains
     virtual void set_channel_numbers(const ChanNums& channel_numbers) override;
@@ -87,8 +83,6 @@ public:
 
     /// Removes a channel number from current channel numbers
     virtual void remove_channel_number(ChanNum channel_number) override;
-
-protected:
 
     /// Sorts channel numbers associated with inputs and outputs
     virtual void sort_input_output_channel_numbers() const;

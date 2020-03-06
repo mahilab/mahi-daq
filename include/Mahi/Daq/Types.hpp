@@ -3,6 +3,7 @@
 #include <typeinfo>
 #include <vector>
 #include <map>
+#include <set>
 
 namespace mahi {
 namespace daq {

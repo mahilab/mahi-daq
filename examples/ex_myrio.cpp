@@ -43,23 +43,23 @@ bool handler(CtrlEvent event) {
 void print_channel_info(const MyRio& myrio) {
     print("----------------------------------------");
     print("Connector MXP A");
-    print("    AO: ", myrio.mxpA.AO.get_channel_numbers());
-    print("    AI: ", myrio.mxpA.AI.get_channel_numbers());
-    print("    DI: ", myrio.mxpA.DIO.get_input_channel_numbers());
-    print("    DO: ", myrio.mxpA.DIO.get_output_channel_numbers());
-    print("    ENC:", myrio.mxpA.encoder.get_channel_numbers());
+    print("    AO: ", myrio.mxpA.AO.channel_numbers());
+    print("    AI: ", myrio.mxpA.AI.channel_numbers());
+    print("    DI: ", myrio.mxpA.DIO.input_channel_numbers());
+    print("    DO: ", myrio.mxpA.DIO.output_channel_numbers());
+    print("    ENC:", myrio.mxpA.encoder.channel_numbers());
     print("Connector MXP B");
-    print("    AO: ", myrio.mxpB.AO.get_channel_numbers());
-    print("    AI: ", myrio.mxpB.AI.get_channel_numbers());
-    print("    DI: ", myrio.mxpB.DIO.get_input_channel_numbers());
-    print("    DO: ", myrio.mxpB.DIO.get_output_channel_numbers());
-    print("    ENC:", myrio.mxpB.encoder.get_channel_numbers());
+    print("    AO: ", myrio.mxpB.AO.channel_numbers());
+    print("    AI: ", myrio.mxpB.AI.channel_numbers());
+    print("    DI: ", myrio.mxpB.DIO.input_channel_numbers());
+    print("    DO: ", myrio.mxpB.DIO.output_channel_numbers());
+    print("    ENC:", myrio.mxpB.encoder.channel_numbers());
     print("Connector MSP C");
-    print("    AO: ", myrio.mspC.AO.get_channel_numbers());
-    print("    AI: ", myrio.mspC.AI.get_channel_numbers());
-    print("    DI: ", myrio.mspC.DIO.get_input_channel_numbers());
-    print("    DO: ", myrio.mspC.DIO.get_output_channel_numbers());  
-    print("    ENC:", myrio.mspC.encoder.get_channel_numbers());
+    print("    AO: ", myrio.mspC.AO.channel_numbers());
+    print("    AI: ", myrio.mspC.AI.channel_numbers());
+    print("    DI: ", myrio.mspC.DIO.input_channel_numbers());
+    print("    DO: ", myrio.mspC.DIO.output_channel_numbers());  
+    print("    ENC:", myrio.mspC.encoder.channel_numbers());
     print("----------------------------------------");
 }
 
@@ -134,19 +134,19 @@ int main(int argc, char** argv) {
         myrio.update_input();
         // perform analog loopback
         double voltage_write = sinwave(t);
-        myrio.mspC.AO[0].set_value(voltage_write);
-        double voltage_read  = myrio.mspC.AI[0].get_value(); 
+        myrio.mspC.AO[0].set(voltage_write);
+        double voltage_read  = myrio.mspC.AI[0].get(); 
         // button -> DO[1] -> DI[5] -> led[3] loop
         if (myrio.is_button_pressed())
-            myrio.mspC.DIO[1].set_value(High);
+            myrio.mspC.DIO[1].set(High);
         else
-            myrio.mspC.DIO[1].set_value(Low);
+            myrio.mspC.DIO[1].set(Low);
         if (myrio.mspC.DIO[5] == High)
             myrio.set_led(3, true);
         else
             myrio.set_led(3, false);
         // read an encoder
-        int    counts   = myrio.mspC.encoder[0].get_value();
+        int    counts   = myrio.mspC.encoder[0].get();
         double position = myrio.mspC.encoder[0].get_position(); // counts scale by 2*PI/500.0f
         if (myrio.is_button_pressed()) 
             myrio.mspC.encoder[0].zero();

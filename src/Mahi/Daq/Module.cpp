@@ -11,6 +11,8 @@ namespace daq {
 // HELPER FUNCTIONS
 //==============================================================================
 
+namespace  {
+
 ChanNums sort_and_reduce_channels(const ChanNums& channels) {
     ChanNums sorted_channels = channels;
     std::sort(sorted_channels.begin(), sorted_channels.end());
@@ -23,6 +25,8 @@ ChanMap make_channel_map(const ChanNums& channel_numbers) {
     for (std::size_t i = 0; i < channel_numbers.size(); ++i)
         channel_map[channel_numbers[i]] = i;
     return channel_map;
+}
+
 }
 
 //==============================================================================
@@ -55,29 +59,39 @@ bool ModuleBase::update() {
 }
 
 void ModuleBase::set_channel_numbers(const ChanNums& channel_numbers) {
-    auto new_channel_numbers = sort_and_reduce_channels(channel_numbers);
-    if (new_channel_numbers != channel_numbers_) {
-        channel_numbers_ = new_channel_numbers;
+    auto new_channels = sort_and_reduce_channels(channel_numbers);
+    if (new_channels != channel_numbers_) {
+        auto old_channels = channel_numbers_;
+        channel_numbers_ = new_channels;
         update_map();
+        on_channels_changed(old_channels, channel_numbers_);
         LOG(Verbose) << "Set Module " << get_name() << " channel numbers";// to " << channel_numbers_;
     }
 }
 
 void ModuleBase::add_channel_number(ChanNum channel_number) {
     if (!channel_map_.count(channel_number)) {
+        auto old_channels = channel_numbers_;
         channel_numbers_.push_back(channel_number);
         sort_and_reduce_channels(channel_numbers_);
         update_map(); 
+        on_channels_changed(old_channels, channel_numbers_);
         LOG(Verbose) << "Added channel number " << channel_number << " to Module " << get_name();      
     } 
 }
 
 void ModuleBase::remove_channel_number(ChanNum channel_number) {
     if (channel_map_.count(channel_number)) {
+        auto old_channels = channel_numbers_;
         channel_numbers_.erase(std::remove(channel_numbers_.begin(), channel_numbers_.end(), channel_number), channel_numbers_.end());
         update_map();
+        on_channels_changed(old_channels, channel_numbers_);
         LOG(Verbose) << "Removed channel number " << channel_number << " from Module " << get_name();      
     }
+}
+
+void ModuleBase::on_channels_changed(const ChanNums& old_channels, const ChanNums& new_channels) {
+    // do nothing by default
 }
 
 void ModuleBase::update_map() {
@@ -87,11 +101,11 @@ void ModuleBase::update_map() {
         buffers_[i]->change_channel_numbers(old_map, channel_map_);    
 }
 
-const ChanNums& ModuleBase::get_channel_numbers() const {
+const ChanNums& ModuleBase::channel_numbers() const {
     return channel_numbers_;
 }
 
-std::size_t ModuleBase::get_channel_count() const {
+std::size_t ModuleBase::channel_count() const {
     return channel_numbers_.size();
 }
 
@@ -108,7 +122,7 @@ bool ModuleBase::validate_channel_count(std::size_t size, bool quiet) const {
     if (channel_numbers_.size() == size)
         return true;
     if (!quiet) {
-        LOG(Error) << "Invalid number of elements (" << size << ") not equal to channel count of " << get_channel_count() << " on Module " << get_name();
+        LOG(Error) << "Invalid number of elements (" << size << ") not equal to channel count of " << channel_count() << " on Module " << get_name();
     }
     return false;
 }

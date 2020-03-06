@@ -36,7 +36,7 @@ public:
     VirtualAI(VirtualDaq& daq, const ChanNums& channel_numbers);
     bool update_channel(ChanNum channel_number) override;
 public:
-    Buffer<std::function<Voltage(double)>> sources;
+    Buffer<std::function<Voltage(void)>> sources;
 private:
     VirtualDaq& daq_;
 };
@@ -49,6 +49,8 @@ class VirtualAO : public AnalogOutput {
 public:
     VirtualAO(VirtualDaq& daq, const ChanNums& channel_numbers);
     bool update_channel(ChanNum channel_number) override;
+public:
+    Buffer<std::function<void(Voltage)>> sinks;
 private:
     VirtualDaq& daq_;
 };
@@ -62,7 +64,7 @@ public:
     VirtualDI(VirtualDaq& daq, const ChanNums& channel_numbers);
     bool update_channel(ChanNum channel_number) override;
 public:
-    Buffer<std::function<Logic(double)>> sources;
+    Buffer<std::function<Logic(void)>> sources;
 private:
     VirtualDaq& daq_;
 };
@@ -75,6 +77,8 @@ class VirtualDO : public DigitalOutput {
 public:
     VirtualDO(VirtualDaq& daq, const ChanNums& channel_numbers);
     bool update_channel(ChanNum channel_number) override;
+public:
+    Buffer<std::function<void(Logic)>> sinks;
 private:
     VirtualDaq& daq_;
 };
@@ -89,7 +93,7 @@ public:
     bool update_channel(ChanNum channel_number) override;
     bool reset_count(ChanNum channel_number, int count);
 public:
-    Buffer<std::function<int(double)>> sources;
+    Buffer<std::function<int(void)>> sources;
 private:
     VirtualDaq& daq_;
 };

@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
             q8_ai_data[i]  = q8.AI[i];
             q8_di_data[i]  = (double)q8.DI[i];
             q8_enc_data[i] = (double)q8.encoder[i];
-            q8_vel_data[i] = q8.encoder[i].get_value_per_sec();
+            q8_vel_data[i] = q8.encoder.channel(i).get_value_per_sec();
         }
 
         // set AO

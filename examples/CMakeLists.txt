@@ -11,6 +11,8 @@ macro(mahi_daq_example target)
     set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
 endmacro(mahi_daq_example)
 
+    mahi_daq_example(refs)
+
 if (MAHI_QUANSER)
     mahi_daq_example(q2usb)
     mahi_daq_example(q8usb)

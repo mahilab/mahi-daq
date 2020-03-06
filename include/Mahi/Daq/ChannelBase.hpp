@@ -41,19 +41,16 @@ public:
     bool update();
 
     /// Returns the current value of the channel
-    T get_value() const;
+    const T& get() const;
+
+    /// Returns the current value of the channel
+    T& get();
 
     /// Sets the current value of the channel
-    void set_value(T value);
-
-    /// Overload assignment operator for setting
-    void operator= (const T& value);
-
-    /// Overload cast opoerator for getting
-    operator T() const;
+    void set(T value);
 
     /// Gets the channel number
-    ChanNum get_channel_number() const;
+    ChanNum channel_number() const;
 
     /// Returns true if the Channel is valid
     bool is_valid() const;

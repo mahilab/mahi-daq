@@ -31,7 +31,7 @@ bool S826AO::on_open() {
     // program all channels to be -10 to 10 V
     int result;
     bool success = true;
-    for (auto& c : get_channel_numbers()) {
+    for (auto& c : channel_numbers()) {
         result = S826_DacRangeWrite(s826_.board_, c, S826_DAC_SPAN_10_10, 0);
         if (result != S826_ERR_OK) {
             LOG(Error) << "Failed to set " << get_name() << " channel number " << c << " output range (" << S826::get_error_message(result) << ")";

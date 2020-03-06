@@ -52,27 +52,27 @@ int main() {
     if (!qpid.enable())
         return 1;
 
-    // qpid.AO[0].set_value(5.0);
+    // qpid.AO[0].set(5.0);
     // qpid.update_output();
     // qpid.update_input();
-    // double in = qpid.AI[0].get_value();
+    // double in = qpid.AI[0].get();
     // print(in);
 
     
 
-    qpid.DIO[0].set_direction(Direction::Out);
-    qpid.DIO[1].set_direction(Direction::Out);
-    qpid.DIO[8].set_direction(Direction::In);
-    qpid.DIO[9].set_direction(Direction::In);
+    qpid.DIO.channel(0).set_direction(Direction::Out);
+    qpid.DIO.channel(1).set_direction(Direction::Out);
+    qpid.DIO.channel(8).set_direction(Direction::In);
+    qpid.DIO.channel(9).set_direction(Direction::In);
 
-    print_var(qpid.DIO.get_output_channel_numbers());
-    print_var(qpid.DIO.get_input_channel_numbers());
+    print_var(qpid.DIO.output_channel_numbers());
+    print_var(qpid.DIO.input_channel_numbers());
 
-    qpid.DIO[0].set_value(Logic::High);
-    qpid.DIO[1].set_value(Logic::Low);
+    qpid.DIO[0] = Logic::High;
+    qpid.DIO[1] = Logic::Low;
 
-    print_var(qpid.DIO.get_value(0));
-    print_var(qpid.DIO.get_value(1));
+    print_var(qpid.DIO.get(0));
+    print_var(qpid.DIO.get(1));
 
     qpid.update_output();
 
@@ -81,16 +81,16 @@ int main() {
     sleep(seconds(1));
 
     qpid.update_input();
-    double input = qpid.DIO[8].get_value();
+    double input = qpid.DIO[8];
     print_var(input);
-    input = qpid.DIO[9].get_value();
+    input = qpid.DIO[9];
     print_var(input);
 
     // qpid.watchdog.start();
 
     // for (int i = 0; i < 1000; ++i) {
     //     qpid.update_input();
-    //     print(qpid.encoder[0].get_value());
+    //     print(qpid.encoder[0].get());
     //     sleep(milliseconds(1));
     // }
 
