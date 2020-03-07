@@ -1,4 +1,4 @@
-#include <mahi/daq/Quanser/QuanserDaq.hpp>
+#include <Mahi/Daq/Quanser/QuanserDaq.hpp>
 #include <quanser_messages.h>
 #include <hil.h>
 #include <tchar.h>
@@ -29,7 +29,7 @@ bool QuanserDaq::on_open() {
     // Try to open in 5 attempts
     for (int attempt = 0; attempt < 5; attempt++) {
         result = hil_open(card_type_.c_str(), std::to_string(id_).c_str(), &handle_);
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        util::sleep(milliseconds(10));
         if (result == 0) {
             // successful open
             if (!set_options(options_)) {
@@ -52,7 +52,7 @@ bool QuanserDaq::on_open() {
 bool QuanserDaq::on_close() {
     t_error result;
     result = hil_close(handle_);
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    util::sleep(milliseconds(10));
     if (result == 0) {
         return true;
     }
@@ -68,7 +68,7 @@ bool QuanserDaq::set_options(const QuanserOptions& options) {
     std::strcpy(options_str, options_.get_string().c_str());
     t_error result;
     result = hil_set_card_specific_options(handle_, options_str, std::strlen(options_str));
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    util::sleep(milliseconds(10));
     if (result == 0) {
         LOG(Verbose) << "Set " << get_name() << " options to: \"" << options_.get_string() << "\"";
         return true;

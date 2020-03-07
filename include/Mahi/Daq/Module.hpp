@@ -15,15 +15,15 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <mahi/daq/Device.hpp>
-#include <mahi/daq/Buffer.hpp>
+#include <Mahi/Daq/Buffer.hpp>
+#include <Mahi/Util/Device.hpp>
 #include <map>
 
 namespace mahi {
 namespace daq {
 
 /// Defines non-templated Module functions/members
-class ModuleBase : public Device {
+class ModuleBase : public util::Device {
 public:
 
     /// Default Constructor (creates an invlaid empty Module)
@@ -33,7 +33,7 @@ public:
     ModuleBase(const ChanNums& channel_numbers);
 
     /// Calls the Modules's API to update a single channel with the real-world.
-    virtual bool update_channel(ChanNum channel_number) = 0;
+    virtual bool update_channel(ChanNum channel_number);
 
     /// Calls the Modules's API to update all channels with the real-world.
     /// By default, iteratively calls update_channel() on all channel numbers.
@@ -45,8 +45,6 @@ public:
     /// Returns the number of channels on this Module
     std::size_t channel_count() const;
 
-protected:
-
     /// Checks if a channel number is a number defined on this Module.
     /// If quiet is false, an error log will be thrown.
     bool validate_channel_number(ChanNum channel_number, bool quiet = false) const;
@@ -54,6 +52,8 @@ protected:
     /// Checks if the size of a vector equals the number of channels
     /// If quiet is false, an error log will be thrown.
     bool validate_channel_count(std::size_t size, bool quiet = false) const;
+
+protected:
 
     /// Sets the channel numbers this Module maintains
     virtual void set_channel_numbers(const ChanNums& channel_numbers);
@@ -75,10 +75,10 @@ protected:
 
 private:
 
-    friend class BufferBase;
+    friend class ModuleArrayBase;
 
     /// Adds a Registry to this Module
-    void add_buffer(BufferBase* buffer);
+    void add_buffer(ModuleArrayBase* buffer);
 
     /// Updates the channel Map and notifies Registries
     void update_map();
@@ -90,7 +90,7 @@ private:
 
     ChanNums channel_numbers_;         ///< The channel numbers used by this ModuleBase
     ChanMap  channel_map_;             ///< Maps a channel number with a vector index position
-    std::vector<BufferBase*> buffers_; ///< Buffers needed by this Module
+    std::vector<ModuleArrayBase*> buffers_; ///< Buffers needed by this Module
 
 };
 
@@ -139,7 +139,7 @@ public:
 
 protected:
 
-    Buffer<T> values_;      ///< The real-world values of the channels in this Module
+    Buffer<T> m_values;      ///< The real-world values of the channels in this Module
     Buffer<T> min_values_;  ///< The minimum possible values of each channel
     Buffer<T> max_values_;  ///< The maximum possible values of each channel
 
@@ -148,4 +148,4 @@ protected:
 } // namespace daq
 } // namespace mahi
 
-#include <mahi/daq/Detail/Module.inl>
+#include <Mahi/Daq/Detail/Module.inl>

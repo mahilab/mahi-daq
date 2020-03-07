@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <mahi/daq/Encoder.hpp>
+#include <Mahi/Daq/Encoder.hpp>
 
 namespace mahi {
 namespace daq {
@@ -52,9 +52,6 @@ public:
 
     /// Returns a S826Encoder::Channel
     Channel channel(ChanNum channel_number);
-
-    /// Returns multiple S826Encoder::Channels
-    std::vector<Channel> channels(const ChanNums& channel_numbers);
 
 private:
 

@@ -15,7 +15,7 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <mahi/daq/Types.hpp>
+#include <Mahi/Daq/Types.hpp>
 #include <string>
 
 namespace mahi {

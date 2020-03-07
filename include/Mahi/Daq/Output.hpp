@@ -15,8 +15,8 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <mahi/daq/ChannelBase.hpp>
-#include <mahi/daq/Module.hpp>
+#include <Mahi/Daq/ChannelBase.hpp>
+#include <Mahi/Daq/Module.hpp>
 namespace mahi {
 namespace daq {
 
@@ -60,9 +60,6 @@ public:
 
     /// Gets a handle to a channel on this module
     Channel channel(ChanNum channel_number);
-
-    /// Gets a vector of handles to channels on this module
-    std::vector<Channel> channels(const ChanNums& channel_numbers);
 
 protected:
 
@@ -112,4 +109,4 @@ typedef Output<DutyCycle> PwmOutput;
 } // namespace daq
 } // namespace mahi
 
-#include <mahi/daq/Detail/Output.inl>
+#include <Mahi/Daq/Detail/Output.inl>

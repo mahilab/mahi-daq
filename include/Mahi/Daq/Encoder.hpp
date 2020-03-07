@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <mahi/daq/ChannelBase.hpp>
-#include <mahi/daq/Module.hpp>
+#include <Mahi/Daq/ChannelBase.hpp>
+#include <Mahi/Daq/Module.hpp>
 
 namespace mahi {
 namespace daq {
@@ -42,6 +42,12 @@ public:
     /// This function should call the DAQ's API to set all encoder counters
     virtual bool reset_counts(const std::vector<int>& counts);
 
+    /// This function should call the DAQ's API to set the quadrature factor on all encoder channels
+    virtual bool set_quadrature_factors(const std::vector<QuadFactor>& factors);
+
+    /// This function should call the DAQ's API to set the quadrature factor on a single channel
+    virtual bool set_quadrature_factor(ChanNum channel_number, QuadFactor factor);
+
     /// Zeros a single encoder channel
     bool zero_channel(ChanNum channel_number);
 
@@ -58,34 +64,45 @@ public:
     double get_position(ChanNum channel_number);
 
     /// Performs conversion to positions using factors_ and counts_per_unit
-    const std::vector<double>& get_positions();
+    const std::vector<double>& get_positions() const;
+    std::vector<double>& get_positions();
+
+    /// Returns values per second for all channels
+    const std::vector<double>& get_values_per_sec() const;
+    std::vector<double>& get_values_per_sec();
+
+    /// Returns valus per second for a single channel
+    double get_value_per_sec(ChanNum channel_number);
+
+    /// Performs conversion to positions using #factors_ and #counts_per_unit
+    const std::vector<double>& get_velocities() const;
+    std::vector<double>& get_velocities();
+
+    /// Performs conversion to position using #factors_ and #counts_per_unit
+    double get_velocity(ChanNum channel_number); 
 
     /// Returns a Encoder::Channel
     Channel channel(ChanNum channel_number);
 
-    /// Returns multiple Encoder::Channels
-    std::vector<Channel> channels(const ChanNums& channel_numbers);
+    /// Does this incremental encoder have velocity estimation? (false unless override)
+    virtual bool has_velocity() const;
 
 protected:
 
     /// Override to call compute_conversions
     virtual bool on_enable() override;
 
-    /// This function should call the DAQ's API to set the quadrature factor on all encoder channels
-    virtual bool set_quadrature_factors(const std::vector<QuadFactor>& factors);
-
-    /// This function should call the DAQ's API to set the quadrature factor on a single channel
-    virtual bool set_quadrature_factor(ChanNum channel_number, QuadFactor factor);
-
     /// Precomputes position conversion sclars (i.e. units_per_count_ / factors_)
     void compute_conversions();
 
 protected:
 
-    Buffer<QuadFactor> factors_;      ///< The encoder quadrature factors (default X4)
-    Buffer<double> units_per_count_;  ///< The number of counts per unit of travel of the Encoder
-    Buffer<double> positions_;        ///< The calculated positions of the Encoder channels
-    Buffer<double> conversions_;      ///< Conversion scalars used to convert to positions
+    Buffer<QuadFactor> factors_;         ///< The encoder quadrature factors (default X4)
+    Buffer<double> units_per_count_;     ///< The number of counts per unit of travel of the Encoder
+    mutable Buffer<double> positions_;   ///< The calculated positions of the Encoder channels
+    Buffer<double> values_per_sec_;      ///< The encoder velocities, if supported
+    mutable Buffer<double> velocities_;  ///< The calculated velocities of the Encoder channels
+    Buffer<double> conversions_;         ///< Conversion scalars used to convert to positions
 
 public:
     /// Encapsulates and Encoder channel (can be used as a PositionSensor)
@@ -97,11 +114,14 @@ public:
         /// Creates a valid channel.
         Channel(Encoder* module, ChanNum channel_number);
 
-        /// Inherit assignment operator for setting
-        using ChannelBase<int>::operator=;
-
         /// Gets the encoder position
         double get_position();
+
+        /// Gets the encoder counts per second if available
+        double get_value_per_sec();
+
+        /// Gets the encoder velocity if available
+        double get_velocity();
 
         /// Zeros the encoder count
         bool zero();
@@ -116,8 +136,6 @@ public:
 
         /// Sets the encoder quadrature factor
         bool set_quadrature_factor(QuadFactor factor);
-
-        double position_;
 
     };
 };

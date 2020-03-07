@@ -15,7 +15,7 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <mahi/daq/Encoder.hpp>
+#include <Mahi/Daq/Encoder.hpp>
 #include <utility>
 
 namespace mahi {

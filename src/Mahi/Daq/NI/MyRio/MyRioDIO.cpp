@@ -1,6 +1,6 @@
-#include <mahi/daq/NI/MyRio/MyRio.hpp>
+#include <Mahi/Daq/NI/MyRio/MyRio.hpp>
 
-#include <mahi/daq/NI/MyRio/MyRioConnector.hpp>
+#include <Mahi/Daq/NI/MyRio/MyRioConnector.hpp>
 #include "Detail/MyRioFpga60/MyRio.h"
 #include "Detail/MyRioUtil.hpp"
 
@@ -39,10 +39,10 @@ bool MyRioDIO::update_channel(ChanNum channel_number) {
     if (!validate_channel_number(channel_number))
         return false;
     if (directions_[channel_number] == In) {
-        values_[channel_number] = get_register_bit(ins_[channel_number / 8], channel_number % 8) ? High : Low;
+        m_values[channel_number] = get_register_bit(ins_[channel_number / 8], channel_number % 8) ? High : Low;
     }
     else {
-        if (values_[channel_number] == High)
+        if (m_values[channel_number] == High)
             set_register_bit(outs_[channel_number / 8], channel_number % 8);
         else
             clr_register_bit(outs_[channel_number / 8], channel_number % 8);

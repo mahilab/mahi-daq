@@ -15,8 +15,8 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <mahi/daq/DaqBase.hpp>
-#include <mahi/daq/Quanser/QuanserOptions.hpp>
+#include <Mahi/Daq/DaqBase.hpp>
+#include <Mahi/Daq/Quanser/QuanserOptions.hpp>
 
 //==============================================================================
 // FORWARD DECLARATIONS

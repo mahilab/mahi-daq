@@ -1,5 +1,5 @@
-#include <mahi/daq/Sensoray/S826.hpp>
-#include <mahi/daq/Sensoray/S826DIO.hpp>
+#include <Mahi/Daq/Sensoray/S826.hpp>
+#include <Mahi/Daq/Sensoray/S826DIO.hpp>
 
 #include <windows.h>
 #include <826api.h> 

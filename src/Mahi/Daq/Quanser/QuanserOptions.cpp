@@ -1,4 +1,4 @@
-#include <mahi/daq/Quanser/QuanserOptions.hpp>
+#include <Mahi/Daq/Quanser/QuanserOptions.hpp>
 
 namespace mahi {
 namespace daq {

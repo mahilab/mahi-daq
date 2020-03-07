@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <mahi/daq/Output.hpp>
+#include <Mahi/Daq/Output.hpp>
 
 namespace mahi {
 namespace daq {

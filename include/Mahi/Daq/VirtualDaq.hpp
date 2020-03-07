@@ -15,11 +15,11 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <mahi/daq/DaqBase.hpp>
-#include <mahi/daq/Input.hpp>
-#include <mahi/daq/Output.hpp>
-#include <mahi/daq/InputOutput.hpp>
-#include <mahi/daq/Encoder.hpp>
+#include <Mahi/Daq/DaqBase.hpp>
+#include <Mahi/Daq/Input.hpp>
+#include <Mahi/Daq/Output.hpp>
+#include <Mahi/Daq/InputOutput.hpp>
+#include <Mahi/Daq/Encoder.hpp>
 #include <functional>
 
 namespace mahi {

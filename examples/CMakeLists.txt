@@ -12,6 +12,7 @@ macro(mahi_daq_example target)
 endmacro(mahi_daq_example)
 
     mahi_daq_example(refs)
+    mahi_daq_example(testing)
 
 if (MAHI_QUANSER)
     mahi_daq_example(q2usb)

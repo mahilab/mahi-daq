@@ -1,5 +1,5 @@
-#include <mahi/daq/NI/MyRio/MyRioI2C.hpp>
-#include <mahi/daq/NI/MyRio/MyRioConnector.hpp>
+#include <Mahi/Daq/NI/MyRio/MyRioI2C.hpp>
+#include <Mahi/Daq/NI/MyRio/MyRioConnector.hpp>
 #include "Detail/MyRioUtil.hpp"
 #include "Detail/MyRioFpga60/MyRio.h"
 

@@ -15,8 +15,8 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <mahi/daq/Types.hpp>
-#include <mahi/daq/Device.hpp>
+#include <Mahi/Daq/Types.hpp>
+#include <Mahi/Daq/Device.hpp>
 #include <bitset>
 
 namespace mahi {

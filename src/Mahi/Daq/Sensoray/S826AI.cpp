@@ -1,5 +1,5 @@
-#include <mahi/daq/Sensoray/S826.hpp>
-#include <mahi/daq/Sensoray/S826AI.hpp>
+#include <Mahi/Daq/Sensoray/S826.hpp>
+#include <Mahi/Daq/Sensoray/S826AI.hpp>
 #include <windows.h>
 #include <826api.h> 
 #include <bitset>
@@ -34,7 +34,7 @@ bool S826AI::update() {
         int slot = adc_buffer_[c];
         std::bitset<16> bits(slot); // get first 16 bits which hold the measured value
         short int value = static_cast<short int>(bits.to_ulong()); // get signed 16-bit int value
-        values_[c] = ( value + 32768 ) * 20.0 / 65535.0 - 10.0; // convert to voltage
+        m_values[c] = ( value + 32768 ) * 20.0 / 65535.0 - 10.0; // convert to voltage
     }
     return true;
 }
@@ -54,7 +54,7 @@ bool S826AI::update_channel(ChanNum channel_number) {
     int slot = adc_buffer_[channel_number];
     std::bitset<16> bits(slot); // get first 16 bits which hold the measured value
     short int value = static_cast<short int>(bits.to_ulong()); // get signed 16-bit int value
-    values_[channel_number] = ( value + 32768 ) * 20.0 / 65535.0 - 10.0; // convert to voltage
+    m_values[channel_number] = ( value + 32768 ) * 20.0 / 65535.0 - 10.0; // convert to voltage
     return true;
 }
 

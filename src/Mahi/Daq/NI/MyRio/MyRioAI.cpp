@@ -1,6 +1,6 @@
-#include <mahi/daq/NI/MyRio/MyRio.hpp>
-#include <mahi/daq/NI/MyRio/MyRioAI.hpp>
-#include <mahi/daq/NI/MyRio/MyRioConnector.hpp>
+#include <Mahi/Daq/NI/MyRio/MyRio.hpp>
+#include <Mahi/Daq/NI/MyRio/MyRioAI.hpp>
+#include <Mahi/Daq/NI/MyRio/MyRioConnector.hpp>
 #include "Detail/MyRioFpga60/MyRio.h"
 
 #include <Mahi/Util/Logging/Log.hpp>
@@ -56,9 +56,9 @@ bool MyRioAI::update_channel(ChanNum channel_number) {
     }
     else {
         if (connector_.type == MyRioConnector::Type::MspC)
-            values_[channel_number] = (int16_t)value * WEIGHTS[connector_.type][channel_number] + OFFSETS[connector_.type][channel_number];
+            m_values[channel_number] = (int16_t)value * WEIGHTS[connector_.type][channel_number] + OFFSETS[connector_.type][channel_number];
         else
-            values_[channel_number] = value * WEIGHTS[connector_.type][channel_number] + OFFSETS[connector_.type][channel_number];
+            m_values[channel_number] = value * WEIGHTS[connector_.type][channel_number] + OFFSETS[connector_.type][channel_number];
         return true;
     }
 }

@@ -1,4 +1,4 @@
-#include <mahi/daq/DaqBase.hpp>
+#include <Mahi/Daq/DaqBase.hpp>
 
 #include <Mahi/Util/Logging/Log.hpp>
 using namespace mahi::util;
@@ -11,8 +11,7 @@ namespace daq {
 //==============================================================================
 
 DaqBase::DaqBase(const std::string& name) :
-    Device(name),
-    open_(false)
+    Device(name)
 {
 
 }
@@ -20,40 +19,6 @@ DaqBase::DaqBase(const std::string& name) :
 DaqBase::~DaqBase() {
     // this once call disable/close, but calling virtual functions in ctor/dtor
     // is considered dangerous!
-}
-
-bool DaqBase::open() {
-    if (open_) {
-        LOG(Warning) << "DAQ " << get_name() << " already open";
-        return true;
-    }
-    if (on_open()) {
-        LOG(Info) << "Opened DAQ " << get_name();
-        open_ = true;
-        return true;
-    }
-    else {
-        LOG(Error) << "Failed to open DAQ " << get_name();
-        open_ = false;
-        return false;
-    }
-}
-
-bool DaqBase::close() {
-    if (!open_) {
-        LOG(Warning) << "DAQ " << get_name() << " already closed";
-        return true;
-    }
-    if (on_close()) {
-        LOG(Info) << "Closed DAQ " << get_name();
-        open_ = false;
-        return true;
-    }
-    else {
-        LOG(Error) << "Failed to close DAQ " << get_name();
-        open_ = true;
-        return false;
-    }
 }
 
 bool DaqBase::update_input() {
@@ -65,11 +30,6 @@ bool DaqBase::update_output() {
     // TODO?
     return true;
 }
-
-bool DaqBase::is_open() const {
-    return open_;
-}
-
 
 } // namespace daq
 } // namespace mahi

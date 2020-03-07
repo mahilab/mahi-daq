@@ -8,7 +8,7 @@ namespace daq {
 template <typename T>
 Module<T>::Module() :
     ModuleBase(),
-    values_(this),
+    m_values(this),
     min_values_(this),
     max_values_(this)
 {}
@@ -16,7 +16,7 @@ Module<T>::Module() :
 template <typename T>
 Module<T>::Module(const ChanNums& channel_numbers) :
     ModuleBase(channel_numbers),
-    values_(this),
+    m_values(this),
     min_values_(this),
     max_values_(this)
 {}
@@ -26,18 +26,18 @@ Module<T>::~Module() { }
 
 template <typename T>
 const T& Module<T>::operator[](ChanNum channel_number) const {
-    return values_[channel_number];
+    return m_values[channel_number];
 }
 
 template <typename T>
 T& Module<T>::operator[](ChanNum channel_number) {
-    return values_[channel_number];
+    return m_values[channel_number];
 }
 
 template <typename T>
 bool Module<T>::set_ranges(const std::vector<T>& min_values, const std::vector<T>& max_values) {
-    min_values_.set_raw(min_values);
-    max_values_.set_raw(max_values);
+    min_values_.set(min_values);
+    max_values_.set(max_values);
     return true;
 }
 
@@ -53,27 +53,27 @@ bool Module<T>::set_range(ChanNum channel_number, T min_value, T max_value) {
 
 template <typename T>
 std::vector<T>& Module<T>::get() {
-    return values_.get_raw();
+    return m_values.get();
 }
 
 template <typename T>
 const T& Module<T>::get(ChanNum channel_number) const {
-    return values_[channel_number];
+    return m_values[channel_number];
 }
 
 template <typename T>
 T& Module<T>::get(ChanNum channel_number) {
-    return values_[channel_number];
+    return m_values[channel_number];
 }
 
 template <typename T>
 void Module<T>::set(const std::vector<T>& values) {
-    values_.set_raw(values);
+    m_values.set(values);
 }
 
 template <typename T>
 void Module<T>::set(ChanNum channel_number, T value) {
-    values_[channel_number] = value;
+    m_values[channel_number] = value;
 }
 
 } // namespace daq

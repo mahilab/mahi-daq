@@ -2,33 +2,33 @@ namespace mahi {
 namespace daq {
 
 template <typename T>
-ChannelBase<T>::ChannelBase() : module_(nullptr), channel_number_(0) {}
+ChannelBase<T>::ChannelBase() : m_module(nullptr), channel_number_(0) {}
 
 template <typename T>
 ChannelBase<T>::ChannelBase(Module<T>* module, ChanNum channel_number)
-    : module_(module), channel_number_(channel_number) {}
+    : m_module(module), channel_number_(channel_number) {}
 
 template <typename T>
 ChannelBase<T>::~ChannelBase() {}
 
 template <typename T>
 bool ChannelBase<T>::update() {
-    return module_->update_channel(channel_number_);
+    return m_module->update_channel(channel_number_);
 }
 
 template <typename T>
 const T& ChannelBase<T>::get() const {
-    return module_->get(channel_number_);
+    return m_module->get(channel_number_);
 }
 
 template <typename T>
 T& ChannelBase<T>::get() {
-    return module_->get(channel_number_);
+    return m_module->get(channel_number_);
 }
 
 template <typename T>
 void ChannelBase<T>::set(T value) {
-    module_->set(channel_number_, value);
+    m_module->set(channel_number_, value);
 }
 
 template <typename T>
@@ -38,9 +38,9 @@ ChanNum ChannelBase<T>::channel_number() const {
 
 template <typename T>
 bool ChannelBase<T>::is_valid() const {
-    if (module_ == nullptr)
+    if (m_module == nullptr)
         return false;
-    if (!module_->validate_channel_number(channel_number_))
+    if (!m_module->validate_channel_number(channel_number_))
         return false;
     return true;
 }

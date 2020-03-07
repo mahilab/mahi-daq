@@ -15,6 +15,7 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #include <Mahi/Daq.hpp>
+#include <Mahi/Util.hpp>
 
 using namespace mahi::util;
 using namespace mahi::daq;

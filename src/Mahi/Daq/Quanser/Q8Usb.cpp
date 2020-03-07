@@ -1,4 +1,4 @@
-#include <mahi/daq/Quanser/Q8Usb.hpp>
+#include <Mahi/Daq/Quanser/Q8Usb.hpp>
 #include <hil.h>
 #include <thread>
 
@@ -12,7 +12,9 @@ namespace daq {
 // STATIC VARIABLES
 //==============================================================================
 
- ChanNum NEXT_Q8USB_ID = 0;
+namespace {
+ChanNum NEXT_Q8USB_ID = 0;
+}
 
 //==============================================================================
 // CLASS DEFINITIONS
@@ -73,7 +75,7 @@ bool Q8Usb::on_open() {
         return false;
     }
     // allow changes to take effect
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    util::sleep(milliseconds(10));
     return true;
 }
 
@@ -83,7 +85,7 @@ bool Q8Usb::on_close() {
     // clear the watchdog (precautionary, ok if fails)
     watchdog.clear();
     // allow changes to take effect
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    util::sleep(milliseconds(10));
     // close as QDaq
     return QuanserDaq::on_close();
 }
@@ -106,7 +108,7 @@ bool Q8Usb::on_enable() {
     if (!encoder.enable())
         success = false;
     // allow changes to take effect
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    util::sleep(milliseconds(10));
     return success;
 }
 
@@ -128,7 +130,7 @@ bool Q8Usb::on_disable() {
     if (!encoder.disable())
         success = false;
     // allow changes to take effect
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    util::sleep(milliseconds(10));
     return success;
 }
 
@@ -145,7 +147,7 @@ bool Q8Usb::update_input() {
         static_cast<ChanNum>(encoder.channel_count()),
         DI.channel_count() > 0 ? &(DI.channel_numbers())[0] : NULL,
         static_cast<ChanNum>(DI.channel_count()),
-        encoder.channel_count() > 0 ? &(encoder.get_quanser_velocity_channels())[0] : NULL,
+        encoder.channel_count() > 0 ? &(encoder.velocity_channel_numbers())[0] : NULL,
         static_cast<ChanNum>(encoder.channel_count()),
         AI.channel_count() > 0 ? &(AI.get())[0] : NULL,
         encoder.channel_count() > 0 ? &(encoder.get())[0] : NULL,
@@ -199,14 +201,14 @@ bool Q8Usb::identify(ChanNum channel_number) {
     for (int i = 0; i < 5; ++i) {
         do_ch.set(High);
         do_ch.update();
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        util::sleep(milliseconds(10));
         di_ch.update();
         if (di_ch.get() != High) {
             return false;
         }
         do_ch.set(Low);
         do_ch.update();
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        util::sleep(milliseconds(10));
         di_ch.update();
         if (di_ch.get() != Low) {
             return false;

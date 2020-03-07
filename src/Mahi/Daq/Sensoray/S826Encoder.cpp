@@ -1,5 +1,5 @@
-#include <mahi/daq/Sensoray/S826.hpp>
-#include <mahi/daq/Sensoray/S826Encoder.hpp>
+#include <Mahi/Daq/Sensoray/S826.hpp>
+#include <Mahi/Daq/Sensoray/S826Encoder.hpp>
 #include <windows.h>
 #include <826api.h> 
 
@@ -52,11 +52,11 @@ bool S826Encoder::update_channel(ChanNum channel_number) {
         LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " (" << S826::get_error_message(result) << ")";
         return false;
     }
-    int last_count = values_[channel_number];
+    int last_count = m_values[channel_number];
     int this_count = static_cast<int>(count);
     double last_time = timestamps_[channel_number];
     double this_time = timestamp / 1000000;
-    values_[channel_number] = this_count;
+    m_values[channel_number] = this_count;
     timestamps_[channel_number] = this_time;
     values_per_sec_[channel_number] = static_cast<double>(this_count - last_count) / (this_time - last_time);
     return true;
@@ -75,7 +75,7 @@ bool S826Encoder::reset_count(ChanNum channel_number, int count) {
         LOG(Error) << "Failed to reset counts of " << get_name() << " channel number " << channel_number << " (" << S826::get_error_message(result) << ")";
         return false;
     }
-    values_[channel_number] = count;
+    m_values[channel_number] = count;
     return true;
 }
 
@@ -112,7 +112,7 @@ bool S826Encoder::set_quadrature_factor(ChanNum channel_number, QuadFactor facto
 }
 
 std::vector<double>& S826Encoder::get_values_per_sec() {
-    return values_per_sec_.get_raw();
+    return values_per_sec_.get();
 }
 
 double S826Encoder::get_value_per_sec(ChanNum channel_number) {
@@ -125,7 +125,7 @@ double S826Encoder::get_value_per_sec(ChanNum channel_number) {
 const std::vector<double>& S826Encoder::get_velocities() {
     for (auto const& ch : channel_numbers())
         velocities_[ch] = values_per_sec_[ch] * conversions_[ch];
-    return velocities_.get_raw();
+    return velocities_.get();
 }
 
 double S826Encoder::get_velocity(ChanNum channel_number) {
@@ -143,7 +143,7 @@ double S826Encoder::get_timestamp(ChanNum channel_number) {
 }
 
 std::vector<double>& S826Encoder::get_timestamps() {
-    return timestamps_.get_raw();
+    return timestamps_.get();
 }
 
 //=============================================================================
@@ -155,13 +155,6 @@ S826Encoder::Channel S826Encoder::channel(ChanNum channel_number) {
         return Channel();
 }
 
-std::vector<S826Encoder::Channel> S826Encoder::channels(const ChanNums& channel_numbers) {
-    std::vector<Channel> channels;
-    for (std::size_t i = 0; i < channel_numbers.size(); ++i)
-        channels.push_back(channel(channel_numbers[i]));
-    return channels;
-}
-
 S826Encoder::Channel::Channel() :
     Encoder::Channel()
 { }
@@ -171,16 +164,16 @@ S826Encoder::Channel::Channel(S826Encoder* module, ChanNum channel_number) :
 { }
 
 double S826Encoder::Channel::get_value_per_sec() {
-    return static_cast<S826Encoder*>(module_)->get_value_per_sec(channel_number_);
+    return static_cast<S826Encoder*>(m_module)->get_value_per_sec(channel_number_);
 }
 
 double S826Encoder::Channel::get_velocity() {
-    velocity_ = static_cast<S826Encoder*>(module_)->get_velocity(channel_number_);
+    velocity_ = static_cast<S826Encoder*>(m_module)->get_velocity(channel_number_);
     return velocity_;
 }
 
 double S826Encoder::Channel::get_timestamp() {
-    return static_cast<S826Encoder*>(module_)->get_timestamp(channel_number_);
+    return static_cast<S826Encoder*>(m_module)->get_timestamp(channel_number_);
 }
 
 } // namespace daq

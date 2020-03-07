@@ -71,6 +71,18 @@
         "variant": "cpp",
         "xlocmes": "cpp",
         "xlocmon": "cpp",
-        "xloctime": "cpp"
+        "xloctime": "cpp",
+        "regex": "cpp",
+        "valarray": "cpp",
+        "complex": "cpp",
+        "csignal": "cpp",
+        "forward_list": "cpp",
+        "iomanip": "cpp",
+        "locale": "cpp",
+        "optional": "cpp",
+        "set": "cpp",
+        "unordered_set": "cpp",
+        "xlocbuf": "cpp",
+        "resumable": "cpp"
     }
 }

@@ -22,15 +22,6 @@ namespace daq {
             return Channel();
     }
 
-    template<typename T>
-    std::vector<typename Input<T>::Channel> Input<T>::channels(
-        const ChanNums& channel_numbers) {
-        std::vector<Channel> channels;
-        for (std::size_t i = 0; i < channel_numbers.size(); ++i)
-            channels.push_back(channel(channel_numbers[i]));
-        return channels;
-    }
-
     template <typename T>
     Input<T>::Channel::Channel() : ChannelBase<T>() { }
 

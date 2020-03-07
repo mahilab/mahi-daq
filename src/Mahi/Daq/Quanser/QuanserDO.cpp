@@ -1,6 +1,6 @@
 #include <hil.h>
-#include <mahi/daq/Quanser/QuanserDaq.hpp>
-#include <mahi/daq/Quanser/QuanserDO.hpp>
+#include <Mahi/Daq/Quanser/QuanserDaq.hpp>
+#include <Mahi/Daq/Quanser/QuanserDO.hpp>
 
 #include <Mahi/Util/Logging/Log.hpp>
 using namespace mahi::util;
@@ -23,9 +23,9 @@ namespace daq {
     bool QuanserDO::update() {
         // convert Logic to Quanser t_boolean (aka char)
         for (auto const& ch : channel_numbers())
-            quanser_values_[ch] = static_cast<char>(values_[ch]);
+            quanser_values_[ch] = static_cast<char>(m_values[ch]);
         t_error result;
-        result = hil_write_digital(daq_.handle_, &channel_numbers()[0], static_cast<ChanNum>(channel_count()), &quanser_values_.get_raw()[0]);
+        result = hil_write_digital(daq_.handle_, &channel_numbers()[0], static_cast<ChanNum>(channel_count()), &quanser_values_.get()[0]);
         if (result == 0)
             return true;
         else {
@@ -36,7 +36,7 @@ namespace daq {
 
     bool QuanserDO::update_channel(ChanNum channel_number) {
         // convert Logic to Quanser t_boolean (aka char)
-        quanser_values_[channel_number] = static_cast<char>(values_[channel_number]);
+        quanser_values_[channel_number] = static_cast<char>(m_values[channel_number]);
         t_error result;
         result = hil_write_digital(daq_.handle_, &channel_number, 1, &quanser_values_[channel_number]);
         if (result == 0)
@@ -49,7 +49,7 @@ namespace daq {
 
 
     std::vector<char>& QuanserDO::get_quanser_values() {
-        return quanser_values_.get_raw();
+        return quanser_values_.get();
     }
 
     bool QuanserDO::set_expire_values(const std::vector<Logic>& expire_values) {

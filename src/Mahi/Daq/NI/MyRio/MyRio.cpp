@@ -1,4 +1,4 @@
-#include <mahi/daq/NI/MyRio/MyRio.hpp>
+#include <Mahi/Daq/NI/MyRio/MyRio.hpp>
 #include "Detail/MyRioFpga60/MyRio.h"
 #include "Detail/MyRioFpga60/MyRio.h"
 #include "Detail/MyRioUtil.hpp"
@@ -152,7 +152,7 @@ bool MyRio::on_enable() {
     }
     // enable each connector
     if (mxpA.enable() && mxpB.enable() && mspC.enable()) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        util::sleep(milliseconds(10));
         return true;
     }
     else
@@ -166,7 +166,7 @@ bool MyRio::on_disable() {
     }
     // disable each connect
     if (mxpA.disable() && mxpB.disable() && mspC.disable()) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        util::sleep(milliseconds(10));
         return true;
     }
     else

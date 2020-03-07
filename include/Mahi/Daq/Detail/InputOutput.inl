@@ -22,7 +22,7 @@ namespace daq {
 
     template <typename T>
     bool InputOutput<T>::set_directions(const std::vector<Direction>& directions) {
-        directions_.set_raw(directions);
+        directions_.set(directions);
         sort_input_output_channel_numbers();
         return true;
     }
@@ -85,15 +85,6 @@ namespace daq {
     }
 
     template <typename T>
-    std::vector<typename InputOutput<T>::Channel> InputOutput<T>::channels(
-        const ChanNums& channel_numbers) {
-        std::vector<Channel> channels;
-        for (std::size_t i = 0; i < channel_numbers.size(); ++i)
-            channels.push_back(channel(channel_numbers[i]));
-        return channels;
-    }
-
-    template <typename T>
     void InputOutput<T>::set_channel_numbers(const ChanNums& channel_numbers) {
         Output<T>::set_channel_numbers(channel_numbers);
         sort_input_output_channel_numbers();
@@ -116,9 +107,9 @@ namespace daq {
         input_channel_numbers_.clear();
         output_channel_numbers_.clear();
         for (std::size_t i = 0; i < this->channel_count(); ++i) {
-            if (directions_.get_raw()[i] == In)
+            if (directions_.get()[i] == In)
                 input_channel_numbers_.push_back(this->channel_numbers()[i]);
-            else if (directions_.get_raw()[i] == Out)
+            else if (directions_.get()[i] == Out)
                 output_channel_numbers_.push_back(this->channel_numbers()[i]);
         }
     }
@@ -132,7 +123,7 @@ namespace daq {
 
     template <typename T>
     void InputOutput<T>::Channel::set_direction(Direction direction) {
-        dynamic_cast<InputOutput<T>*>(this->module_)->set_direction(this->channel_number_, direction);
+        dynamic_cast<InputOutput<T>*>(this->m_module)->set_direction(this->channel_number_, direction);
     }
 
 } // namespace daq

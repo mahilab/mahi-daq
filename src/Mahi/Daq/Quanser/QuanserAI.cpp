@@ -1,5 +1,5 @@
-#include <mahi/daq/Quanser/QuanserDaq.hpp>
-#include <mahi/daq/Quanser/QuanserAI.hpp>
+#include <Mahi/Daq/Quanser/QuanserDaq.hpp>
+#include <Mahi/Daq/Quanser/QuanserAI.hpp>
 #include <hil.h>
 
 #include <Mahi/Util/Logging/Log.hpp>
@@ -21,7 +21,7 @@ QuanserAI::QuanserAI(QuanserDaq& daq, const ChanNums& channel_numbers) :
 
 bool QuanserAI::update() {
     t_error result;
-    result = hil_read_analog(daq_.handle_, &channel_numbers()[0], static_cast<ChanNum>(channel_count()), &values_.get_raw()[0]);
+    result = hil_read_analog(daq_.handle_, &channel_numbers()[0], static_cast<ChanNum>(channel_count()), &m_values.get()[0]);
     if (result == 0)
         return true;
     else {
@@ -32,7 +32,7 @@ bool QuanserAI::update() {
 
 bool QuanserAI::update_channel(ChanNum channel_number) {
     t_error result;
-    result = hil_read_analog(daq_.handle_, &channel_number, 1, &values_[channel_number]);
+    result = hil_read_analog(daq_.handle_, &channel_number, 1, &m_values[channel_number]);
     if (result == 0)
         return true;
     else {
@@ -45,7 +45,7 @@ bool QuanserAI::set_ranges(const std::vector<Voltage>& min_values, const std::ve
     if (!Module::set_ranges(min_values, max_values))
         return false;
     t_error result;
-    result = hil_set_analog_input_ranges(daq_.handle_, &channel_numbers()[0], static_cast<ChanNum>(channel_count()), &min_values_.get_raw()[0], &max_values_.get_raw()[0]);
+    result = hil_set_analog_input_ranges(daq_.handle_, &channel_numbers()[0], static_cast<ChanNum>(channel_count()), &min_values_.get()[0], &max_values_.get()[0]);
     if (result == 0) {
         LOG(Verbose) << "Set " << get_name() << "ranges"; // to min=" << min_values << ", max=" << max_values;
         return true;

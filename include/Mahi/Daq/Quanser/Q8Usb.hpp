@@ -15,14 +15,14 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <mahi/daq/Quanser/QuanserDaq.hpp>
-#include <mahi/daq/Quanser/QuanserAI.hpp>
-#include <mahi/daq/Quanser/QuanserAO.hpp>
-#include <mahi/daq/Quanser/QuanserDI.hpp>
-#include <mahi/daq/Quanser/QuanserDO.hpp>
-#include <mahi/daq/Quanser/QuanserEncoder.hpp>
-#include <mahi/daq/Quanser/QuanserOptions.hpp>
-#include <mahi/daq/Quanser/QuanserWatchdog.hpp>
+#include <Mahi/Daq/Quanser/QuanserDaq.hpp>
+#include <Mahi/Daq/Quanser/QuanserAI.hpp>
+#include <Mahi/Daq/Quanser/QuanserAO.hpp>
+#include <Mahi/Daq/Quanser/QuanserDI.hpp>
+#include <Mahi/Daq/Quanser/QuanserDO.hpp>
+#include <Mahi/Daq/Quanser/QuanserEncoder.hpp>
+#include <Mahi/Daq/Quanser/QuanserOptions.hpp>
+#include <Mahi/Daq/Quanser/QuanserWatchdog.hpp>
 
 namespace mahi {
 namespace daq {

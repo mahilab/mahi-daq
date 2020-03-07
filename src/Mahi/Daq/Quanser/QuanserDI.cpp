@@ -1,5 +1,5 @@
-#include <mahi/daq/Quanser/QuanserDaq.hpp>
-#include <mahi/daq/Quanser/QuanserDI.hpp>
+#include <Mahi/Daq/Quanser/QuanserDaq.hpp>
+#include <Mahi/Daq/Quanser/QuanserDI.hpp>
 #include <hil.h>
 
 #include <Mahi/Util/Logging/Log.hpp>
@@ -22,11 +22,11 @@ namespace daq {
 
     bool QuanserDI::update() {
         t_error result;
-        result = hil_read_digital(daq_.handle_, &channel_numbers()[0], static_cast<ChanNum>(channel_count()), &quanser_values_.get_raw()[0]);
+        result = hil_read_digital(daq_.handle_, &channel_numbers()[0], static_cast<ChanNum>(channel_count()), &quanser_values_.get()[0]);
         if (result == 0) {
             // convert Quanser t_boolean (aka char) to Logic
             for (auto const& ch : channel_numbers())
-                values_[ch] = static_cast<Logic>(quanser_values_[ch]);
+                m_values[ch] = static_cast<Logic>(quanser_values_[ch]);
             return true;
         }
         else {
@@ -39,7 +39,7 @@ namespace daq {
         t_error result;
         result = hil_read_digital(daq_.handle_, &channel_number, 1, &quanser_values_[channel_number]);
         if (result == 0) {
-            values_[channel_number] = static_cast<Logic>(quanser_values_[channel_number]);
+            m_values[channel_number] = static_cast<Logic>(quanser_values_[channel_number]);
             return true;
         }
         else {
@@ -49,7 +49,7 @@ namespace daq {
     }
 
     std::vector<char>& QuanserDI::get_quanser_values() {
-        return quanser_values_.get_raw();
+        return quanser_values_.get();
     }
 
 

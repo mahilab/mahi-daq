@@ -1,4 +1,4 @@
-#include <mahi/daq/VirtualDaq.hpp>
+#include <Mahi/Daq/VirtualDaq.hpp>
 #include <Mahi/Util/Timing/Clock.hpp>
 #include <Mahi/Util/Math/Constants.hpp>
 #include <cmath>
@@ -47,7 +47,7 @@ VirtualAI::VirtualAI(VirtualDaq& daq, const ChanNums& channel_numbers) :
 }
 
 bool VirtualAI::update_channel(ChanNum channel_number) {
-    values_[channel_number] = sources[channel_number]();
+    m_values[channel_number] = sources[channel_number]();
     return true;
 }
 
@@ -64,7 +64,7 @@ VirtualAO::VirtualAO(VirtualDaq& daq, const ChanNums& channel_numbers) :
 }
 
 bool VirtualAO::update_channel(ChanNum channel_number) {
-    sinks[channel_number](values_[channel_number]);
+    sinks[channel_number](m_values[channel_number]);
     return true;
 }
 
@@ -82,7 +82,7 @@ VirtualDI::VirtualDI(VirtualDaq& daq, const ChanNums& channel_numbers) :
 }
 
 bool VirtualDI::update_channel(ChanNum channel_number) {
-    values_[channel_number] = sources[channel_number]();
+    m_values[channel_number] = sources[channel_number]();
     return true;
 }
 
@@ -99,7 +99,7 @@ VirtualDO::VirtualDO(VirtualDaq& daq, const ChanNums& channel_numbers) :
 }
 
 bool VirtualDO::update_channel(ChanNum channel_number) {
-    sinks[channel_number](values_[channel_number]);
+    sinks[channel_number](m_values[channel_number]);
     return true;
 }
 
@@ -117,7 +117,7 @@ VirtualEncoder::VirtualEncoder(VirtualDaq& daq, const ChanNums& channel_numbers)
 }
 
 bool VirtualEncoder::update_channel(ChanNum channel_number) {
-    values_[channel_number] = sources[channel_number]();
+    m_values[channel_number] = sources[channel_number]();
     return true;
 }
 

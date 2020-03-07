@@ -15,7 +15,7 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <mahi/daq/Encoder.hpp>
+#include <Mahi/Daq/Encoder.hpp>
 
 namespace mahi {
 namespace daq {
@@ -50,62 +50,16 @@ public:
     bool set_quadrature_factor(ChanNum channel_number, QuadFactor factor) override;
 
     /// Set whether the Encoder enables velocity estimation
-    bool has_velocity() const;
-
-    /// Returns values per second for all channels
-    std::vector<double>& get_values_per_sec();
-
-    /// Returns valus per second for a single channel
-    double get_value_per_sec(ChanNum channel_number);
-
-    /// Performs conversion to positions using #factors_ and #counts_per_unit
-    const std::vector<double>& get_velocities();
-
-    /// Performs conversion to position using #factors_ and #counts_per_unit
-    double get_velocity(ChanNum channel_number);
+    bool has_velocity() const override;
 
     /// Returns the Quanser encoder velocity channels
-    const ChanNums get_quanser_velocity_channels();
-
-    /// Returns a QuanserEncoder::Channel
-    Channel channel(ChanNum channel_number);
-
-    /// Returns multiple QuanserEncoder::Channels
-    std::vector<Channel> channels(const ChanNums& channel_numbers);
+    const ChanNums velocity_channel_numbers();
 
 private:
 
-    QuanserDaq& daq_;                            ///< Reference to parent QDaq
+    QuanserDaq& daq_;                          ///< Reference to parent QDaq
     Buffer<ChanNum> velocity_channel_numbes_;  ///< Converted channel numbers
-    Buffer<double> values_per_sec_;            ///< Counts per second if Encoder has velocity
-    Buffer<double> velocities_;                ///< The calculated velocities of the Encoder channels
-    bool has_velocity_;                          ///< True if Encoder module has velocity estimation
-
-public:
-
-    /// Encapsulates and QuanserEncoder channel (can be used as a PositionSensor or VelocitySensor)
-    class Channel : public Encoder::Channel {
-    public:
-        /// Default constructor. Creates invalid channel
-        Channel();
-
-        /// Creates a valid channel.
-        Channel(QuanserEncoder* module, ChanNum channel_number);
-
-        /// Inherit assignment operator for setting
-        using ChannelBase<int>::operator=;
-
-        /// Gets the encoder counts per second if available
-        double get_value_per_sec();
-
-        /// Gets the encoder velocity if available
-        double get_velocity();
-
-    private:
-
-        double velocity_;
-
-    };
+    bool has_velocity_;                        ///< True if Encoder module has velocity estimation
 
 };
 

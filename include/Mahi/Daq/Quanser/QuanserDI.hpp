@@ -15,7 +15,7 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <mahi/daq/Input.hpp>
+#include <Mahi/Daq/Input.hpp>
 
 namespace mahi {
 namespace daq {

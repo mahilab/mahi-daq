@@ -1,7 +1,7 @@
-#include <mahi/daq/NI/MyRio/MyRio.hpp>
+#include <Mahi/Daq/NI/MyRio/MyRio.hpp>
 #include "Detail/MyRioUtil.hpp"
 #include "Detail/MyRioFpga60/MyRio.h"
-#include <mahi/daq/NI/MyRio/MyRioConnector.hpp>
+#include <Mahi/Daq/NI/MyRio/MyRioConnector.hpp>
 #include <algorithm>
 
 #include <Mahi/Util/Logging/Log.hpp>
@@ -53,7 +53,7 @@ bool MyRioEncoder::update_channel(ChanNum channel_number) {
         LOG(Error) << "Failed to read counts from encoder register";
         return false;
     }
-    values_[channel_number] = static_cast<int>(counts);
+    m_values[channel_number] = static_cast<int>(counts);
     return true;
 }
 
@@ -63,7 +63,7 @@ bool MyRioEncoder::reset_count(ChanNum channel_number, int count) {
     if (count == 0) {
         set_register_bit(cnfg_[channel_number], 1);
         clr_register_bit(cnfg_[channel_number], 1);
-        values_[channel_number] = 0;
+        m_values[channel_number] = 0;
         return true;
     }
     else  {

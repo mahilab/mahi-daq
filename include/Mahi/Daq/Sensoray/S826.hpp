@@ -16,12 +16,12 @@
 
 #pragma once
 
-#include <mahi/daq/DaqBase.hpp>
-#include <mahi/daq/Sensoray/S826AI.hpp>
-#include <mahi/daq/Sensoray/S826AO.hpp>
-#include <mahi/daq/Sensoray/S826DIO.hpp>
-#include <mahi/daq/Sensoray/S826Encoder.hpp>
-#include <mahi/daq/Sensoray/S826Watchdog.hpp>
+#include <Mahi/Daq/DaqBase.hpp>
+#include <Mahi/Daq/Sensoray/S826AI.hpp>
+#include <Mahi/Daq/Sensoray/S826AO.hpp>
+#include <Mahi/Daq/Sensoray/S826DIO.hpp>
+#include <Mahi/Daq/Sensoray/S826Encoder.hpp>
+#include <Mahi/Daq/Sensoray/S826Watchdog.hpp>
 
 namespace mahi {
 namespace daq {

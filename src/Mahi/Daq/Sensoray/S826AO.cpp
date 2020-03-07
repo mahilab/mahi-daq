@@ -1,5 +1,5 @@
-#include <mahi/daq/Sensoray/S826.hpp>
-#include <mahi/daq/Sensoray/S826AO.hpp>
+#include <Mahi/Daq/Sensoray/S826.hpp>
+#include <Mahi/Daq/Sensoray/S826AO.hpp>
 #include <windows.h>
 #include <826api.h> 
 
@@ -17,7 +17,7 @@ S826AO::S826AO(S826& s826) :
 }
 
 bool S826AO::update_channel(ChanNum channel_number) {
-    double volts = values_[channel_number];
+    double volts = m_values[channel_number];
     ChanNum setpoint = (uint)(volts * 0xFFFF / 20) + 0x8000; // -10V to +10V
     int result = S826_DacDataWrite(s826_.board_, channel_number, setpoint, 0);
     if (result != S826_ERR_OK) {

@@ -1,4 +1,4 @@
-#include <mahi/daq/Quanser/Q2Usb.hpp>
+#include <Mahi/Daq/Quanser/Q2Usb.hpp>
 #include <hil.h>
 #include <thread>
 
@@ -12,7 +12,9 @@ namespace daq {
 // STATIC VARIABLES
 //==============================================================================
 
- ChanNum NEXT_Q2USB_ID = 0;
+namespace {
+ChanNum NEXT_Q2USB_ID = 0;
+}
 
 //==============================================================================
 // CLASS DEFINITIONS
@@ -66,7 +68,7 @@ bool Q2Usb::on_open() {
         return false;
     }
     // allow changes to take effect
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    util::sleep(milliseconds(10));
     return true;
 }
 
@@ -76,7 +78,7 @@ bool Q2Usb::on_close() {
     // clear the watchdog (precautionary, ok if fails)
     watchdog.clear();
     // allow changes to take effect
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    util::sleep(milliseconds(10));
     // close as QDaq
     return QuanserDaq::on_close();
 }
@@ -97,7 +99,7 @@ bool Q2Usb::on_enable() {
     if (!encoder.enable())
         success = false;
     // allow changes to take effect
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    util::sleep(milliseconds(10));
     return success;
 }
 
@@ -121,7 +123,7 @@ bool Q2Usb::on_disable() {
     // clear the watchdog (precautionary, ok if fails)
     watchdog.clear();
     // allow changes to take effect
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    util::sleep(milliseconds(10));
     return success;
 }
 
@@ -158,13 +160,13 @@ bool Q2Usb::identify(ChanNum input_channel_number, ChanNum outout_channel_number
     for (int i = 0; i < 5; ++i) {
         do_ch.set(High);
         do_ch.update();
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        util::sleep(milliseconds(10));
         di_ch.update();
         if (di_ch.get() != High)
             return false;
         do_ch.set(Low);
         do_ch.update();
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        util::sleep(milliseconds(10));
         di_ch.update();
         if (di_ch.get() != Low)
             return false;

@@ -1,4 +1,4 @@
-#include <mahi/daq/Module.hpp>
+#include <Mahi/Daq/Module.hpp>
 #include <algorithm>
 
 #include <Mahi/Util/Logging/Log.hpp>
@@ -48,6 +48,11 @@ bool ModuleBase::on_enable() {
 
 bool ModuleBase::on_disable() {
     // return true by default
+    return true;
+}
+
+bool ModuleBase::update_channel(ChanNum channel) {
+    // TODO
     return true;
 }
 
@@ -113,7 +118,7 @@ bool ModuleBase::validate_channel_number(ChanNum channel_number, bool quiet) con
     if (channel_map_.count(channel_number) > 0)
         return true;
     if (!quiet) {
-        LOG(Error) << "Invalid channel number " << channel_number << " not declared in channel numbers"; // [" << channel_numbers_ << "] on Module " << get_name();
+        LOG(Error) << "Invalid channel number " << channel_number << " not declared in channel numbers on Module " << get_name();
     }
     return false;
 }
@@ -127,7 +132,7 @@ bool ModuleBase::validate_channel_count(std::size_t size, bool quiet) const {
     return false;
 }
 
-void ModuleBase::add_buffer(BufferBase* buffer) {
+void ModuleBase::add_buffer(ModuleArrayBase* buffer) {
     buffers_.push_back(buffer);
 }
 

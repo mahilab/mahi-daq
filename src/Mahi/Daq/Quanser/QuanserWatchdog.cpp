@@ -1,6 +1,6 @@
 #include <hil.h>
-#include <mahi/daq/Quanser/QuanserDaq.hpp>
-#include <mahi/daq/Quanser/QuanserWatchdog.hpp>
+#include <Mahi/Daq/Quanser/QuanserDaq.hpp>
+#include <Mahi/Daq/Quanser/QuanserWatchdog.hpp>
 
 #include <Mahi/Util/Logging/Log.hpp>
 using namespace mahi::util;

@@ -15,8 +15,8 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <mahi/daq/Input.hpp>
-#include <mahi/daq/Output.hpp>
+#include <Mahi/Daq/Input.hpp>
+#include <Mahi/Daq/Output.hpp>
 
 namespace mahi {
 namespace daq {
@@ -70,9 +70,6 @@ public:
     /// Gets a handle to a channel on this module
     Channel channel(ChanNum channel_number);
 
-    /// Gets a vector of handles to channels on this module
-    std::vector<Channel> channels(const ChanNums& channel_numbers);
-
 protected:
 
     /// Sets the channel numbers this Module maintains
@@ -120,4 +117,4 @@ typedef InputOutput<Logic> DigitalInputOutput;
 } // namespace daq
 } // namespace mahi
 
-#include <mahi/daq/Detail/InputOutput.inl>
+#include <Mahi/Daq/Detail/InputOutput.inl>

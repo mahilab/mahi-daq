@@ -1,4 +1,4 @@
-#include <mahi/daq/Quanser/QPid.hpp>
+#include <Mahi/Daq/Quanser/QPid.hpp>
 #include <hil.h>
 #include <thread>
 
@@ -12,7 +12,9 @@ namespace daq {
 // STATIC VARIABLES
 //==============================================================================
 
- ChanNum NEXT_QPID_ID = 0;
+namespace {
+ChanNum NEXT_QPID_ID = 0;
+}
 
 //==============================================================================
 // CLASS DEFINITIONS
@@ -76,7 +78,7 @@ bool QPid::on_open() {
         LOG(Error) << "Failed to set PWM expiration states on QPID " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
 
     // allow changes to take effect
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    util::sleep(milliseconds(10));
     return true;
 }
 
@@ -86,7 +88,7 @@ bool QPid::on_close() {
     // clear the watchdog (precautionary, ok if fails)
     watchdog.clear();
     // allow changes to take effect
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    util::sleep(milliseconds(10));
     // close as QDaq
     return QuanserDaq::on_close();
 }
@@ -107,7 +109,7 @@ bool QPid::on_enable() {
     if (!encoder.enable())
         success = false;
     // allow changes to take effect
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    util::sleep(milliseconds(10));
     return success;
 }
 
@@ -127,7 +129,7 @@ bool QPid::on_disable() {
     if (!encoder.disable())
         success = false;
     // allow changes to take effect
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    util::sleep(milliseconds(10));
     return success;
 }
 
@@ -144,7 +146,7 @@ bool QPid::update_input() {
         static_cast<ChanNum>(encoder.channel_count()),
         DIO.input_channel_count() > 0 ? &(DIO.input_channel_numbers())[0] : NULL,
         static_cast<ChanNum>(DIO.input_channel_count()),
-        encoder.channel_count() > 0 ? &(encoder.get_quanser_velocity_channels())[0] : NULL,
+        encoder.channel_count() > 0 ? &(encoder.velocity_channel_numbers())[0] : NULL,
         static_cast<ChanNum>(encoder.channel_count()),
         AI.channel_count() > 0 ? &(AI.get())[0] : NULL,
         encoder.channel_count() > 0 ? &(encoder.get())[0] : NULL,

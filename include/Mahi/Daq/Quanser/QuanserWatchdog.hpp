@@ -15,7 +15,7 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <mahi/daq/Watchdog.hpp>
+#include <Mahi/Daq/Watchdog.hpp>
 
 namespace mahi {
 namespace daq {

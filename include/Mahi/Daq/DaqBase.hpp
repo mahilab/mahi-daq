@@ -16,7 +16,8 @@
 
 #pragma once
 
-#include <mahi/daq/Module.hpp>
+#include <Mahi/Daq/Module.hpp>
+#include <Mahi/Util/Device.hpp>
 #include <typeindex>
 #include <unordered_map>
 
@@ -27,7 +28,7 @@ namespace daq {
 // CLASS DECLARATION
 //==============================================================================
 
-class DaqBase : public Device {
+class DaqBase : public util::Device {
 public:
 
     /// Constructor
@@ -36,46 +37,13 @@ public:
     /// Destructor. By default, this closes the DAQ.
     virtual ~DaqBase();
 
-    /// Opens communication with DAQ.
-    ///
-    /// \return TRUE if open successful, FALSE otherwise
-    bool open();
-
-    /// Closes communication with DAQ.
-    ///
-    /// \return TRUE if open successful, FALSE otherwise
-    bool close();
-
     /// Updates all Input modules contained on the DAQ
-    ///
-    /// \return TRUE if successful, FALSE otherwise
+    /// return TRUE if successful, FALSE otherwise
     virtual bool update_input();
 
     /// Updates all Output modules contained on the DAQ
-    ///
-    /// \return TRUE if successful, FALSE otherwise
+    /// return TRUE if successful, FALSE otherwise
     virtual bool update_output();
-
-    /// Returns whether the DAQ is open or closed
-    ///
-    /// \return TRUE if open, FALSE if closed
-    bool is_open() const;
-
-protected:
-
-    /// Implement this function to open communication with your DAQ
-    ///
-    /// \return TRUE if open successful, FALSE otherwise
-    virtual bool on_open() = 0;
-
-    /// Implement this function to close communication with your DAQ
-    ///
-    /// \return TRUE if close successful, FALSE otherwise
-    virtual bool on_close() = 0;
-
-private:
-
-    bool open_;  ///< TRUE if open, FALSE if closed
 
 };
 

@@ -15,8 +15,8 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <mahi/daq/Types.hpp>
-#include <mahi/daq/Module.hpp>
+#include <Mahi/Daq/Types.hpp>
+#include <Mahi/Daq/Module.hpp>
 
 namespace mahi {
 namespace daq {
@@ -56,11 +56,11 @@ public:
     bool is_valid() const;
 
 protected:
-    Module<T>* module_;       ///< Pointer to the module this channel is on
+    Module<T>* m_module;       ///< Pointer to the module this channel is on
     ChanNum channel_number_;  ///< The channel number of this channel
 };
 
 } // namespace daq
 } // namespace mahi
 
-#include <mahi/daq/Detail/ChannelBase.inl>
+#include <Mahi/Daq/Detail/ChannelBase.inl>

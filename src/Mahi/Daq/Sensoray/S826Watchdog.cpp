@@ -1,5 +1,5 @@
-#include <mahi/daq/Sensoray/S826.hpp>
-#include <mahi/daq/Sensoray/S826Watchdog.hpp>
+#include <Mahi/Daq/Sensoray/S826.hpp>
+#include <Mahi/Daq/Sensoray/S826Watchdog.hpp>
 #include <windows.h>
 #include <826api.h> 
 #include <bitset>

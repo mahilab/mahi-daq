@@ -16,52 +16,49 @@
 
 #pragma once
 
-#include <mahi/daq/Buffer.hpp>
-#include <mahi/daq/ChannelBase.hpp>
-#include <mahi/daq/DaqBase.hpp>
-#include <mahi/daq/Device.hpp>
-#include <mahi/daq/Encoder.hpp>
-#include <mahi/daq/Input.hpp>
-#include <mahi/daq/InputOutput.hpp>
-#include <mahi/daq/Module.hpp>
-#include <mahi/daq/Output.hpp>
-#include <mahi/daq/Types.hpp>
-#include <mahi/daq/VirtualDaq.hpp>
-#include <mahi/daq/Watchdog.hpp>
+#include <Mahi/Daq/Buffer.hpp>
+#include <Mahi/Daq/ChannelBase.hpp>
+#include <Mahi/Daq/DaqBase.hpp>
+#include <Mahi/Daq/Encoder.hpp>
+#include <Mahi/Daq/Input.hpp>
+#include <Mahi/Daq/InputOutput.hpp>
+#include <Mahi/Daq/Module.hpp>
+#include <Mahi/Daq/Output.hpp>
+#include <Mahi/Daq/Types.hpp>
+#include <Mahi/Daq/VirtualDaq.hpp>
+#include <Mahi/Daq/Watchdog.hpp>
 
 #ifdef MAHI_QUANSER
-    #include <mahi/daq/Quanser/Q2Usb.hpp>
-    #include <mahi/daq/Quanser/Q8Usb.hpp>
-    #include <mahi/daq/Quanser/QPid.hpp>
-    #include <mahi/daq/Quanser/QuanserAI.hpp>
-    #include <mahi/daq/Quanser/QuanserAO.hpp>
-    #include <mahi/daq/Quanser/QuanserDaq.hpp>
-    #include <mahi/daq/Quanser/QuanserDI.hpp>
-    #include <mahi/daq/Quanser/QuanserDIO.hpp>
-    #include <mahi/daq/Quanser/QuanserDO.hpp>
-    #include <mahi/daq/Quanser/QuanserEncoder.hpp>
-    #include <mahi/daq/Quanser/QuanserOptions.hpp>
-    #include <mahi/daq/Quanser/QuanserPwm.hpp>
-    #include <mahi/daq/Quanser/QuanserWatchdog.hpp>
+    #include <Mahi/Daq/Quanser/Q2Usb.hpp>
+    #include <Mahi/Daq/Quanser/Q8Usb.hpp>
+    #include <Mahi/Daq/Quanser/QPid.hpp>
+    #include <Mahi/Daq/Quanser/QuanserAI.hpp>
+    #include <Mahi/Daq/Quanser/QuanserAO.hpp>
+    #include <Mahi/Daq/Quanser/QuanserDaq.hpp>
+    #include <Mahi/Daq/Quanser/QuanserDI.hpp>
+    #include <Mahi/Daq/Quanser/QuanserDIO.hpp>
+    #include <Mahi/Daq/Quanser/QuanserDO.hpp>
+    #include <Mahi/Daq/Quanser/QuanserEncoder.hpp>
+    #include <Mahi/Daq/Quanser/QuanserOptions.hpp>
+    #include <Mahi/Daq/Quanser/QuanserPwm.hpp>
+    #include <Mahi/Daq/Quanser/QuanserWatchdog.hpp>
 #endif
 
 #ifdef MAHI_SENSORAY
-    #include <mahi/daq/Sensoray/S826.hpp>
-    #include <mahi/daq/Sensoray/S826AI.hpp>
-    #include <mahi/daq/Sensoray/S826AO.hpp>
-    #include <mahi/daq/Sensoray/S826DIO.hpp>
-    #include <mahi/daq/Sensoray/S826Encoder.hpp>
-    #include <mahi/daq/Sensoray/S826Watchdog.hpp>
+    #include <Mahi/Daq/Sensoray/S826.hpp>
+    #include <Mahi/Daq/Sensoray/S826AI.hpp>
+    #include <Mahi/Daq/Sensoray/S826AO.hpp>
+    #include <Mahi/Daq/Sensoray/S826DIO.hpp>
+    #include <Mahi/Daq/Sensoray/S826Encoder.hpp>
+    #include <Mahi/Daq/Sensoray/S826Watchdog.hpp>
 #endif
 
 #ifdef MAHI_MYRIO
-    #include <mahi/daq/NI/MyRio/MyRio.hpp>
-    #include <mahi/daq/NI/MyRio/MyRioAI.hpp>
-    #include <mahi/daq/NI/MyRio/MyRioAO.hpp>
-    #include <mahi/daq/NI/MyRio/MyRioConnector.hpp>
-    #include <mahi/daq/NI/MyRio/MyRioDIO.hpp>
-    #include <mahi/daq/NI/MyRio/MyRioEncoder.hpp>
-    #include <mahi/daq/NI/MyRio/MyRioI2C.hpp>
+    #include <Mahi/Daq/NI/MyRio/MyRio.hpp>
+    #include <Mahi/Daq/NI/MyRio/MyRioAI.hpp>
+    #include <Mahi/Daq/NI/MyRio/MyRioAO.hpp>
+    #include <Mahi/Daq/NI/MyRio/MyRioConnector.hpp>
+    #include <Mahi/Daq/NI/MyRio/MyRioDIO.hpp>
+    #include <Mahi/Daq/NI/MyRio/MyRioEncoder.hpp>
+    #include <Mahi/Daq/NI/MyRio/MyRioI2C.hpp>
 #endif
-
-#include <Mahi/Util.hpp>

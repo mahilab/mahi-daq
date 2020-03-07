@@ -1,4 +1,4 @@
-#include <mahi/daq/NI/MyRio/MyRio.hpp>
+#include <Mahi/Daq/NI/MyRio/MyRio.hpp>
 #include "Detail/MyRioFpga60/MyRio.h"
 
 #include <Mahi/Util/Logging/Log.hpp>
@@ -44,7 +44,7 @@ MyRioAO::MyRioAO(MyRioConnector& connector, const ChanNums& channel_numbers) :
 bool MyRioAO::update_channel(ChanNum channel_number) {
     NiFpga_Status status;
     uint16_t valueScaled;
-    double value = values_[channel_number];
+    double value = m_values[channel_number];
     if (connector_.type == MyRioConnector::Type::MspC)
     {
         value = (value - OFFSETS[connector_.type][channel_number]) / WEIGHTS[connector_.type][channel_number];

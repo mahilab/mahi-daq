@@ -15,13 +15,13 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <mahi/daq/DaqBase.hpp>
+#include <Mahi/Daq/DaqBase.hpp>
 
-#include <mahi/daq/NI/MyRio/MyRioAI.hpp>
-#include <mahi/daq/NI/MyRio/MyRioAO.hpp>
-#include <mahi/daq/NI/MyRio/MyRioDIO.hpp>
-#include <mahi/daq/NI/MyRio/MyRioEncoder.hpp>
-#include <mahi/daq/NI/MyRio/MyRioI2C.hpp>
+#include <Mahi/Daq/NI/MyRio/MyRioAI.hpp>
+#include <Mahi/Daq/NI/MyRio/MyRioAO.hpp>
+#include <Mahi/Daq/NI/MyRio/MyRioDIO.hpp>
+#include <Mahi/Daq/NI/MyRio/MyRioEncoder.hpp>
+#include <Mahi/Daq/NI/MyRio/MyRioI2C.hpp>
 
 namespace mahi {
 namespace daq {
