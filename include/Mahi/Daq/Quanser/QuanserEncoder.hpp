@@ -57,7 +57,7 @@ public:
 
 private:
 
-    QuanserDaq& daq_;                          ///< Reference to parent QDaq
+    QuanserDaq& daq_;                          ///< Reference to parent QuanserDaq
     Buffer<ChanNum> velocity_channel_numbes_;  ///< Converted channel numbers
     bool has_velocity_;                        ///< True if Encoder module has velocity estimation
 

@@ -116,7 +116,7 @@ std::vector<double>& S826Encoder::get_values_per_sec() {
 }
 
 double S826Encoder::get_value_per_sec(ChanNum channel_number) {
-    if (validate_channel_number(channel_number))
+    if (valid_channel(channel_number))
         return values_per_sec_[channel_number];
     else
         return double();
@@ -129,7 +129,7 @@ const std::vector<double>& S826Encoder::get_velocities() {
 }
 
 double S826Encoder::get_velocity(ChanNum channel_number) {
-    if (validate_channel_number(channel_number)) {
+    if (valid_channel(channel_number)) {
         return values_per_sec_[channel_number] * conversions_[channel_number];
     }
     else
@@ -137,7 +137,7 @@ double S826Encoder::get_velocity(ChanNum channel_number) {
 }
 
 double S826Encoder::get_timestamp(ChanNum channel_number) {
-    if (validate_channel_number(channel_number))
+    if (valid_channel(channel_number))
         return timestamps_[channel_number];
     return 0;
 }
@@ -149,7 +149,7 @@ std::vector<double>& S826Encoder::get_timestamps() {
 //=============================================================================
 
 S826Encoder::Channel S826Encoder::channel(ChanNum channel_number) {
-    if (validate_channel_number(channel_number))
+    if (valid_channel(channel_number))
         return Channel(this, channel_number);
     else
         return Channel();

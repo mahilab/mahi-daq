@@ -85,7 +85,6 @@ bool QuanserEncoder::reset_count(ChanNum channel_number, int count) {
     }
 }
 
-
 bool QuanserEncoder::set_quadrature_factors(const std::vector<QuadFactor>& factors) {
     if (!Encoder::set_quadrature_factors(factors))
         return false;

@@ -46,7 +46,7 @@ public:
                    Voltage max_value) override;
 
 private:
-    QuanserDaq& daq_;  ///< Reference to parent QDaq
+    QuanserDaq& daq_;  ///< Reference to parent QuanserDaq
 
     QuanserAI( const QuanserAI& ) = delete; // non construction-copyable
     QuanserAI& operator=( const QuanserAI& ) = delete; // non copyable

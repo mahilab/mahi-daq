@@ -98,12 +98,12 @@ if(WIN32)
 
         find_package(HIL)
         if (HIL_FOUND)
-            option(MAHI_QUANSER "Turn ON to build Quanser support"  OFF) 
+            option(MAHI_QUANSER "Turn ON to build Quanser support"  ON) 
         else()
             option(MAHI_QUANSER "Turn ON to build Quanser support"  OFF) 
         endif()
         if (MAHI_QUANSER)
-            add_subdirectory(src/mahi/daq/Quanser)
+            add_subdirectory(src/mahi/daq/Quanser2)
         endif()
 
         #=======================================================================

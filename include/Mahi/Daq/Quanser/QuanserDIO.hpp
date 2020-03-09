@@ -65,7 +65,7 @@ private:
 private:
     friend class QPid;
     friend class Q2Usb;
-    QuanserDaq& daq_;  ///< Reference to parent QDaq
+    QuanserDaq& daq_;  ///< Reference to parent QuanserDaq
     mutable std::vector<char> quanser_input_buffer_;
     mutable std::vector<char> quanser_output_buffer_;
 

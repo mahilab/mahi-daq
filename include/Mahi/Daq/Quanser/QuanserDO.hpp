@@ -45,7 +45,7 @@ public:
     bool set_expire_value(ChanNum channel_number, Logic expire_value) override;
 
 private:
-    QuanserDaq& daq_;  ///< Reference to parent QDaq
+    QuanserDaq& daq_;  ///< Reference to parent QuanserDaq
     Buffer<char> quanser_values_;
 
     QuanserDO( const QuanserDO& ) = delete; // non construction-copyable

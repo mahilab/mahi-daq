@@ -55,7 +55,7 @@ private:
     S826Watchdog(S826& daq, util::Time timeout);
 
 private:
-    S826& s826_;  ///< Reference to parent QDaq
+    S826& s826_;  ///< Reference to parent QuanserDaq
 };
 
 } // namespace daq

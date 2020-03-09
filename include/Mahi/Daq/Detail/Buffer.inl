@@ -6,8 +6,8 @@ namespace mahi {
 namespace daq {
 
     template <typename T>
-    Buffer<T>::Buffer(ModuleBase* module, T default_value) :
-        ModuleArray<T>(module, default_value)
+    Buffer<T>::Buffer(ModuleInterface* module, T default_value) :
+        ModuleInterface<T>(module, default_value)
     { 
     }
 

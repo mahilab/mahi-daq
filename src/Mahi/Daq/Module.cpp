@@ -1,4 +1,6 @@
 #include <Mahi/Daq/Module.hpp>
+#include <Mahi/Daq/ModuleInterface.hpp>
+#include <Mahi/Daq/DaqBase.hpp>
 #include <algorithm>
 
 #include <Mahi/Util/Logging/Log.hpp>
@@ -33,88 +35,61 @@ ChanMap make_channel_map(const ChanNums& channel_numbers) {
 // CLASS DEFINITIONS
 //==============================================================================
 
-ModuleBase::ModuleBase() { }
-
-ModuleBase::ModuleBase(const ChanNums& channel_numbers) 
-    : channel_numbers_(channel_numbers)
-{
-    update_map();
+Module::Module(DaqBase& daq) : m_daq(daq) { 
+    m_daq.m_modules.push_back(this);
 }
 
-bool ModuleBase::on_enable() {
-    // return true by default
-    return true;
-}
-
-bool ModuleBase::on_disable() {
-    // return true by default
-    return true;
-}
-
-bool ModuleBase::update_channel(ChanNum channel) {
-    // TODO
-    return true;
-}
-
-bool ModuleBase::update() {
-    bool success = true;
-    for (auto& ch : channel_numbers_) 
-        success = update_channel(ch) ? success : false;
-    return success;
-}
-
-void ModuleBase::set_channel_numbers(const ChanNums& channel_numbers) {
+void Module::set_channel_numbers(const ChanNums& channel_numbers) {
     auto new_channels = sort_and_reduce_channels(channel_numbers);
     if (new_channels != channel_numbers_) {
         auto old_channels = channel_numbers_;
         channel_numbers_ = new_channels;
         update_map();
-        on_channels_changed(old_channels, channel_numbers_);
+        for (auto& iface : interfaces_)
+            iface->on_channels_changed.emit(old_channels, new_channels);
         LOG(Verbose) << "Set Module " << get_name() << " channel numbers";// to " << channel_numbers_;
     }
 }
 
-void ModuleBase::add_channel_number(ChanNum channel_number) {
+void Module::add_channel_number(ChanNum channel_number) {
     if (!channel_map_.count(channel_number)) {
         auto old_channels = channel_numbers_;
         channel_numbers_.push_back(channel_number);
         sort_and_reduce_channels(channel_numbers_);
         update_map(); 
-        on_channels_changed(old_channels, channel_numbers_);
+        for (auto& iface : interfaces_)
+            iface->on_channels_changed.emit(old_channels, channel_numbers_);
         LOG(Verbose) << "Added channel number " << channel_number << " to Module " << get_name();      
     } 
 }
 
-void ModuleBase::remove_channel_number(ChanNum channel_number) {
+void Module::remove_channel_number(ChanNum channel_number) {
     if (channel_map_.count(channel_number)) {
         auto old_channels = channel_numbers_;
         channel_numbers_.erase(std::remove(channel_numbers_.begin(), channel_numbers_.end(), channel_number), channel_numbers_.end());
         update_map();
-        on_channels_changed(old_channels, channel_numbers_);
+        for (auto& iface : interfaces_)
+            iface->on_channels_changed.emit(old_channels, channel_numbers_);
         LOG(Verbose) << "Removed channel number " << channel_number << " from Module " << get_name();      
     }
 }
 
-void ModuleBase::on_channels_changed(const ChanNums& old_channels, const ChanNums& new_channels) {
-    // do nothing by default
-}
-
-void ModuleBase::update_map() {
+void Module::update_map() {
     ChanMap old_map = channel_map_;
     channel_map_ = make_channel_map(channel_numbers_);
-    for (std::size_t i = 0; i < buffers_.size(); i++)
-        buffers_[i]->change_channel_numbers(old_map, channel_map_);    
+    for (std::size_t i = 0; i < interfaces_.size(); i++)
+        interfaces_[i]->remap_channels(old_map, channel_map_);   
 }
 
-const ChanNums& ModuleBase::channel_numbers() const {
+const ChanNums& Module::channel_numbers() const {
     return channel_numbers_;
 }
 
-std::size_t ModuleBase::channel_count() const {
+std::size_t Module::channel_count() const {
     return channel_numbers_.size();
 }
 
-bool ModuleBase::validate_channel_number(ChanNum channel_number, bool quiet) const {
+bool Module::valid_channel(ChanNum channel_number, bool quiet) const {
     if (channel_map_.count(channel_number) > 0)
         return true;
     if (!quiet) {
@@ -123,7 +98,7 @@ bool ModuleBase::validate_channel_number(ChanNum channel_number, bool quiet) con
     return false;
 }
 
-bool ModuleBase::validate_channel_count(std::size_t size, bool quiet) const {
+bool Module::valid_count(std::size_t size, bool quiet) const {
     if (channel_numbers_.size() == size)
         return true;
     if (!quiet) {
@@ -132,13 +107,11 @@ bool ModuleBase::validate_channel_count(std::size_t size, bool quiet) const {
     return false;
 }
 
-void ModuleBase::add_buffer(ModuleArrayBase* buffer) {
-    buffers_.push_back(buffer);
-}
-
-std::size_t ModuleBase::index(ChanNum channel_number) const {
+std::size_t Module::index(ChanNum channel_number) const {
     return channel_map_.at(channel_number);
 }
+
+
 
 } // namespace daq
 } // namespace mahi

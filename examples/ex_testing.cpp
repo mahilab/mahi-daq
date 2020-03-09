@@ -5,112 +5,83 @@
 using namespace mahi::util;
 using namespace mahi::daq;
 
+// class VirtualEncoder : public EncoderModule<void> {
+// public:
+//     VirtualEncoder(const ChanNums& channels) {
+//         set_channel_numbers(channels);
+//         auto read_impl = [this](const ChanNum* chs, int* counts, std::size_t n) {
+//             for (int i = 0; i < n; ++i)
+//                 counts[i] += (i+1) * 128;
+//             return true;
+//         };
+//         on_read.connect(read_impl);
+//         auto write_impl = [this](const ChanNum* chs, const int* counts, std::size_t n) {
+//             for (int i = 0; i < n; ++i)
+//                 fmt::print("{},", counts[i]);
+//             fmt::print("\n");
+//             return true;
+//         };
+//         on_write.connect(write_impl);
+//     }
+// };
 
-class CurrentAmplifier {
-public:
-    CurrentAmplifier(double& command_voltage, const double& sense_voltage, double gain) : 
-        m_command_voltage(command_voltage), 
-        m_sense_voltage(sense_voltage),
-        m_gain(gain) 
-    { }
-    void command(double amps) {
-        m_command_voltage = amps / m_gain;
+struct Printer {
+    Printer(const double& pos) : pos(pos) { }
+    void print() {
+        ::print("Pos: {} revolutions", pos);
     }
-    double sense() {
-        return m_gain * m_sense_voltage;
-    }
-    double& m_command_voltage;
-    const double& m_sense_voltage;
-    double m_gain; // A/V
+    const double& pos;
 };
 
-
-class AIMod : public ModuleBase, public BufferW<double, AIMod> {
-public:
-    AIMod() : 
-        BufferW<double, AIMod>(this),
-        minValues(this, -10),
-        maxValues(this, 10) 
-    { 
-        set_channel_numbers({0,1,2,3,4});
-    }
-
-    BufferW<double, AIMod> minValues;
-    BufferW<double, AIMod> maxValues;
+class Stuff {
+protected:
+    int x;
 };
 
-class MyModule : public Module<double> {
-public:
-    MyModule() : AI(this), AO(this) { 
-
-        set_channel_numbers({0,1,2,3,4});
-        set_name("MyModule");
-
-        AI.on_read_one = [](ChanNum ch, double& val) {
-            val = 4;
-            print("Reading channel {} value = {}", ch, val);
-            return true;
-        };
-
-        AI.on_read_all = [](const ChanNums& chs, std::vector<double>& vals) {
-            vals = {1,1,1,1,1};
-            print("Reading channels {} values = {}", chs, vals);
-            return true;
-        };
-
-        AO.on_write_one = [](ChanNum ch, double val) {
-            print("Writing channel {} value = {}", ch, val);
-            return true;
-        };
-
-        AO.on_write_all = [](const ChanNums& chs, const std::vector<double>& vals) {
-            print("Writing channels {} values = {}", chs, vals);
-            return true;
-        };
-    }
-
-    BufferR<double, MyModule> AI;
-    BufferW<double, MyModule> AO;
+void read(Readable* readable) {
+    print("Reading");
+    readable->read();
 };
 
 int main(int argc, char const *argv[])
 {
-    MyModule myMod;
+    // VirtualEncoder enc({0,1,2,3});
 
-    CurrentAmplifier amp(myMod.AO[0], myMod.AI[0], 0.2);
+    // for (auto& ch : enc.channel_numbers())
+    //     enc.units[ch] = 1.0 / 1024.0;
+    // print("Counts:    {}",enc);
+    // print("Positions: {}",enc.positions);
+    // print("Quads:     {}",enc.quadratures);
+    // enc.read();
+    // print("Counts:    {}",enc);
+    // print("Positions: {}",enc.positions);
+    // enc.write({40,40,40,40});
+    // print("Counts:    {}",enc);
+    // enc.zero(3);
+    // print("Counts:    {}",enc);
+    // enc.zero();
+    // print("Counts:    {}",enc);
 
-    print("Ch. Count:  {}",myMod.channel_count());
-    print("Ch. Nums:   {}",myMod.channel_numbers());
-    print("Read Size:  {}",myMod.AI.size());
-    print("Write Size: {}",myMod.AO.size());
-    print("AI:         {}",myMod.AI);
-    print("AO:         {}",myMod.AO);
-    myMod.AI.read();
-    myMod.AI.read(4);
-    print("AI:         {}",myMod.AI);
+    // Printer printer(enc.positions[0]);
 
-    myMod.AO[0] = 14;
-    print("AO:         {}",myMod.AO);
-    myMod.AO.write();
-    myMod.AO.write(4, 20);
-    print("AO:         {}",myMod.AO);
-    myMod.AO.write({1,2,3,4,5});
-    print("AO:         {}",myMod.AO);
+    Q8Usb q8;
 
 
-    // get the current sense from the amplifier
-    print("Sense:    {} A", amp.sense());
-    // set the amplifier command current
-    amp.command(0.25);
-    print("Command:  {} A", 0.25);
-    myMod.AO.write();
-
-    AIMod aimod;
-    print("{}",aimod.channel_numbers());
-    aimod[0] = 4;
-    aimod.write();
-    print("{}",aimod[0]);
-    aimod.minValues[0] = 1;
-    aimod.minValues.write();
-    print("The End");
+    // q8.open();
+    // q8.set_options(QuanserOptions());
+    // q8.AO.min_values;
+    // q8.AO.write();
+    // q8.AO.write(1,0);
+    // q8.AO.write({0,1,2,3,4,5,6,7});
+    // q8.AI.read();
+    // q8.AI.read(0);
+    // print("hey!");
+    return 0;
 }
+
+// ModuleInterface []
+
+// AO [], [=], write                 (RegistryW)
+// AI [], read                       (RegistryR)
+// AI.enable_values [],[=]           (BufferR)
+// AI.expire_values write, [], write (RegistryW)

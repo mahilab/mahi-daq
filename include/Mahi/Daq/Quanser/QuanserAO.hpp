@@ -50,10 +50,11 @@ public:
     bool set_expire_value(ChanNum channel_number, Voltage expire_value) override;
 
 private:
-    QuanserDaq& daq_;  ///< Reference to parent QDaq
-
+    QuanserDaq& daq_;  ///< Reference to parent QuanserDaq
     QuanserAO( const QuanserAO& ) = delete; // non construction-copyable
     QuanserAO& operator=( const QuanserAO& ) = delete; // non copyable
+    
+    
 };
 
 } // namespace daq

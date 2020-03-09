@@ -53,7 +53,7 @@ QPid::~QPid() {
 }
 
 bool QPid::on_open() {
-    // open as QDaq
+    // open as QuanserDaq
     if (!QuanserDaq::on_open())
         return false;
     // clear watchdog (precautionary, ok if fails)
@@ -89,7 +89,7 @@ bool QPid::on_close() {
     watchdog.clear();
     // allow changes to take effect
     util::sleep(milliseconds(10));
-    // close as QDaq
+    // close as QuanserDaq
     return QuanserDaq::on_close();
 }
 

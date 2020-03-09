@@ -88,13 +88,13 @@ std::size_t QuanserDaq::get_qdaq_count(const std::string& card_type) {
     std::vector<t_card> qdaqs;
     t_error result;
     while (true) {
-        t_card qdaq;
-        result = hil_open(card_type.c_str(), std::to_string(id).c_str(), &qdaq);
+        t_card QuanserDaq;
+        result = hil_open(card_type.c_str(), std::to_string(id).c_str(), &QuanserDaq);
         if (result < 0) {
             break;
         }
         else {
-            qdaqs.push_back(qdaq);
+            qdaqs.push_back(QuanserDaq);
             ++id;
         }
     }

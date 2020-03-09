@@ -50,7 +50,7 @@ public:
     bool clear() override;
 
 private:
-    QuanserDaq& daq_;  ///< Reference to parent QDaq
+    QuanserDaq& daq_;  ///< Reference to parent QuanserDaq
 
     QuanserWatchdog( const QuanserWatchdog& ) = delete; // non construction-copyable
     QuanserWatchdog& operator=( const QuanserWatchdog& ) = delete; // non copyable

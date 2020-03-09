@@ -90,7 +90,6 @@ private:
     bool on_open() override;
     bool on_close() override;
 
-
     /// Enables the Q8Usb by sequentially calling the enable() function
     /// on all I/O modules. Consult the documentation for each module for
     /// details on what the enable functions do.

@@ -28,7 +28,7 @@ namespace daq {
 
     template <typename T>
     bool Output<T>::set_expire_value(ChanNum channel_number, T expire_value) {
-        if (Module<T>::validate_channel_number(channel_number)) {
+        if (Module<T>::valid_channel(channel_number)) {
             expire_values_[channel_number] = expire_value;
             return true;
         }
@@ -37,31 +37,31 @@ namespace daq {
 
     template <typename T>
     void Output<T>::set_enable_values(const std::vector<T>& enable_values) {
-        if (this->validate_channel_count(enable_values.size()))
+        if (this->valid_count(enable_values.size()))
             enable_values_.set(enable_values);
     }
 
     template <typename T>
     void Output<T>::set_enable_value(ChanNum channel_number, T enable_value) {
-        if (Module<T>::validate_channel_number(channel_number))
+        if (Module<T>::valid_channel(channel_number))
             enable_values_[channel_number] = enable_value;
     }
 
     template <typename T>
     void Output<T>::set_disable_values(const std::vector<T>& disable_values) {
-        if (this->validate_channel_count(disable_values.size()))
+        if (this->valid_count(disable_values.size()))
             disable_values_.set(disable_values);
     }
 
     template <typename T>
     void Output<T>::set_disable_value(ChanNum channel_number, T disable_value) {
-        if (Module<T>::validate_channel_number(channel_number))
+        if (Module<T>::valid_channel(channel_number))
             disable_values_[channel_number] = disable_value;
     }
 
     template <typename T>
     typename Output<T>::Channel Output<T>::channel(ChanNum channel_number) {
-        if (Module<T>::validate_channel_number(channel_number))
+        if (Module<T>::valid_channel(channel_number))
             return Channel(this, channel_number);
         else
             return Channel();

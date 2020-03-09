@@ -1,9 +1,9 @@
 target_sources(daq
     PRIVATE
     DaqBase.cpp
-    Encoder.cpp
+    # Encoder.cpp
     Module.cpp
-    ModuleArray.cpp
-    VirtualDaq.cpp
-    Watchdog.cpp
+    ModuleInterface.cpp
+    # VirtualDaq.cpp
+    # Watchdog.cpp
 )

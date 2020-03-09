@@ -43,7 +43,7 @@ public:
     bool set_expire_value(ChanNum channel_number, double expire_value) override;
 
 private:
-    QuanserDaq& daq_;  ///< Reference to parent QDaq
+    QuanserDaq& daq_;  ///< Reference to parent QuanserDaq
 
     QuanserPwm( const QuanserPwm& ) = delete; // non construction-copyable
     QuanserPwm& operator=( const QuanserPwm& ) = delete; // non copyable

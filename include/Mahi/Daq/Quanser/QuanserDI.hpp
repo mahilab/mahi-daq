@@ -41,7 +41,7 @@ public:
     std::vector<char>& get_quanser_values();
 
 private:
-    QuanserDaq& daq_;  ///< Reference to parent QDaq
+    QuanserDaq& daq_;  ///< Reference to parent QuanserDaq
     Buffer<char> quanser_values_;
 
     QuanserDI( const QuanserDI& ) = delete; // non construction-copyable

@@ -36,7 +36,7 @@ MyRioDIO::MyRioDIO(MyRioConnector& connector, const ChanNums& channel_numbers) :
 }
 
 bool MyRioDIO::update_channel(ChanNum channel_number) {
-    if (!validate_channel_number(channel_number))
+    if (!valid_channel(channel_number))
         return false;
     if (directions_[channel_number] == In) {
         m_values[channel_number] = get_register_bit(ins_[channel_number / 8], channel_number % 8) ? High : Low;

@@ -61,11 +61,11 @@ public:
     /// Overloaded version of set_options() that allows passing in new options
     bool set_options(const QuanserOptions& options);
 
-    /// Gets a copy of the QOptions of this QDaq
+    /// Gets a copy of the QOptions of this QuanserDaq
     QuanserOptions get_options();
 
 public:
-    /// Determines how many of a specifc QDaq are currently connected to the host
+    /// Determines how many of a specifc QuanserDaq are currently connected to the host
     static std::size_t get_qdaq_count(const std::string& card_type);
 
     /// Gets the string message corresponding to a Quanser error number

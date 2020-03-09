@@ -45,7 +45,7 @@ MyRioEncoder::MyRioEncoder(MyRioConnector& connector, const ChanNums& channel_nu
 }
 
 bool MyRioEncoder::update_channel(ChanNum channel_number) {
-    if (!validate_channel_number(channel_number))
+    if (!valid_channel(channel_number))
         return false;
     uint32_t counts;
     NiFpga_Status status = NiFpga_ReadU32(myrio_session, cntr_[channel_number], &counts);
@@ -58,7 +58,7 @@ bool MyRioEncoder::update_channel(ChanNum channel_number) {
 }
 
 bool MyRioEncoder::reset_count(ChanNum channel_number, int count) {
-    if (!validate_channel_number(channel_number))
+    if (!valid_channel(channel_number))
         return false;
     if (count == 0) {
         set_register_bit(cnfg_[channel_number], 1);

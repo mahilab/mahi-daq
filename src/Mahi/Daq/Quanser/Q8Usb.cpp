@@ -51,7 +51,7 @@ Q8Usb::~Q8Usb() {
 }
 
 bool Q8Usb::on_open() {
-    // open as QDaq
+    // open as QuanserDaq
     if (!QuanserDaq::on_open())
         return false;
     // clear watchdog (precautionary, ok if fails)
@@ -86,7 +86,7 @@ bool Q8Usb::on_close() {
     watchdog.clear();
     // allow changes to take effect
     util::sleep(milliseconds(10));
-    // close as QDaq
+    // close as QuanserDaq
     return QuanserDaq::on_close();
 }
 

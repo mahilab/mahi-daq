@@ -40,7 +40,7 @@ template <typename T>
 bool ChannelBase<T>::is_valid() const {
     if (m_module == nullptr)
         return false;
-    if (!m_module->validate_channel_number(channel_number_))
+    if (!m_module->valid_channel(channel_number_))
         return false;
     return true;
 }

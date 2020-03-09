@@ -16,32 +16,32 @@
 
 #pragma once
 
-#include <Mahi/Daq/Buffer.hpp>
-#include <Mahi/Daq/ChannelBase.hpp>
+// #include <Mahi/Daq/ChannelBase.hpp>
 #include <Mahi/Daq/DaqBase.hpp>
-#include <Mahi/Daq/Encoder.hpp>
-#include <Mahi/Daq/Input.hpp>
-#include <Mahi/Daq/InputOutput.hpp>
-#include <Mahi/Daq/Module.hpp>
-#include <Mahi/Daq/Output.hpp>
-#include <Mahi/Daq/Types.hpp>
-#include <Mahi/Daq/VirtualDaq.hpp>
+// #include <Mahi/Daq/Encoder.hpp>
+#include <Mahi/Daq/Io.hpp>
+// #include <Mahi/Daq/InputOutput.hpp>
+// #include <Mahi/Daq/Module.hpp>
+// #include <Mahi/Daq/Output.hpp>
+// #include <Mahi/Daq/Types.hpp>
+// #include <Mahi/Daq/VirtualDaq.hpp>
 #include <Mahi/Daq/Watchdog.hpp>
 
 #ifdef MAHI_QUANSER
-    #include <Mahi/Daq/Quanser/Q2Usb.hpp>
-    #include <Mahi/Daq/Quanser/Q8Usb.hpp>
-    #include <Mahi/Daq/Quanser/QPid.hpp>
-    #include <Mahi/Daq/Quanser/QuanserAI.hpp>
-    #include <Mahi/Daq/Quanser/QuanserAO.hpp>
-    #include <Mahi/Daq/Quanser/QuanserDaq.hpp>
-    #include <Mahi/Daq/Quanser/QuanserDI.hpp>
-    #include <Mahi/Daq/Quanser/QuanserDIO.hpp>
-    #include <Mahi/Daq/Quanser/QuanserDO.hpp>
-    #include <Mahi/Daq/Quanser/QuanserEncoder.hpp>
-    #include <Mahi/Daq/Quanser/QuanserOptions.hpp>
-    #include <Mahi/Daq/Quanser/QuanserPwm.hpp>
-    #include <Mahi/Daq/Quanser/QuanserWatchdog.hpp>
+    // #include <Mahi/Daq/Quanser/Q2Usb.hpp>
+    // #include <Mahi/Daq/Quanser/Q8Usb.hpp>
+    // #include <Mahi/Daq/Quanser/QPid.hpp>
+    // #include <Mahi/Daq/Quanser/QuanserAI.hpp>
+    // #include <Mahi/Daq/Quanser/QuanserAO.hpp>
+    // #include <Mahi/Daq/Quanser/QuanserDaq.hpp>
+    // #include <Mahi/Daq/Quanser/QuanserDI.hpp>
+    // #include <Mahi/Daq/Quanser/QuanserDIO.hpp>
+    // #include <Mahi/Daq/Quanser/QuanserDO.hpp>
+    // #include <Mahi/Daq/Quanser/QuanserEncoder.hpp>
+    // #include <Mahi/Daq/Quanser/QuanserOptions.hpp>
+    // #include <Mahi/Daq/Quanser/QuanserPwm.hpp>
+    // #include <Mahi/Daq/Quanser/QuanserWatchdog.hpp>
+    #include <Mahi/Daq/Quanser2/Q8Usb.hpp>
 #endif
 
 #ifdef MAHI_SENSORAY

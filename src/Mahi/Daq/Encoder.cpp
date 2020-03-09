@@ -42,7 +42,7 @@ bool Encoder::on_enable() {
 }
 
 bool Encoder::reset_counts(const std::vector<int>& counts) {
-    if (validate_channel_count(counts.size())) {
+    if (valid_count(counts.size())) {
         auto ch_nums = channel_numbers();
         for (std::size_t i = 0; i < ch_nums.size(); ++i) {
             reset_count(ch_nums[i], counts[i]);
@@ -52,7 +52,7 @@ bool Encoder::reset_counts(const std::vector<int>& counts) {
 }
 
 bool Encoder::reset_count(ChanNum channel_number, int count) {
-    if (validate_channel_number(channel_number)) {
+    if (valid_channel(channel_number)) {
         m_values[channel_number] = count;
         return true;
     }
@@ -67,7 +67,7 @@ bool Encoder::set_quadrature_factors(const std::vector<QuadFactor>& factors) {
 }
 
 bool Encoder::set_quadrature_factor(ChanNum channel_number, QuadFactor factor) {
-    if (validate_channel_number(channel_number)) {
+    if (valid_channel(channel_number)) {
         factors_[channel_number] = factor;
         compute_conversions();
         return true;
@@ -91,7 +91,7 @@ void Encoder::set_units_per_count(const std::vector<double>& units_per_count) {
 }
 
 void Encoder::set_units_per_count(ChanNum channel_number, double units_per_count) {
-    if (validate_channel_number(channel_number)) {
+    if (valid_channel(channel_number)) {
         units_per_count_[channel_number] = units_per_count;
         compute_conversions();
     }
@@ -110,7 +110,7 @@ std::vector<double>& Encoder::get_positions() {
 }
 
 double Encoder::get_position(ChanNum channel_number) {
-    if (validate_channel_number(channel_number)) {
+    if (valid_channel(channel_number)) {
         return m_values[channel_number] * conversions_[channel_number];
     }
     else
@@ -135,7 +135,7 @@ double Encoder::get_value_per_sec(ChanNum channel_number) {
     if (!has_velocity()) {
         LOG(util::Warning) << "Encoder module " << get_name() << " has no velocity estimation";
     }
-    if (validate_channel_number(channel_number))
+    if (valid_channel(channel_number))
         return values_per_sec_[channel_number];
     else
         return double();
@@ -163,7 +163,7 @@ double Encoder::get_velocity(ChanNum channel_number) {
     if (!has_velocity()) {
         LOG(util::Warning) << "Encoder module " << get_name() << " has no velocity estimation";
     }
-    if (validate_channel_number(channel_number)) {
+    if (valid_channel(channel_number)) {
         return values_per_sec_[channel_number] * conversions_[channel_number];
     }
     else
@@ -171,7 +171,7 @@ double Encoder::get_velocity(ChanNum channel_number) {
 }
 
 Encoder::Channel Encoder::channel(ChanNum channel_number) {
-    if (validate_channel_number(channel_number))
+    if (valid_channel(channel_number))
         return Channel(this, channel_number);
     else
         return Channel();

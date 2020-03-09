@@ -29,7 +29,7 @@ namespace daq {
 
     template <typename T>
     bool InputOutput<T>::set_direction(ChanNum channel_number, Direction direction) {
-        if (this->validate_channel_number(channel_number)) {
+        if (this->valid_channel(channel_number)) {
             directions_[channel_number] = direction;
             sort_input_output_channel_numbers();
             return true;
@@ -78,7 +78,7 @@ namespace daq {
 
     template <typename T>
     typename InputOutput<T>::Channel InputOutput<T>::channel(ChanNum channel_number) {
-        if (this->validate_channel_number(channel_number))
+        if (this->valid_channel(channel_number))
             return Channel(this, channel_number);
         else
             return Channel();

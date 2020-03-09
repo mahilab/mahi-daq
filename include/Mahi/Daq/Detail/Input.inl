@@ -16,7 +16,7 @@ namespace daq {
 
     template<typename T>
     typename Input<T>::Channel Input<T>::channel(ChanNum channel_number) {
-        if (this->validate_channel_number(channel_number))
+        if (this->valid_channel(channel_number))
             return Channel(this, channel_number);
         else
             return Channel();
