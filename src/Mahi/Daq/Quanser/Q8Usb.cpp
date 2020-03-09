@@ -141,19 +141,19 @@ bool Q8Usb::update_input() {
     }
     t_error result;
     result = hil_read(handle_,
-        AI.channel_count() > 0 ? &(AI.channel_numbers())[0] : NULL,
-        static_cast<ChanNum>(AI.channel_count()),
-        encoder.channel_count() > 0 ? &(encoder.channel_numbers())[0] : NULL,
-        static_cast<ChanNum>(encoder.channel_count()),
-        DI.channel_count() > 0 ? &(DI.channel_numbers())[0] : NULL,
-        static_cast<ChanNum>(DI.channel_count()),
-        encoder.channel_count() > 0 ? &(encoder.velocity_channel_numbers())[0] : NULL,
-        static_cast<ChanNum>(encoder.channel_count()),
-        AI.channel_count() > 0 ? &(AI.get())[0] : NULL,
-        encoder.channel_count() > 0 ? &(encoder.get())[0] : NULL,
-        DI.channel_count() > 0 ? &(DI.get_quanser_values())[0] : NULL,
-        encoder.channel_count() > 0 ? &(encoder.get_values_per_sec())[0] : NULL);
-    for (std::size_t i = 0; i < DI.channel_count(); ++i)
+        AI.channels_internal().size() > 0 ? &(AI.channels_internal())[0] : NULL,
+        static_cast<ChanNum>(AI.channels_internal().size()),
+        encoder.channels_internal().size() > 0 ? &(encoder.channels_internal())[0] : NULL,
+        static_cast<ChanNum>(encoder.channels_internal().size()),
+        DI.channels_internal().size() > 0 ? &(DI.channels_internal())[0] : NULL,
+        static_cast<ChanNum>(DI.channels_internal().size()),
+        encoder.channels_internal().size() > 0 ? &(encoder.velocity_channel_numbers())[0] : NULL,
+        static_cast<ChanNum>(encoder.channels_internal().size()),
+        AI.channels_internal().size() > 0 ? &(AI.get())[0] : NULL,
+        encoder.channels_internal().size() > 0 ? &(encoder.get())[0] : NULL,
+        DI.channels_internal().size() > 0 ? &(DI.get_quanser_values())[0] : NULL,
+        encoder.channels_internal().size() > 0 ? &(encoder.get_values_per_sec())[0] : NULL);
+    for (std::size_t i = 0; i < DI.channels_internal().size(); ++i)
         DI.get()[i] = static_cast<Logic>(DI.get_quanser_values()[i]);
     if (result == 0)
         return true;
@@ -169,19 +169,19 @@ bool Q8Usb::update_output() {
         return false;
     }
     // convert digitals
-    for (std::size_t i = 0; i < DO.channel_count(); ++i)
+    for (std::size_t i = 0; i < DO.channels_internal().size(); ++i)
         DO.get_quanser_values()[i] = static_cast<char>(DO.get()[i]);
     t_error result;
     result = hil_write(handle_,
-        AO.channel_count() > 0 ? &(AO.channel_numbers())[0] : NULL,
-        static_cast<ChanNum>(AO.channel_count()),
+        AO.channels_internal().size() > 0 ? &(AO.channels_internal())[0] : NULL,
+        static_cast<ChanNum>(AO.channels_internal().size()),
         NULL, 0,
-        DO.channel_count() > 0 ? &(DO.channel_numbers())[0] : NULL,
-        static_cast<ChanNum>(DO.channel_count()),
+        DO.channels_internal().size() > 0 ? &(DO.channels_internal())[0] : NULL,
+        static_cast<ChanNum>(DO.channels_internal().size()),
         NULL, 0,
-        AO.channel_count() > 0 ? &(AO.get())[0] : NULL,
+        AO.channels_internal().size() > 0 ? &(AO.get())[0] : NULL,
         NULL,
-        DO.channel_count() > 0 ? &(DO.get_quanser_values())[0] : NULL,
+        DO.channels_internal().size() > 0 ? &(DO.get_quanser_values())[0] : NULL,
         NULL);
     if (result == 0)
         return true;

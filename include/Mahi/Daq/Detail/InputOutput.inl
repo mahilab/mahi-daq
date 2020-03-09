@@ -106,11 +106,11 @@ namespace daq {
     void InputOutput<T>::sort_input_output_channel_numbers() const {
         input_channel_numbers_.clear();
         output_channel_numbers_.clear();
-        for (std::size_t i = 0; i < this->channel_count(); ++i) {
+        for (std::size_t i = 0; i < this->channels_internal().size(); ++i) {
             if (directions_.get()[i] == In)
-                input_channel_numbers_.push_back(this->channel_numbers()[i]);
+                input_channel_numbers_.push_back(this->channels_internal()[i]);
             else if (directions_.get()[i] == Out)
-                output_channel_numbers_.push_back(this->channel_numbers()[i]);
+                output_channel_numbers_.push_back(this->channels_internal()[i]);
         }
     }
 

@@ -21,11 +21,13 @@ typedef std::map<unsigned int, std::size_t> ChanMap;
 /// Represents a voltage in [V]
 typedef double Voltage;
 
-/// Represents a digital TTL logic level
-enum Logic {
-    Low  = 0, ///< Low TTL level  (typically 0V)
-    High = 1   ///< High TTL level (typically 5V)
-};
+/// Represents a digital TTL logic level 
+typedef char Logic;
+
+/// Low TTL level, i.e. 0 V
+constexpr Logic LOW  = 0;
+/// High TTL, i.e. 3.3 V or 5 V
+constexpr Logic HIGH = 1; 
 
 /// Represents a duty cycle (e.g 0.5 = 50%)
 typedef double DutyCycle;

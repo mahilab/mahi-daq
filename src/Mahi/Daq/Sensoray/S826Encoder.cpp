@@ -23,7 +23,7 @@ bool S826Encoder::on_open() {
     // program all counters to be incremental encoders
     int result;
     bool success = true;
-    for (auto& c : channel_numbers()) {
+    for (auto& c : channels_internal()) {
         result = S826_CounterModeWrite(s826_.board_, c, S826_CM_K_QUADX4);
         if (result != S826_ERR_OK) {
             LOG(Error) << "Failed to writer counter mode of " << get_name() << " channel number " << c << " (" << S826::get_error_message(result) << ")";
@@ -123,7 +123,7 @@ double S826Encoder::get_value_per_sec(ChanNum channel_number) {
 }
 
 const std::vector<double>& S826Encoder::get_velocities() {
-    for (auto const& ch : channel_numbers())
+    for (auto const& ch : channels_internal())
         velocities_[ch] = values_per_sec_[ch] * conversions_[ch];
     return velocities_.get();
 }

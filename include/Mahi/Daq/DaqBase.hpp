@@ -18,42 +18,38 @@
 
 #include <Mahi/Daq/Module.hpp>
 #include <Mahi/Util/Device.hpp>
-#include <typeindex>
-#include <set>
 
 namespace mahi {
 namespace daq {
 
+// Forward Declarations
 class Readable;
 class Writeable;
 class Module;
 
-//==============================================================================
-// CLASS DECLARATION
-//==============================================================================
-
+/// A DAQ interface, the topmost level of the mahi::daq architecture
 class DaqBase : public util::Device {
 public:
     /// Constructor
     DaqBase();
     /// Destructor. By default, this closes the DAQ.
     virtual ~DaqBase();
-    /// Reads all readable ModuleInterfaces owned
-    virtual bool read();
-    /// Reads all writeable ModuleInterfaces owned
-    virtual bool write();
+    /// Reads all readable ModuleInterfaces known to this DAQ if they allow it
+    virtual bool read_all();
+    /// Reads all writeable ModuleInterfaces know to this DAQ if they allow it
+    virtual bool write_all();
     /// Returns the number of modules on this DAQ
-    std::size_t module_count() const;
+    const std::vector<Module*>& modules() const;
 private:
-    friend Module;
-    friend Readable;
-    friend Writeable;
     /// The Modules owned by this DAQ
     std::vector<Module*> m_modules;
+    friend Module;
     /// The readable ModuleInerfaces indirectly owned by this DAQ
     std::vector<Readable*> m_readables;
+    friend Readable;
     /// The writeable ModuleInterfaces indirectly owned by this DAQ
     std::vector<Writeable*> m_writeables;
+    friend Writeable;
 };
 
 } // namespace daq

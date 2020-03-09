@@ -43,23 +43,23 @@ bool handler(CtrlEvent event) {
 void print_channel_info(const MyRio& myrio) {
     print("----------------------------------------");
     print("Connector MXP A");
-    print("    AO: ", myrio.mxpA.AO.channel_numbers());
-    print("    AI: ", myrio.mxpA.AI.channel_numbers());
+    print("    AO: ", myrio.mxpA.AO.channels_internal());
+    print("    AI: ", myrio.mxpA.AI.channels_internal());
     print("    DI: ", myrio.mxpA.DIO.input_channel_numbers());
     print("    DO: ", myrio.mxpA.DIO.output_channel_numbers());
-    print("    ENC:", myrio.mxpA.encoder.channel_numbers());
+    print("    ENC:", myrio.mxpA.encoder.channels_internal());
     print("Connector MXP B");
-    print("    AO: ", myrio.mxpB.AO.channel_numbers());
-    print("    AI: ", myrio.mxpB.AI.channel_numbers());
+    print("    AO: ", myrio.mxpB.AO.channels_internal());
+    print("    AI: ", myrio.mxpB.AI.channels_internal());
     print("    DI: ", myrio.mxpB.DIO.input_channel_numbers());
     print("    DO: ", myrio.mxpB.DIO.output_channel_numbers());
-    print("    ENC:", myrio.mxpB.encoder.channel_numbers());
+    print("    ENC:", myrio.mxpB.encoder.channels_internal());
     print("Connector MSP C");
-    print("    AO: ", myrio.mspC.AO.channel_numbers());
-    print("    AI: ", myrio.mspC.AI.channel_numbers());
+    print("    AO: ", myrio.mspC.AO.channels_internal());
+    print("    AI: ", myrio.mspC.AI.channels_internal());
     print("    DI: ", myrio.mspC.DIO.input_channel_numbers());
     print("    DO: ", myrio.mspC.DIO.output_channel_numbers());  
-    print("    ENC:", myrio.mspC.encoder.channel_numbers());
+    print("    ENC:", myrio.mspC.encoder.channels_internal());
     print("----------------------------------------");
 }
 

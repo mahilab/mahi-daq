@@ -30,7 +30,7 @@ bool S826AI::update() {
         return false;
     }
     // convert adc buffer to voltages
-    for (auto& c : channel_numbers()) {
+    for (auto& c : channels_internal()) {
         int slot = adc_buffer_[c];
         std::bitset<16> bits(slot); // get first 16 bits which hold the measured value
         short int value = static_cast<short int>(bits.to_ulong()); // get signed 16-bit int value
@@ -62,7 +62,7 @@ bool S826AI::set_settling_time(double t) {
     unsigned int tsettle = (unsigned int)(t * 1000000);
     // cofigure all timeslots for -10 to +10 V
     bool success = true;
-    for (auto& c : channel_numbers()) {
+    for (auto& c : channels_internal()) {
         int result = S826_AdcSlotConfigWrite(s826_.board_, c, c, tsettle, S826_ADC_GAIN_1);
         if (result != S826_ERR_OK) {
             LOG(Error) << "Failed to set " << get_name() << " channel number " << c << " input range (" << S826::get_error_message(result) << ")";

@@ -23,11 +23,11 @@ QuanserEncoder::QuanserEncoder(QuanserDaq& daq, const ChanNums& channel_numbers,
 
 bool QuanserEncoder::update() {
     t_error result;
-    result = hil_read_encoder(daq_.handle_, &channel_numbers()[0], static_cast<ChanNum>(channel_count()), &m_values.get()[0]);
+    result = hil_read_encoder(daq_.handle_, &channels_internal()[0], static_cast<ChanNum>(channels_internal().size()), &m_values.get()[0]);
     // velocity
     if (has_velocity_) {
         auto velocity_channels = velocity_channel_numbers();
-        result = hil_read_other(daq_.handle_, &velocity_channels[0], static_cast<ChanNum>(channel_count()), &values_per_sec_.get()[0]);
+        result = hil_read_other(daq_.handle_, &velocity_channels[0], static_cast<ChanNum>(channels_internal().size()), &values_per_sec_.get()[0]);
     } 
     if (result == 0)
         return true;
@@ -57,7 +57,7 @@ bool QuanserEncoder::reset_counts(const std::vector<int>& counts) {
     if (!Encoder::reset_counts(counts))
         return false;
     t_error result;
-    result = hil_set_encoder_counts(daq_.handle_, &channel_numbers()[0], static_cast<ChanNum>(channel_count()), &counts[0]);
+    result = hil_set_encoder_counts(daq_.handle_, &channels_internal()[0], static_cast<ChanNum>(channels_internal().size()), &counts[0]);
     util::sleep(milliseconds(10));
     if (result == 0) {
         LOG(Verbose) << "Reset " << get_name() << " counts"; // to " << counts;
@@ -105,7 +105,7 @@ bool QuanserEncoder::set_quadrature_factors(const std::vector<QuadFactor>& facto
         }
     }
     t_error result;
-    result = hil_set_encoder_quadrature_mode(daq_.handle_, &channel_numbers()[0], static_cast<ChanNum>(channel_count()), &converted_factors[0]);
+    result = hil_set_encoder_quadrature_mode(daq_.handle_, &channels_internal()[0], static_cast<ChanNum>(channels_internal().size()), &converted_factors[0]);
     util::sleep(milliseconds(10));
     if (result == 0) {
         LOG(Verbose) << "Set " << get_name() << " quadrature factors";
@@ -153,9 +153,9 @@ bool QuanserEncoder::has_velocity() const {
 }
 
 const ChanNums QuanserEncoder::velocity_channel_numbers() {
-    ChanNums velocity_channels(channel_count());
+    ChanNums velocity_channels(channels_internal().size());
     for (std::size_t i = 0; i < velocity_channels.size(); ++i)
-        velocity_channels[i] = channel_numbers()[i] + 14000;
+        velocity_channels[i] = channels_internal()[i] + 14000;
     return velocity_channels;
 }
 

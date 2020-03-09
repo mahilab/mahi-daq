@@ -16,27 +16,27 @@ DaqBase::~DaqBase() {
 }
 
 /// Reads all readable ModuleInterfaces owned
-bool DaqBase::read(){
+bool DaqBase::read_all() {
     bool success = true;
     for (auto& r : m_readables) {
-        if (r->read_with_daq)
+        if (r->read_with_all)
             success = r->read() ? success : false;
     }
     return success;
 }
 
 /// Reads all writeable ModuleInterfaces owned
-bool DaqBase::write() {
+bool DaqBase::write_all() {
     bool success = true;
     for (auto& w : m_writeables) {
-        if (w->write_with_daq)
+        if (w->write_with_all)
             success = w->write() ? success : false;
     }
     return success;
 }
 
-std::size_t DaqBase::module_count() const {
-    return m_modules.size();
+const std::vector<Module*>& DaqBase::modules() const {
+    return m_modules;
 }
 
 // void DaqBase::add_readable(Readable* readable) {

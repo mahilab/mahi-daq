@@ -1,6 +1,7 @@
 #include <vector>
 #include <Mahi/Util.hpp>
 #include <Mahi/Daq.hpp>
+#include <type_traits>
 
 using namespace mahi::util;
 using namespace mahi::daq;
@@ -47,7 +48,7 @@ int main(int argc, char const *argv[])
 {
     // VirtualEncoder enc({0,1,2,3});
 
-    // for (auto& ch : enc.channel_numbers())
+    // for (auto& ch : enc.channels_internal())
     //     enc.units[ch] = 1.0 / 1024.0;
     // print("Counts:    {}",enc);
     // print("Positions: {}",enc.positions);
@@ -63,9 +64,18 @@ int main(int argc, char const *argv[])
     // print("Counts:    {}",enc);
 
     // Printer printer(enc.positions[0]);
+    // print("{}",QuanserDaq::hil_version());
+    // Q8Usb q8;
+    // // print("{}", q8.AI.channels());
+    // // print("{}", q8.AO.channels());
+    // // print("{}", q8.encoder.channels());
+    // print("{}", q8.velocity.channels());
+    // print("{}", q8.velocity.channels_internal());
+    // q8.velocity.read(4);
+    // // q8.velocity.
 
-    Q8Usb q8;
-
+    // for (auto& mod: q8.modules())
+    //     print("{}",mod->get_name());
 
     // q8.open();
     // q8.set_options(QuanserOptions());
@@ -76,6 +86,10 @@ int main(int argc, char const *argv[])
     // q8.AI.read();
     // q8.AI.read(0);
     // print("hey!");
+
+    Q8Usb q8;
+    q8.write_all();
+
     return 0;
 }
 

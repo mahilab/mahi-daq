@@ -17,7 +17,7 @@ QuanserPwm::QuanserPwm(QuanserDaq& daq, const ChanNums& channel_numbers) :
 
 bool QuanserPwm::update() {
     t_error result;
-    result = hil_write_pwm(daq_.handle_, &channel_numbers()[0], static_cast<ChanNum>(channel_count()), &m_values.get()[0]);
+    result = hil_write_pwm(daq_.handle_, &channels_internal()[0], static_cast<ChanNum>(channels_internal().size()), &m_values.get()[0]);
     if (result == 0)
         return true;
     else {
@@ -41,7 +41,7 @@ bool QuanserPwm::set_expire_values(const std::vector<DutyCycle>& expire_values) 
     if (!Output::set_expire_values(expire_values))
         return false;
     t_error result;
-    result = hil_watchdog_set_pwm_expiration_state(daq_.handle_, &channel_numbers()[0], static_cast<ChanNum>(channel_count()), &expire_values_.get()[0]);
+    result = hil_watchdog_set_pwm_expiration_state(daq_.handle_, &channels_internal()[0], static_cast<ChanNum>(channels_internal().size()), &expire_values_.get()[0]);
     if (result == 0) {
         LOG(Verbose) << "Set " << get_name() << " expire values to " << expire_values_;
         return true;

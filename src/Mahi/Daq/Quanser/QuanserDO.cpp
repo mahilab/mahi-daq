@@ -22,10 +22,10 @@ namespace daq {
 
     bool QuanserDO::update() {
         // convert Logic to Quanser t_boolean (aka char)
-        for (auto const& ch : channel_numbers())
+        for (auto const& ch : channels_internal())
             quanser_values_[ch] = static_cast<char>(m_values[ch]);
         t_error result;
-        result = hil_write_digital(daq_.handle_, &channel_numbers()[0], static_cast<ChanNum>(channel_count()), &quanser_values_.get()[0]);
+        result = hil_write_digital(daq_.handle_, &channels_internal()[0], static_cast<ChanNum>(channels_internal().size()), &quanser_values_.get()[0]);
         if (result == 0)
             return true;
         else {
@@ -64,7 +64,7 @@ namespace daq {
                 converted_expire_values.push_back(DIGITAL_STATE_LOW);
         }
         t_error result;
-        result = hil_watchdog_set_digital_expiration_state(daq_.handle_, &channel_numbers()[0], static_cast<ChanNum>(channel_count()), &converted_expire_values[0]);
+        result = hil_watchdog_set_digital_expiration_state(daq_.handle_, &channels_internal()[0], static_cast<ChanNum>(channels_internal().size()), &converted_expire_values[0]);
         if (result == 0) {
             LOG(Verbose) << "Set " << get_name() << " expire values to " << expire_values_;
             return true;

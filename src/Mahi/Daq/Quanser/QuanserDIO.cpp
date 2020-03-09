@@ -139,7 +139,7 @@ namespace daq {
                 converted_expire_values.push_back(DIGITAL_STATE_LOW);
         }
         t_error result;
-        result = hil_watchdog_set_digital_expiration_state(daq_.handle_, &channel_numbers()[0], static_cast<ChanNum>(channel_count()), &converted_expire_values[0]);
+        result = hil_watchdog_set_digital_expiration_state(daq_.handle_, &channels_internal()[0], static_cast<ChanNum>(channels_internal().size()), &converted_expire_values[0]);
         if (result == 0) {
             LOG(Verbose) << "Set " << get_name() << " expire values to " << expire_values_;
             return true;

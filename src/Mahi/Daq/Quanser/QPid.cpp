@@ -140,18 +140,18 @@ bool QPid::update_input() {
     }
     t_error result;
     result = hil_read(handle_,
-        AI.channel_count() > 0 ? &(AI.channel_numbers())[0] : NULL,
-        static_cast<ChanNum>(AI.channel_count()),
-        encoder.channel_count() > 0 ? &(encoder.channel_numbers())[0] : NULL,
-        static_cast<ChanNum>(encoder.channel_count()),
+        AI.channels_internal().size() > 0 ? &(AI.channels_internal())[0] : NULL,
+        static_cast<ChanNum>(AI.channels_internal().size()),
+        encoder.channels_internal().size() > 0 ? &(encoder.channels_internal())[0] : NULL,
+        static_cast<ChanNum>(encoder.channels_internal().size()),
         DIO.input_channel_count() > 0 ? &(DIO.input_channel_numbers())[0] : NULL,
         static_cast<ChanNum>(DIO.input_channel_count()),
-        encoder.channel_count() > 0 ? &(encoder.velocity_channel_numbers())[0] : NULL,
-        static_cast<ChanNum>(encoder.channel_count()),
-        AI.channel_count() > 0 ? &(AI.get())[0] : NULL,
-        encoder.channel_count() > 0 ? &(encoder.get())[0] : NULL,
+        encoder.channels_internal().size() > 0 ? &(encoder.velocity_channel_numbers())[0] : NULL,
+        static_cast<ChanNum>(encoder.channels_internal().size()),
+        AI.channels_internal().size() > 0 ? &(AI.get())[0] : NULL,
+        encoder.channels_internal().size() > 0 ? &(encoder.get())[0] : NULL,
         DIO.input_channel_count() > 0 ? &(DIO.quanser_input_buffer_)[0] : NULL,
-        encoder.channel_count() > 0 ? &(encoder.get_values_per_sec())[0] : NULL);   
+        encoder.channels_internal().size() > 0 ? &(encoder.get_values_per_sec())[0] : NULL);   
     DIO.buffer_to_input();
     if (result == 0)
         return true;
@@ -170,13 +170,13 @@ bool QPid::update_output() {
     DIO.output_to_buffer();
     t_error result;
     result = hil_write(handle_,
-        AO.channel_count() > 0 ? &(AO.channel_numbers())[0] : NULL,
-        static_cast<ChanNum>(AO.channel_count()),
+        AO.channels_internal().size() > 0 ? &(AO.channels_internal())[0] : NULL,
+        static_cast<ChanNum>(AO.channels_internal().size()),
         NULL, 0,
         DIO.output_channel_count() > 0 ? &(DIO.output_channel_numbers())[0] : NULL,
         static_cast<ChanNum>(DIO.output_channel_count()),
         NULL, 0,
-        AO.channel_count() > 0 ? &(AO.get())[0] : NULL,
+        AO.channels_internal().size() > 0 ? &(AO.get())[0] : NULL,
         NULL,
         DIO.output_channel_count() > 0 ? &(DIO.quanser_output_buffer_)[0] : NULL,
         NULL);

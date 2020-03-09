@@ -28,53 +28,52 @@ class ModuleInterfaceBase;
 class Readable;
 class Writeable;
 
-/// Defines non-templated Module functions/members
+/// A DAQ Module. A DAQ interface may expose one or more Modules.
+/// Modules should expose one type of I/O functionality of the DAQ, but
+/// may use any number of ModuleInterfaces to implement the functionality,
+/// e.g. separate ModuleInterfaces for buffers and registry settings. 
 class Module : public util::Device {
 public:
-
     /// Default Constructor (creates an invlaid empty Module)
     Module(DaqBase& daq);
-
     /// Gets the vector of channel numbers this Module maintains
-    const ChanNums& channel_numbers() const;
-
-    /// Returns the number of channels on this Module
-    std::size_t channel_count() const;
-
+    const ChanNums& channels() const;
+    /// Gets the vector of channel numbers this Module maintains in the internal representation
+    const ChanNums& channels_internal() const;
     /// Checks if a channel number is a number defined on this Module.
-    bool valid_channel(ChanNum channel_number, bool quiet = false) const;
-
+    bool valid_channel(ChanNum ch, bool quiet = false) const;
     /// Checks if the size of a vector equals the number of channels
     bool valid_count(std::size_t size, bool quiet = false) const;
-
-    /// Returns vector index associated with channel number
-    std::size_t index(ChanNum channel_number) const;
-
+    /// Returns buffer index associated with channel number
+    std::size_t index(ChanNum ch) const;
 protected:
-
-    /// Sets the channel numbers this Module maintains
-    void set_channel_numbers(const ChanNums& channel_numbers);
-
-    /// Adds a channel number to current channel numbers
-    void add_channel_number(ChanNum channel_number);
-
-    /// Removes a channel number from current channel numbers
-    void remove_channel_number(ChanNum channel_number);
-
+    /// Sets the public facing channel numbers this Module maintains.
+    /// You may choose to make this public in your own implementation.
+    void set_channel_numbers(const ChanNums& chs);
+    /// Adds a public facing channel number to current channel numbers
+    /// You may choose to make this public in your own implementation.
+    void add_channel_number(ChanNum ch);
+    /// Removes a public facing channel number from current channel numbers
+    /// You may choose to make this public in your own implementation.
+    void remove_channel_number(ChanNum ch);
+    /// Transforms a public facing channel number to the internal representation.
+    /// Passes through by default. Override if your DAQ API channel indexing is 
+    /// different from the interface indexing you you want clients to use. 
+    virtual ChanNum transform_channel_number(ChanNum public_facing) const;
 private:
-
-    friend class ModuleInterfaceBase;
-
-    /// Updates the channel Map and notifies Registries
+    /// Updates the channel Map and notifies ModuleInterfaces
     void update_map();
-
+    /// Updates internal channel numbers
+    void update_internal();
 private:
+    friend ModuleInterfaceBase;
     friend Readable;
     friend Writeable;
-    ChanNums channel_numbers_;                  ///< The channel numbers used by this ModuleInterface
-    ChanMap  channel_map_;                      ///< Maps a channel number with a vector index position
-    std::vector<ModuleInterfaceBase*> interfaces_; ///< Objects needed by this Module
-    DaqBase& m_daq;                             ///< This modules Daq
+    ChanNums m_chs_public;                      ///< The public facing channel numbers
+    ChanNums m_chs_internal;                    ///< The internal facing channel numbers
+    ChanMap  m_ch_map;                          ///< Maps a public facing channel number to a buffer index position
+    std::vector<ModuleInterfaceBase*> m_ifaces; ///< Interfaces maintained  by this Module
+    DaqBase& m_daq;                             ///< This Module's parent Daq
 };
 
 } // namespace daq
