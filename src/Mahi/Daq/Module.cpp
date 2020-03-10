@@ -10,6 +10,7 @@ using namespace mahi::util;
 namespace mahi {
 namespace daq {
 
+
 namespace  {
 void sort_and_reduce_channels(ChanNums& channels) {
     std::sort(channels.begin(), channels.end());
@@ -21,6 +22,7 @@ ChanMap make_channel_map(const ChanNums& channel_numbers) {
         channel_map[channel_numbers[i]] = i;
     return channel_map;
 }
+std::unordered_map<ChannelsModule*,std::vector<std::pair<ChannelsModule*,ChannelsModule::ShareList>>> g_share_list_map; 
 } // namespace private
 
 Module::Module(Daq& daq) : m_daq(daq) {
@@ -105,10 +107,6 @@ ChanNum ChannelsModule::transform_channel_number(ChanNum public_facing) const {
 
 // CHANNEL SHARING
 
-namespace {
-    std::unordered_map<ChannelsModule*,std::vector<std::pair<ChannelsModule*,ChannelsModule::ShareList>>> g_share_list_map; 
-}
-
 void ChannelsModule::share(ChannelsModule* a, ChannelsModule* b, ShareList share_list) {
     // make sure entries exist
     if (g_share_list_map.count(a) == 0)
@@ -134,7 +132,24 @@ void ChannelsModule::share(ChannelsModule* a, ChannelsModule* b, ShareList share
                 std::cout << "  " << p.first << " <=> " << p.second << std::endl;
             }
         }
+    }    
+}
+
+bool ChannelsModule::shares_pins() const {
+    for (auto& entry : g_share_list_map) {
+        if (entry.first == this)
+            return true;
     }
+    return false;
+}
+
+void ChannelsModule::update_shared() {
+    if (!shares_pins())
+        return;
+    // for every module we share with
+    for (auto other : g_share_list_map[this]) {
+        g_share_list_map.count(this);
+    }    
 }
 
 

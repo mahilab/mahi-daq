@@ -33,7 +33,7 @@ public:
     ModuleInterfaceBase(ChannelsModule& module);
 protected:
     friend ChannelsModule;
-    /// Called by ModuleInterface when channel numbers change
+    /// Called by Module when channel numbers change
     virtual void remap_channels(const ChanMap& old_map, const ChanMap& new_map) = 0;
     /// Returns internal channel number
     ChanNum intern(ChanNum public_facing);
@@ -102,10 +102,10 @@ public:
 
 /// Mixin this to inject buffer get access into a ModuleInterface<T> (see Io.hpp)
 template <typename Base>
-class GetAccess : public Base {
+class IGet : public Base {
 public:
     /// Constructor
-    GetAccess(ChannelsModule& module, typename Base::ValueType default_value) : Base(module, default_value) { }
+    IGet(ChannelsModule& module, typename Base::ValueType default_value) : Base(module, default_value) { }
     /// Buffer read access with operator[] (does NOT validate channel number, invalid numbers will cause undefined behavior)
     const typename Base::ValueType& operator[](ChanNum ch) const { return this->buffer(ch); }
     /// Get all buffer values at once
@@ -116,10 +116,10 @@ public:
 
 /// Mixin this to inject buffer set/get access into a ModuleInterface<T> (see Io.hpp)
 template <typename Base>
-class SetAccess : public GetAccess<Base> {
+class ISet : public IGet<Base> {
 public:
     /// Constructor
-    SetAccess(ChannelsModule& module, typename Base::ValueType default_value) : GetAccess<Base>(module, default_value) { }
+    ISet(ChannelsModule& module, typename Base::ValueType default_value) : IGet<Base>(module, default_value) { }
     /// Buffer write access with operator[] (does NOT validate channel number, invalid numbers will cause undefined behavior)
     typename Base::ValueType& operator[](ChanNum ch) { return this->buffer(ch); }
     /// Set all buffer values at once (does size check)
@@ -131,10 +131,10 @@ public:
 
 /// Mixin this to inject an immediate read interface into a ModuleInterface<T> (see Io.hpp)
 template <typename Base>
-class ReadImmediate : public Base, public Readable {
+class IRead : public Base, public Readable {
 public:
     /// Constructor
-    ReadImmediate(ChannelsModule& module, typename Base::ValueType default_value) :
+    IRead(ChannelsModule& module, typename Base::ValueType default_value) :
         Base(module, default_value), 
         Readable(module),
         on_read(nullptr), post_read(nullptr)
@@ -175,9 +175,9 @@ protected:
 
 /// Mixin this to inject an immediate write interface into a ModuleInterface<T>
 template <typename Base>
-class WriteImmediate : public Base, public Writeable {
+class IWrite : public Base, public Writeable {
 public:
-    WriteImmediate(ChannelsModule& module, typename Base::ValueType default_value) : 
+    IWrite(ChannelsModule& module, typename Base::ValueType default_value) : 
         Base(module, default_value), Writeable(module), on_write(nullptr)        
     { }
 

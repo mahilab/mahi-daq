@@ -81,45 +81,27 @@ class Fused : public Protected {
 
 /// A buffer that can be publicly written with operator[]
 template <typename T>
-class OutputBuffer : public SetAccess<ModuleInterface<T>> {
-public:
-    using SetAccess<ModuleInterface<T>>::SetAccess;
-};
+using OutputBuffer = ISet<ModuleInterface<T>>;
 
 /// A buffer that can be publicly read with operator[]
 template <typename T>
-class InputBuffer : public GetAccess<ModuleInterface<T>> {
-public:
-    using GetAccess<ModuleInterface<T>>::GetAccess;
-};
+using InputBuffer = IGet<ModuleInterface<T>>;
 
 /// A buffer that can be publicly written with operator[] and an immediate write interface
 template <typename T>
-class WriteBuffer : public WriteImmediate<SetAccess<ModuleInterface<T>>> {
-public:
-    using WriteImmediate<SetAccess<ModuleInterface<T>>>::WriteImmediate;
-};
+using WriteBuffer = IWrite<ISet<ModuleInterface<T>>>;
 
 /// A buffer that can be publicly read with operator[] and an immediate read interface
 template <typename T>
-class ReadBuffer : public ReadImmediate<GetAccess<ModuleInterface<T>>> {
-public:
-    using ReadImmediate<GetAccess<ModuleInterface<T>>>::ReadImmediate;
-};
+using ReadBuffer = IRead<IGet<ModuleInterface<T>>>;
 
 /// A buffer than can be publicaly read and written with operator[] and an immediate read/write interface
 template <typename T>
-class ReadWriteBuffer : public ReadImmediate<WriteImmediate<SetAccess<ModuleInterface<T>>>> {
-public:
-    using ReadImmediate<WriteImmediate<SetAccess<ModuleInterface<T>>>>::ReadImmediate;
-};
+using ReadWriteBuffer = IRead<IWrite<ISet<ModuleInterface<T>>>>;
 
 /// A ModuleInterface that exposes only immediate mode write functionality, e.g. for setting registers
 template <typename T>
-class Register : public WriteImmediate<ModuleInterface<T>> {
-public:
-    using WriteImmediate<ModuleInterface<T>>::WriteImmediate;
-};
+using Register = IWrite<IGet<ModuleInterface<T>>>;
 
 //=============================================================================
 // INPUT MODULES
@@ -238,7 +220,7 @@ public:
     /// Zeros a single encoder channel.
     bool zero(ChanNum channel) { return write(channel, 0); }
     /// The quadrature factor settings for each channel.
-    Fused<WriteBuffer<QuadMode>,Crtp> quadratures;
+    Fused<Register<QuadMode>,Crtp> quadratures;
     /// The user defined units per count for each channel (e.g. 360 degrees / 1024 counts)
     Fused<OutputBuffer<double>,This> units;
     /// The converted positions in the units defined by the user, i.e. 

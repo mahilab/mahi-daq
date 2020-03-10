@@ -73,6 +73,10 @@ QuanserEncoder::QuanserEncoder(QuanserDaq& d, QuanserHandle& h, const ChanNums& 
     quadratures.on_write.connect(write_quad_impl);
 }
 
+namespace {
+    /// Quanser velocity channel indexing offset
+    constexpr std::size_t g_v_off = 14000; 
+}
 
 QuanserEncoderVelocity::QuanserEncoderVelocity(QuanserDaq& d, QuanserHandle& h, QuanserEncoder& e, const ChanNums& channel_numbers) :
     QuanserOtherInput(d, h),
@@ -82,14 +86,17 @@ QuanserEncoderVelocity::QuanserEncoderVelocity(QuanserDaq& d, QuanserHandle& h, 
     set_name(d.name() + ".velocity");
     set_channel_numbers(channel_numbers);
     auto convert = [this](const ChanNum * chs, const double* cps, std::size_t n) {
-        for (int i = 0; i < n; ++i) 
-            converted.buffer(chs[i]) = static_cast<double>(cps[i]) * m_e.units[chs[i]] / static_cast<double>(m_e.quadratures[chs[i]]);
+        for (int i = 0; i < n; ++i) {
+            /// public facing channel
+            ChanNum pch = chs[i] - g_v_off;
+            converted.buffer(pch) = static_cast<double>(cps[i]) * m_e.units[pch] / static_cast<double>(m_e.quadratures[pch]);
+        }
     };
     post_read.connect(convert);
 }
 
 ChanNum QuanserEncoderVelocity::transform_channel_number(ChanNum public_facing) const {
-    return public_facing + 14000;
+    return public_facing + g_v_off;
 }
 
 } // namespace daq 

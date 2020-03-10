@@ -80,6 +80,8 @@ public:
     /// references. If this Module share's pins with other Modules, they will
     /// be updated as well if needed.
     void set_channel_numbers(const ChanNums& chs);
+    //// Returns true if this Module shares pins
+    bool shares_pins();
 public:
     /// Transforms a public facing channel number to the internal representation.
     /// Passes through by default. Override if your DAQ API channel indexing is 
@@ -97,6 +99,8 @@ private:
     void update_map();
     /// Updates internal channel numbers
     void update_internal();
+    /// Updates shared pins
+    void update_shared();
 private:
     friend ModuleInterfaceBase;
     ChanNums m_chs_public;                      ///< The public facing channel numbers

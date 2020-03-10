@@ -27,11 +27,11 @@ using namespace mahi::daq;
 // };
 
 struct Printer {
-    Printer(const double& pos) : pos(pos) { }
+    Printer(const double* pos) : pos(pos) { }
     void print() {
-        ::print("Pos: {} revolutions", pos);
+        ::print("Pos: {} deg", *pos);
     }
-    const double& pos;
+    const double* pos;
 };
 
 class Stuff {
@@ -44,19 +44,42 @@ void read(Readable* readable) {
     readable->read();
 };
 
+
 int main(int argc, char const *argv[])
 {
     MahiLogger->set_max_severity(Verbose);
-    Q8Usb q8;    
-    q8.open();
-    q8.enable();
+    // Q8Usb q8;   
+    // q8.open(); 
+    // q8.enable();
+    // print("Manufacturer:  {}",q8.manufactuer());
+    // print("Product Name:  {}",q8.product_name());
+    // print("Model Name:    {}",q8.model_name());
+    // print("Serial Number: {}",q8.serial_number());
 
-    // Daq daq;
-    // DOModule d(daq); d.set_name("d");
-    // EncoderModule<> e(daq); e.set_name("e");
-    // d.set_channel_numbers({0,1,2,3});
-    // e.set_channel_numbers({0,1});
-    // ChannelsModule::share(&e,&d,{{{0,1},{0}},{{2,3},{1}}});
+    // q8.watchdog.set_timeout(50_ms);
+    // for (int i = 0; i < 1000; ++i)
+    // {
+    //     print("{}", (int)q8.DI[0]);
+    //     print("{}",q8.AI.get());
+    //     q8.AO[0] = sin(TWOPI*i*0.01);
+    //     q8.DO[0] = 1;
+    //     q8.write_all();
+    //     if (i == 200)
+    //         sleep(100_ms);
+    //     sleep(10_ms);
+    // }
+
+    // q8.open();
+    // q8.enable();
+
+    Daq daq;
+    DOModule d(daq); d.set_name("d");
+    EncoderModule<> e(daq); e.set_name("e");
+    ChannelsModule::share(&e,&d,{{{0,1},{0}},{{2,3},{1}}});
+    d.set_channel_numbers({0,1,2,3});
+    e.set_channel_numbers({0,1});
+
+
 
     return 0;
 }

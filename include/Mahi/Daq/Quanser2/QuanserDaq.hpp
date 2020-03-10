@@ -50,12 +50,14 @@ public:
     QuanserOptions get_options() const;
     /// Is the DAQ currently valid?
     bool valid() const;
-    /// Returns the DAQ manufactuer name
+    /// Returns the DAQ manufactuer name (DAQ must be open)
     std::string manufactuer() const;
-    /// Returns the DAQ product name
+    /// Returns the DAQ product name (DAQ must be open)
     std::string product_name() const;
-    /// Returns the DAQ model name
+    /// Returns the DAQ model name (DAQ must be open)
     std::string model_name() const;
+    /// Returns the DAQ serial number (DAQ must be open)
+    std::string serial_number() const;
     /// Returns the HIL SDK version
     static std::string hil_version();
 protected:
