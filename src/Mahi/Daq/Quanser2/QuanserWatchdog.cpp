@@ -18,6 +18,7 @@ QuanserWatchdog::QuanserWatchdog(QuanserDaq& d, QuanserHandle& h, util::Time tim
     m_h(h)
 { 
     set_name(d.name() + ".watchdog");
+    set_timeout(util::milliseconds(10));
 }
 
 QuanserWatchdog::~QuanserWatchdog() {

@@ -46,13 +46,10 @@ bool Daq::on_open() {
 }
 
 bool Daq::on_close() {
-    if (on_daq_close()) {
-        bool all_success = true;
-        for (auto& m : m_modules) 
-            all_success = m->on_daq_close() ? all_success : false;
-        return all_success;        
-    }
-    return false;
+    bool all_success = true;
+    for (auto& m : m_modules) 
+        all_success = m->on_daq_close() ? all_success : false;
+    return on_daq_close() && all_success;        
 }
 
 bool Daq::on_enable() {
@@ -74,13 +71,10 @@ bool Daq::on_disable() {
         LOG(Error) << "Cannot disable " << name() << " because it is not open";
         return false;
     }
-    if (on_daq_disable()) {
-        bool all_success = true;
-        for (auto& m : m_modules) 
-            all_success = m->on_daq_disable() ? all_success : false;
-        return all_success;        
-    }
-    return false;
+    bool all_success = true;
+    for (auto& m : m_modules) 
+        all_success = m->on_daq_disable() ? all_success : false;
+    return on_daq_disable() && all_success;
 }
 
 const std::vector<Module*>& Daq::modules() const {

@@ -47,14 +47,16 @@ void read(Readable* readable) {
 int main(int argc, char const *argv[])
 {
     MahiLogger->set_max_severity(Verbose);
-    // Q8Usb q8;    
+    Q8Usb q8;    
+    q8.open();
+    q8.enable();
 
-    Daq daq;
-    DOModule d(daq); d.set_name("d");
-    EncoderModule<> e(daq); e.set_name("e");
-    d.set_channel_numbers({0,1,2,3});
-    e.set_channel_numbers({0,1});
-    ChannelsModule::share(&e,&d,{{{0,1},{0}},{{2,3},{1}}});
+    // Daq daq;
+    // DOModule d(daq); d.set_name("d");
+    // EncoderModule<> e(daq); e.set_name("e");
+    // d.set_channel_numbers({0,1,2,3});
+    // e.set_channel_numbers({0,1});
+    // ChannelsModule::share(&e,&d,{{{0,1},{0}},{{2,3},{1}}});
 
     return 0;
 }
