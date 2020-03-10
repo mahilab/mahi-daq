@@ -39,7 +39,7 @@ public:
     const std::string& name() const;
     /// Gets const reference to this Module's DAQ
     Daq& daq() const;
-protected:
+public:
     /// Called when the DAQ opens.
     virtual bool on_daq_open() { return true; }
     /// Called when the DAQ closes.
@@ -77,13 +77,21 @@ public:
     /// Sets the channel numbers this Module maintains. Understand that if you
     /// are holding references to any buffer values, this may, and likely will, 
     /// invalidate those references, so use this only on startup before pulling
-    /// References.
+    /// references. If this Module share's pins with other Modules, they will
+    /// be updated as well if needed.
     void set_channel_numbers(const ChanNums& chs);
-protected:
+public:
     /// Transforms a public facing channel number to the internal representation.
     /// Passes through by default. Override if your DAQ API channel indexing is 
     /// different from the interface indexing you you want clients to use. 
     virtual ChanNum transform_channel_number(ChanNum public_facing) const;
+    /// Share pins data structure
+    typedef std::vector<std::pair<ChanNums,ChanNums>> ShareList;
+    /// Use this to facilitate pin sharing between ChannelsModules
+    /// #share_pins establishes the channel sharing policy, e.g.
+    /// {{{0},{0,1}},{{1,2},{2}}} means a's channel 0 shares with b's 
+    /// channels 0,1, and a's channels 1,2 shares with b's channel 2.
+    static void share(ChannelsModule* a, ChannelsModule* b, ShareList share_list);
 private:
     /// Updates the channel Map and notifies ModuleInterfaces
     void update_map();

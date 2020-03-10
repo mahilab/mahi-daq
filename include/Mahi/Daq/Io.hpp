@@ -210,7 +210,7 @@ typedef OutputModule<Logic> DOModule;
 /// 1) encoder.units[0] = 360.0 / 1024; // user sets 360 degrees per 1024 counts
 /// 2) auto cnt = encoder.read(0);      // user reads ch 0, gets 256
 /// 3) auto pos = encoder.converted[0]  // will be 22.5 degrees (assuming 4x quadrature)
-template <class Crtp>
+template <class Crtp = void>
 class EncoderModule : public ChannelsModule, public ReadWriteBuffer<Counts> {
 public:
     friend Crtp;

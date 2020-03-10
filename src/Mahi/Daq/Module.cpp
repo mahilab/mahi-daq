@@ -3,6 +3,7 @@
 #include <Mahi/Daq/Daq.hpp>
 #include <Mahi/Util/Logging/Log.hpp>
 #include <algorithm>
+#include <map>
 
 using namespace mahi::util;
 
@@ -99,6 +100,41 @@ std::size_t ChannelsModule::index(ChanNum channel_number) const {
 
 ChanNum ChannelsModule::transform_channel_number(ChanNum public_facing) const {
     return public_facing;
+}
+
+
+// CHANNEL SHARING
+
+namespace {
+    std::unordered_map<ChannelsModule*,std::vector<std::pair<ChannelsModule*,ChannelsModule::ShareList>>> g_share_list_map; 
+}
+
+void ChannelsModule::share(ChannelsModule* a, ChannelsModule* b, ShareList share_list) {
+    // make sure entries exist
+    if (g_share_list_map.count(a) == 0)
+        g_share_list_map[a] = {};
+    if (g_share_list_map.count(b) == 0)
+        g_share_list_map[b] = {};
+    // add share lists for a
+    g_share_list_map[a].push_back({b,share_list});
+    // reverse share list
+    ChanNums temp;
+    for (auto& p : share_list)
+    {
+        temp = p.first;
+        p.first = p.second;
+        p.second = temp;
+    }
+    g_share_list_map[b].push_back({a,share_list});
+
+    for (auto& entry : g_share_list_map) {
+        for (auto& other : entry.second) {
+            std::cout << entry.first->name() << " <=> " << other.first->name() << std::endl;
+            for (auto& p : other.second) {
+                std::cout << "  " << p.first << " <=> " << p.second << std::endl;
+            }
+        }
+    }
 }
 
 
