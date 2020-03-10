@@ -24,22 +24,23 @@ namespace mahi {
 namespace daq {
 
 class Module;
+class ChannelsModule;
 
 /// Base class for Module array types
 class ModuleInterfaceBase : util::NonCopyable {
 public:
     /// Constructor
-    ModuleInterfaceBase(Module& module);
+    ModuleInterfaceBase(ChannelsModule& module);
 protected:
-    friend class Module;
+    friend ChannelsModule;
     /// Called by ModuleInterface when channel numbers change
     virtual void remap_channels(const ChanMap& old_map, const ChanMap& new_map) = 0;
     /// Returns internal channel number
     ChanNum intern(ChanNum public_facing);
     /// This Event is invoked when the channel numbers are set or changed
-    util::ProtectedEvent<void(const ChanNums& old_channels, const ChanNums& new_channels), Module> on_channels_changed;
+    util::Event<void(const ChanNums& old_channels, const ChanNums& new_channels)> on_channels_changed;
 protected:
-    Module& m_module; ///< pointer to parent module
+    ChannelsModule& m_module; ///< pointer to parent module
 };
 
 /// Templated ModuleInterface
@@ -49,9 +50,7 @@ public:
     /// Typedef  of the interfaces's value Type for external use
     typedef T ValueType;
     /// Constructor
-    ModuleInterface(Module& module, T default_value);
-    /// Sets the default value subsequent new values should be instantied with
-    void set_default(T default_value);
+    ModuleInterface(ChannelsModule& module, T default_value);
     /// Overload stream operator
     template <typename U>
     friend std::ostream& operator<<(std::ostream& os, const ModuleInterface<U>& array);
@@ -76,7 +75,7 @@ private:
 class Readable {
 public:
     /// Constructor
-    Readable(Module& module);
+    Readable(ChannelsModule& module);
     /// Read implementation that will be called from a read_all 
     virtual bool read() = 0;
     /// If true, read will be called when a read_all call is made
@@ -87,7 +86,7 @@ public:
 class Writeable {
 public:
     /// Constructor
-    Writeable(Module& module);
+    Writeable(ChannelsModule& module);
     /// Write implementation that will be called from a write_all 
     virtual bool write() = 0;
     /// If true, write will be called when a write_all call is made
@@ -101,35 +100,45 @@ public:
 // These mixins allow you to inject public and private functionality into a ModuleInterface<T>
 // For instance, they can be combined to expose array like buffering and/or immediate mode read/write.
 
-/// Mixin this to inject buffer read access into a ModuleInterface<T> (see Io.hpp)
+/// Mixin this to inject buffer get access into a ModuleInterface<T> (see Io.hpp)
 template <typename Base>
-class ReadAccess : public Base {
+class GetAccess : public Base {
 public:
-    ReadAccess(Module& module, typename Base::ValueType default_value) : Base(module, default_value) { }
+    /// Constructor
+    GetAccess(ChannelsModule& module, typename Base::ValueType default_value) : Base(module, default_value) { }
+    /// Buffer read access with operator[] (does NOT validate channel number, invalid numbers will cause undefined behavior)
     const typename Base::ValueType& operator[](ChanNum ch) const { return this->buffer(ch); }
+    /// Get all buffer values at once
+    const std::vector<typename Base::ValueType>& get() const {
+        return this->buffer();
+    }
 };
 
-/// Mixin this to inject buffer write access into a ModuleInterface<T> (see Io.hpp)
+/// Mixin this to inject buffer set/get access into a ModuleInterface<T> (see Io.hpp)
 template <typename Base>
-class WriteAccess : public Base {
+class SetAccess : public GetAccess<Base> {
 public:
-    WriteAccess(Module& module, typename Base::ValueType default_value) : Base(module, default_value) { }
-    const typename Base::ValueType& operator[](ChanNum ch) const { return this->buffer(ch); }
+    /// Constructor
+    SetAccess(ChannelsModule& module, typename Base::ValueType default_value) : GetAccess<Base>(module, default_value) { }
+    /// Buffer write access with operator[] (does NOT validate channel number, invalid numbers will cause undefined behavior)
     typename Base::ValueType& operator[](ChanNum ch) { return this->buffer(ch); }
+    /// Set all buffer values at once (does size check)
+    void set(const std::vector<typename Base::ValueType>& values) {
+        if (this->m_module.valid_count(values.size()))
+            this->buffer() = values;
+    }
 };
 
 /// Mixin this to inject an immediate read interface into a ModuleInterface<T> (see Io.hpp)
 template <typename Base>
 class ReadImmediate : public Base, public Readable {
 public:
-
     /// Constructor
-    ReadImmediate(Module& module, typename Base::ValueType default_value) :
+    ReadImmediate(ChannelsModule& module, typename Base::ValueType default_value) :
         Base(module, default_value), 
         Readable(module),
         on_read(nullptr), post_read(nullptr)
     { }
-
     /// Immediately reads values into the software buffer. 
     /// Returns true for success, false otherwise. Overrides Readable::read.
     virtual bool read() override {
@@ -168,7 +177,7 @@ protected:
 template <typename Base>
 class WriteImmediate : public Base, public Writeable {
 public:
-    WriteImmediate(Module& module, typename Base::ValueType default_value) : 
+    WriteImmediate(ChannelsModule& module, typename Base::ValueType default_value) : 
         Base(module, default_value), Writeable(module), on_write(nullptr)        
     { }
 

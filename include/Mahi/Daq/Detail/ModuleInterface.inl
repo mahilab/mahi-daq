@@ -6,17 +6,12 @@ namespace mahi {
 namespace daq {
 
     template <typename T>
-    ModuleInterface<T>::ModuleInterface(Module& module, T default_value) :
+    ModuleInterface<T>::ModuleInterface(ChannelsModule& module, T default_value) :
         ModuleInterfaceBase(module),
         m_default(default_value)
     { 
         m_buffer.resize(this->m_module.channels_internal().size());        
         std::fill(m_buffer.begin(), m_buffer.end(), m_default);
-    }
-
-    template <typename T>
-    void ModuleInterface<T>::set_default(T default_value) {
-        m_default = default_value;
     }
 
     /// Overload stream operator for ModuleInterface

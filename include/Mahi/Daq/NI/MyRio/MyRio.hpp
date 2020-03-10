@@ -21,7 +21,7 @@ namespace mahi {
 namespace daq {
 
 /// National Instruments myRIO embedded system
-class MyRio : public DaqBase {
+class MyRio : public Daq {
 
 public:
 

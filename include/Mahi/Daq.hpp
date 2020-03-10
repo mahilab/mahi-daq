@@ -17,7 +17,7 @@
 #pragma once
 
 // #include <Mahi/Daq/ChannelBase.hpp>
-#include <Mahi/Daq/DaqBase.hpp>
+#include <Mahi/Daq/Daq.hpp>
 // #include <Mahi/Daq/Encoder.hpp>
 #include <Mahi/Daq/Io.hpp>
 // #include <Mahi/Daqdaqba/InputOutput.hpp>

@@ -26,9 +26,12 @@ class QuanserDaq;
 class QuanserAO : public Fused<AOModule,QuanserDaq> {
 public:
     QuanserAO(QuanserDaq& d, QuanserHandle& h, const ChanNums& chs);
-    Fused<Register<Voltage>,QuanserAO> expire_values;
-    Fused<Register<Voltage>,QuanserAO> min_values;
-    Fused<Register<Voltage>,QuanserAO> max_values;
+    Fused<WriteBuffer<Voltage>,QuanserAO> expire_values;
+    Fused<WriteBuffer<Voltage>,QuanserAO> min_values;
+    Fused<WriteBuffer<Voltage>,QuanserAO> max_values;
+private:
+    /// Sets expire_values to 0 V by default
+    bool on_daq_open() override;
 private:
     QuanserHandle& m_h;
 };

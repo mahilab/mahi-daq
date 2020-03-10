@@ -24,7 +24,7 @@ namespace daq {
 
 class QuanserDaq;
 
-/// Implements a Quanser incremental encoder module
+/// Quanser incremental encoder module
 class QuanserEncoder : public Fused<EncoderModule<QuanserEncoder>,QuanserDaq> {
 public:
     /// Constructor
@@ -33,7 +33,7 @@ private:
     QuanserHandle& m_h;
 };
 
-/// Increments a Quanser incremental encoder velocity estimation module
+/// Quanser incremental encoder velocity estimation module
 class QuanserEncoderVelocity : public QuanserOtherInput {
 public:
     /// Constructor

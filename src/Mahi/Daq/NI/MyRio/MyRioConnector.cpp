@@ -40,7 +40,7 @@ static const std::vector<ChanNums> DIO_CHANNELS({
 } // namespace
     
 MyRioConnector::MyRioConnector(MyRio& myrio,Type _type) :
-    DaqBase(myrio.get_name() + "_" + connectorName(_type)),
+    Daq(myrio.get_name() + "_" + connectorName(_type)),
     type(_type),
     AI(*this, AI_CHANNELS[type]),
     AO(*this, AO_CHANNELS[type]),

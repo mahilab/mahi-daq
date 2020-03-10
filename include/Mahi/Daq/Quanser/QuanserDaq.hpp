@@ -15,7 +15,7 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <Mahi/Daq/DaqBase.hpp>
+#include <Mahi/Daq/Daq.hpp>
 #include <Mahi/Daq/Quanser/QuanserOptions.hpp>
 
 //==============================================================================
@@ -49,7 +49,7 @@ typedef t_card QuanserHandle;
 //==============================================================================
 
 /// Encapsulates a generic Quanser DAQ
-class QuanserDaq : public DaqBase {
+class QuanserDaq : public Daq {
 public:
     /// Default constructor
     QuanserDaq(const std::string& card_type,

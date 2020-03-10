@@ -85,22 +85,22 @@ bool QuanserEncoder::reset_count(ChanNum channel_number, int count) {
     }
 }
 
-bool QuanserEncoder::set_quadrature_factors(const std::vector<QuadFactor>& factors) {
+bool QuanserEncoder::set_quadrature_factors(const std::vector<QuadMode>& factors) {
     if (!Encoder::set_quadrature_factors(factors))
         return false;
-    // convert QuadFactor to Quanser t_encoder_quadratue_mode
+    // convert QuadMode to Quanser t_encoder_quadratue_mode
     std::vector<t_encoder_quadrature_mode> converted_factors;
     for (auto it = factors.begin(); it != factors.end(); ++it) {
-        if (*it == QuadFactor::X0)
+        if (*it == QuadMode::X0)
             converted_factors.push_back(ENCODER_QUADRATURE_NONE);
-        else if (*it == QuadFactor::X1)
+        else if (*it == QuadMode::X1)
             converted_factors.push_back(ENCODER_QUADRATURE_1X);
-        else if (*it == QuadFactor::X2)
+        else if (*it == QuadMode::X2)
             converted_factors.push_back(ENCODER_QUADRATURE_2X);
-        else if (*it == QuadFactor::X4)
+        else if (*it == QuadMode::X4)
             converted_factors.push_back(ENCODER_QUADRATURE_4X);
         else {
-            LOG(Error) << "QuadFactor X" << static_cast<ChanNum>(*it) << " not supported by Quanser";
+            LOG(Error) << "QuadMode X" << static_cast<ChanNum>(*it) << " not supported by Quanser";
             return false;
         }
     }
@@ -117,21 +117,21 @@ bool QuanserEncoder::set_quadrature_factors(const std::vector<QuadFactor>& facto
     }
 }
 
-bool QuanserEncoder::set_quadrature_factor(ChanNum channel_number, QuadFactor factor) {
+bool QuanserEncoder::set_quadrature_factor(ChanNum channel_number, QuadMode factor) {
     if (!Encoder::set_quadrature_factor(channel_number, factor))
         return false;
-    // convert QuadFactor to Quanser t_encoder_quadratue_mode
+    // convert QuadMode to Quanser t_encoder_quadratue_mode
     t_encoder_quadrature_mode converted_factor;
-    if (factor == QuadFactor::X0)
+    if (factor == QuadMode::X0)
         converted_factor = ENCODER_QUADRATURE_NONE;
-    else if (factor == QuadFactor::X1)
+    else if (factor == QuadMode::X1)
         converted_factor = ENCODER_QUADRATURE_1X;
-    else if (factor == QuadFactor::X2)
+    else if (factor == QuadMode::X2)
         converted_factor = ENCODER_QUADRATURE_2X;
-    else if (factor == QuadFactor::X4)
+    else if (factor == QuadMode::X4)
         converted_factor = ENCODER_QUADRATURE_4X;
     else {
-        LOG(Error) << "QuadFactor X" << static_cast<ChanNum>(factor) << " not supported by Quanser";
+        LOG(Error) << "QuadMode X" << static_cast<ChanNum>(factor) << " not supported by Quanser";
         return false;
     }
     t_error result;

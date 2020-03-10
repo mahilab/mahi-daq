@@ -5,8 +5,10 @@
 #include <unordered_map>
 #include <utility>
 
-#include <Mahi/Daq/Quanser2/QuanserAO.hpp>
 #include <Mahi/Daq/Quanser2/QuanserAI.hpp>
+#include <Mahi/Daq/Quanser2/QuanserAO.hpp>
+#include <Mahi/Daq/Quanser2/QuanserDI.hpp>
+#include <Mahi/Daq/Quanser2/QuanserDO.hpp>
 #include <Mahi/Daq/Quanser2/QuanserEncoder.hpp>
 #include <Mahi/Daq/Quanser2/QuanserOther.hpp>
 
@@ -19,7 +21,6 @@ namespace daq {
 
 namespace {
 std::unordered_map<const char*, int> g_id_map;
-
 int inc_id(const char* card_type) {
     if (g_id_map.count(card_type))
         g_id_map[card_type]++;
@@ -27,19 +28,33 @@ int inc_id(const char* card_type) {
         g_id_map.emplace(card_type, 0);
     return g_id_map[card_type];
 }
-
 void dec_id(const char* card_type) {
     if (g_id_map.count(card_type))
         g_id_map[card_type]--;
 }
+} // private namespace
 
-
-}
+/// Structure for holding potential Modules that can be read/written
+/// using Quansers synced read/write operations. I'm using PIMPL idiom
+/// so as to not pollute the public API or confuse the user.
+struct QuanserDaq::ReadWriteImpl {
+    QuanserAI* AI = nullptr;
+    QuanserAO* AO = nullptr;
+    QuanserDI* DI = nullptr;
+    QuanserDO* DO = nullptr;
+    QuanserEncoder* EN = nullptr;
+    QuanserPwm* PW = nullptr;
+    QuanserOtherInput* OI = nullptr;
+    QuanserOtherOutput* OO = nullptr;
+    bool synced_read = false;
+    bool synced_write = false;
+};
 
 QuanserDaq::QuanserDaq(const char* card_type) :
     m_card_type(card_type),
     m_id(inc_id(card_type)),
-    m_handle(nullptr)
+    m_h(nullptr),
+    m_rw(std::make_unique<QuanserDaq::ReadWriteImpl>())
 {
     set_name(std::string(m_card_type) + "_" + std::to_string(m_id));
 }
@@ -49,56 +64,74 @@ QuanserDaq::~QuanserDaq() {
 }
 
 bool QuanserDaq::read_all() {
-    // m_other_read->m_values;
-    print("Read");
-    return true;
+    if (m_rw->synced_read) {
+        // check: 1) not nullptr, 2) has more than 0 channels, and 3) client wants it to be read with read_all
+        const bool read_AI = (m_rw->AI != nullptr && m_rw->AI->channels().size() > 0 && m_rw->AI->read_with_all );
+        const bool read_EN = (m_rw->EN != nullptr && m_rw->EN->channels().size() > 0 && m_rw->EN->read_with_all );
+        const bool read_DI = (m_rw->DI != nullptr && m_rw->DI->channels().size() > 0 && m_rw->DI->read_with_all );;
+        const bool read_OI = (m_rw->OI != nullptr && m_rw->OI->channels().size() > 0 && m_rw->OI->read_with_all );
+        auto result = hil_read(m_h, 
+            read_AI ? &m_rw->AI->channels()[0] : nullptr,                     // analog channels
+            read_AI ? static_cast<t_uint32>(m_rw->AI->channels().size()) : 0, // num analog channels 
+            read_EN ? &m_rw->EN->channels()[0] : nullptr,                     // encoder channels
+            read_EN ? static_cast<t_uint32>(m_rw->EN->channels().size()) : 0, // num encoder channels    
+            read_DI ? &m_rw->DI->channels()[0] : nullptr,                     // digital channels
+            read_DI ? static_cast<t_uint32>(m_rw->DI->channels().size()) : 0, // num digital channels 
+            read_OI ? &m_rw->OI->channels()[0] : nullptr,                     // other channels
+            read_OI ? static_cast<t_uint32>(m_rw->OI->channels().size()) : 0, // num other channels 
+            read_AI ? &m_rw->AI->buffer()[0] : nullptr,                       // analog buffer
+            read_EN ? &m_rw->EN->buffer()[0] : nullptr,                       // encoder buffer
+            read_DI ? &m_rw->DI->buffer()[0] : nullptr,                       // digital buffer
+            read_OI ? &m_rw->OI->buffer()[0] : nullptr                        // other buffer
+        );
+        if (result == 0) {
+            // call post read callbacks
+            if (read_AI) { m_rw->AI->post_read.emit(&m_rw->AI->channels()[0], &m_rw->AI->buffer()[0], m_rw->AI->channels().size()); }
+            if (read_EN) { m_rw->EN->post_read.emit(&m_rw->EN->channels()[0], &m_rw->EN->buffer()[0], m_rw->EN->channels().size()); }
+            if (read_DI) { m_rw->DI->post_read.emit(&m_rw->DI->channels()[0], &m_rw->DI->buffer()[0], m_rw->DI->channels().size()); }
+            if (read_OI) { m_rw->OI->post_read.emit(&m_rw->OI->channels()[0], &m_rw->OI->buffer()[0], m_rw->OI->channels().size()); }
+            return true;
+        }
+        LOG(Error) << "Failed to read all inputs on " << name() << " " << get_quanser_error_message(result);
+        return false;
+    }
+    return Daq::read_all();
 }
 
 bool QuanserDaq::write_all() {
-    print("Write");
-    return true;
+    if (m_rw->synced_write) {
+        // check: 1) not nullptr, 2) has more than 0 channels, and 3) client wants it to be read with read_all
+        const bool read_AO = (m_rw->AO != nullptr && m_rw->AO->channels().size() > 0 && m_rw->AO->write_with_all );
+        // const bool read_PW = (m_rw->PW != nullptr && m_rw->PW->channels().size() > 0 && m_rw->PW->write_with_all );
+        const bool read_DO = (m_rw->DO != nullptr && m_rw->DO->channels().size() > 0 && m_rw->DO->write_with_all );;
+        const bool read_OO = (m_rw->OO != nullptr && m_rw->OO->channels().size() > 0 && m_rw->OO->write_with_all );
+        auto result = hil_write(m_h, 
+            read_AO ? &m_rw->AO->channels()[0] : nullptr,                     // analog channels
+            read_AO ? static_cast<t_uint32>(m_rw->AO->channels().size()) : 0, // num analog channels 
+            nullptr, // read_PW ? &m_rw->PW->channels()[0] : nullptr,                     // encoder channels
+            0, // read_PW ? static_cast<t_uint32>(m_rw->PW->channels().size()) : 0, // num encoder channels    
+            read_DO ? &m_rw->DO->channels()[0] : nullptr,                     // digital channels
+            read_DO ? static_cast<t_uint32>(m_rw->DO->channels().size()) : 0, // num digital channels 
+            read_OO ? &m_rw->OO->channels()[0] : nullptr,                     // other channels
+            read_OO ? static_cast<t_uint32>(m_rw->OO->channels().size()) : 0, // num other channels 
+            read_AO ? &m_rw->AO->buffer()[0] : nullptr,                       // analog buffer
+            nullptr, // read_PW ? &m_rw->PW->buffer()[0] : nullptr,                       // encoder buffer
+            read_DO ? &m_rw->DO->buffer()[0] : nullptr,                       // digital buffer
+            read_OO ? &m_rw->OO->buffer()[0] : nullptr                        // other buffer
+        );
+        if (result == 0) {
+            // call post read callbacks
+            if (read_AO) { m_rw->AO->post_write.emit(&m_rw->AO->channels()[0], &m_rw->AO->buffer()[0], m_rw->AO->channels().size()); }
+            // if (read_PW) { m_rw->PW->post_write.emit(&m_rw->PW->channels()[0], &m_rw->PW->buffer()[0], m_rw->PW->channels().size()); }
+            if (read_DO) { m_rw->DO->post_write.emit(&m_rw->DO->channels()[0], &m_rw->DO->buffer()[0], m_rw->DO->channels().size()); }
+            if (read_OO) { m_rw->OO->post_write.emit(&m_rw->OO->channels()[0], &m_rw->OO->buffer()[0], m_rw->OO->channels().size()); }
+            return true;
+        }
+        LOG(Error) << "Failed to write all outputs on " << name() << " " << get_quanser_error_message(result);
+        return false;
+    }
+    return Daq::write_all();
 }
-
-// bool QuanserDaq::read() {
-//     return true;
-// }
-
-// bool QuanserDaq::write() {
-//     if (!is_enabled()) {
-//         LOG(Error) << "Unable to write " << get_name() << " because it is disabled";
-//         return false;
-//     }
-//     // convert digitals
-//     // for (std::size_t i = 0; i < DO.channels_internal().size(); ++i)
-//     //     DO.get_quanser_values()[i] = static_cast<char>(DO.get()[i]);
-//     t_error result;
-//     // result = hil_write(m_handle,
-//     //     AO.channels_internal().size() > 0 ? &(AO.channels_internal())[0] : nullptr, static_cast<ChanNum>(AO.channels_internal().size()),
-//     //     nullptr, 0,
-//     //     DO.channels_internal().size() > 0 ? &(DO.channels_internal())[0] : nullptr, static_cast<ChanNum>(DO.channels_internal().size()),
-//     //     nullptr, 0,
-//     //     AO.channels_internal().size() > 0 ? &(AO.get())[0] : nullptr,
-//     //     nullptr,
-//     //     DO.channels_internal().size() > 0 ? &(DO.get_quanser_values())[0] : nullptr,
-//     //     nullptr);
-//     result = hil_write(m_handle,
-//         (m_AO && m_AO->channels_internal().size() > 0) ? &m_AO->channels_internal()[0] : nullptr, static_cast<t_uint32>(m_AO->channels_internal().size()),
-//         nullptr, 0,
-//         nullptr, 0,
-//         nullptr, 0,
-//         (m_AO && m_AO->channels_internal().size() > 0) ? &m_AO->m_values[0] : nullptr,
-//         nullptr,
-//         nullptr,
-//         nullptr
-//     );
-
-//     if (result == 0)
-//         return true;
-//     else {
-//         LOG(Error) << "Failed to update " << get_name() << " output " << get_quanser_error_message(result);
-//         return false;
-//     }
-// }
 
 bool QuanserDaq::set_options(const QuanserOptions& options) {
     m_options = options;
@@ -106,14 +139,14 @@ bool QuanserDaq::set_options(const QuanserOptions& options) {
     std::strcpy(options_str, m_options.get_string().c_str());
     if (valid()) {
         t_error result;
-        result = hil_set_card_specific_options(m_handle, options_str, std::strlen(options_str));
+        result = hil_set_card_specific_options(m_h, options_str, std::strlen(options_str));
         util::sleep(util::milliseconds(10));
         if (result == 0) {
-            LOG(Verbose) << "Set " << get_name() << " options to: \"" << m_options.get_string() << "\"";
+            LOG(Verbose) << "Set " << name() << " options to: \"" << m_options.get_string() << "\"";
             return true;
         }
         else {
-            LOG(Error) << "Failed to set " << get_name() << " options to: \"" << m_options.get_string() << "\" " << get_quanser_error_message(result);
+            LOG(Error) << "Failed to set " << name() << " options to: \"" << m_options.get_string() << "\" " << get_quanser_error_message(result);
             return false;
         }
     }
@@ -125,12 +158,12 @@ QuanserOptions QuanserDaq::get_options() const {
 }
 
 bool QuanserDaq::valid() const {
-    return m_handle != nullptr && hil_is_valid(m_handle);
+    return m_h != nullptr && hil_is_valid(m_h);
 }
 
 std::string QuanserDaq::manufactuer() const {
     char buf[256];
-    t_error result = hil_get_string_property(m_handle, PROPERTY_STRING_MANUFACTURER, buf, ARRAY_LENGTH(buf));
+    t_error result = hil_get_string_property(m_h, PROPERTY_STRING_MANUFACTURER, buf, ARRAY_LENGTH(buf));
     if (result == 0)
         return std::string(buf);    
     LOG(Error) << "Failed to get HIL string property PROPERTY_STRING_MANUFACTURER " << get_quanser_error_message(result);
@@ -139,7 +172,7 @@ std::string QuanserDaq::manufactuer() const {
 
 std::string QuanserDaq::product_name() const {
     char buf[256];
-    t_error result = hil_get_string_property(m_handle, PROPERTY_STRING_PRODUCT_NAME, buf, ARRAY_LENGTH(buf));
+    t_error result = hil_get_string_property(m_h, PROPERTY_STRING_PRODUCT_NAME, buf, ARRAY_LENGTH(buf));
     if (result == 0)
         return std::string(buf);    
     LOG(Error) << "Failed to get HIL string property PROPERTY_STRING_PRODUCT_NAME " << get_quanser_error_message(result);
@@ -148,7 +181,7 @@ std::string QuanserDaq::product_name() const {
 
 std::string QuanserDaq::model_name() const {
     char buf[256];
-    t_error result = hil_get_string_property(m_handle, PROPERTY_STRING_MODEL_NAME, buf, ARRAY_LENGTH(buf));
+    t_error result = hil_get_string_property(m_h, PROPERTY_STRING_MODEL_NAME, buf, ARRAY_LENGTH(buf));
     if (result == 0)
         return std::string(buf);    
     LOG(Error) << "Failed to get HIL string property PROPERTY_STRING_MODEL_NAME " << get_quanser_error_message(result);
@@ -165,37 +198,41 @@ std::string QuanserDaq::hil_version() {
     return "";
 }
 
-void QuanserDaq::config_read(QuanserAI* AI, QuanserDI* DI, QuanserEncoder* enc, QuanserOtherInput* other) {
-    m_AI = AI;
-    m_DI = DI;
-    m_enc = enc;
+void QuanserDaq::config_read(QuanserAI* AI, QuanserDI* DI, QuanserEncoder* EN, QuanserOtherInput* OI) {
+    m_rw->synced_read = true;
+    m_rw->AI = AI;
+    m_rw->DI = DI;
+    m_rw->EN = EN;
+    m_rw->OI = OI;
 }
 
-void QuanserDaq::config_write(QuanserAO* AO, QuanserDO* DO, QuanserPwm* pwm, QuanserOtherOutput* other) {
-    m_AO = AO;
-    m_DO = DO;
-    m_pwm = pwm;
+void QuanserDaq::config_write(QuanserAO* AO, QuanserDO* DO, QuanserPwm* PW, QuanserOtherOutput* OO) {
+    m_rw->synced_write = true;
+    m_rw->AO = AO;
+    m_rw->DO = DO;
+    m_rw->PW = PW;
+    m_rw->OO = OO;
 }
 
-bool QuanserDaq::on_open() {
-    t_error result = hil_open(m_card_type, std::to_string(m_id).c_str(), &m_handle);
+bool QuanserDaq::on_daq_open() {
+    t_error result = hil_open(m_card_type, std::to_string(m_id).c_str(), &m_h);
     util::sleep(milliseconds(10));
     if (result == 0) {
         // successful open
         if (!set_options(m_options)) {
             // options didn't take so close
-            hil_close(m_handle);
-            LOG(Error) << "Opened " << get_name() << " but automatically closing because specified options failed to take effect";
+            hil_close(m_h);
+            LOG(Error) << "Opened " << name() << " but automatically closing because specified options failed to take effect";
             return false;
         }
         return true;
     }
-    LOG(Error) << "Failed to open " << get_name() << " " << get_quanser_error_message(result);
+    LOG(Error) << "Failed to open " << name() << " " << get_quanser_error_message(result);
     return false;
 }
 
-bool QuanserDaq::on_close() {
-    t_error result = hil_close(m_handle);
+bool QuanserDaq::on_daq_close() {
+    t_error result = hil_close(m_h);
     if (result == 0) {
         return true;
     }
@@ -203,14 +240,6 @@ bool QuanserDaq::on_close() {
         LOG(Error) << get_quanser_error_message(result, true);
         return false;
     }
-}
-
-bool QuanserDaq::on_enable() {
-    return true;
-}
-
-bool QuanserDaq::on_disable() {
-    return true;
 }
 
 } // namespace daq

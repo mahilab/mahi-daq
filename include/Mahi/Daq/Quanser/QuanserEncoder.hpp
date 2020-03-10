@@ -45,9 +45,9 @@ public:
 
     bool reset_count(ChanNum channel_number, int count) override;
 
-    bool set_quadrature_factors(const std::vector<QuadFactor>& factors) override;
+    bool set_quadrature_factors(const std::vector<QuadMode>& factors) override;
 
-    bool set_quadrature_factor(ChanNum channel_number, QuadFactor factor) override;
+    bool set_quadrature_factor(ChanNum channel_number, QuadMode factor) override;
 
     /// Set whether the Encoder enables velocity estimation
     bool has_velocity() const override;

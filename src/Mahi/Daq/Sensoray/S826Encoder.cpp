@@ -79,24 +79,24 @@ bool S826Encoder::reset_count(ChanNum channel_number, int count) {
     return true;
 }
 
-bool S826Encoder::set_quadrature_factor(ChanNum channel_number, QuadFactor factor) {
+bool S826Encoder::set_quadrature_factor(ChanNum channel_number, QuadMode factor) {
     if (!Encoder::set_quadrature_factor(channel_number, factor))
         return false;
-    if (factor == QuadFactor::X1) {
+    if (factor == QuadMode::X1) {
         int result = S826_CounterModeWrite(s826_.board_, channel_number, S826_CM_K_QUADX1);
         if (result != S826_ERR_OK) {
             LOG(Error) << "Failed to set quadrature mode of " << get_name() << " channel number " << channel_number << " (" << S826::get_error_message(result) << ")";
             return false;
         }
     }
-    else if (factor == QuadFactor::X2) {
+    else if (factor == QuadMode::X2) {
         int result = S826_CounterModeWrite(s826_.board_, channel_number, S826_CM_K_QUADX2);
         if (result != S826_ERR_OK) {
             LOG(Error) << "Failed to set quadrature mode of " << get_name() << " channel number " << channel_number << " (" << S826::get_error_message(result) << ")";
             return false;
         }
     }
-    else if (factor == QuadFactor::X4) {
+    else if (factor == QuadMode::X4) {
         int result = S826_CounterModeWrite(s826_.board_, channel_number, S826_CM_K_QUADX4);
         if (result != S826_ERR_OK) {
             LOG(Error) << "Failed to set quadrature mode of " << get_name() << " channel number " << channel_number << " (" << S826::get_error_message(result) << ")";

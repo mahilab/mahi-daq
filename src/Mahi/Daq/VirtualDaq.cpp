@@ -131,7 +131,7 @@ bool VirtualEncoder::reset_count(ChanNum channel_number, int count) {
 //==============================================================================
 
 VirtualDaq::VirtualDaq(const std::string& name)
-    : DaqBase(name),
+    : Daq(name),
       AI(*this, {0,1,2,3,4,5,6,7,8}),
       AO(*this, {0,1,2,3,4,5,6,7,8}),
       DI(*this, {0,1,2,3,4,5,6,7,8}),

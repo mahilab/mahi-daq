@@ -15,7 +15,7 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <Mahi/Daq/DaqBase.hpp>
+#include <Mahi/Daq/Daq.hpp>
 
 #include <Mahi/Daq/NI/MyRio/MyRioAI.hpp>
 #include <Mahi/Daq/NI/MyRio/MyRioAO.hpp>
@@ -29,7 +29,7 @@ namespace daq {
 class MyRio;
 
 /// myRIo Connector
-class MyRioConnector : public DaqBase {
+class MyRioConnector : public Daq {
 public:
 
     /// Types of myRIO connector
@@ -64,8 +64,8 @@ protected:
     MyRioConnector(MyRio& myrio, Type type);
 
     // Hide open/close functins
-    using DaqBase::open;
-    using DaqBase::close;
+    using Daq::open;
+    using Daq::close;
 
     // Implement virtual functions
     bool on_open() override;

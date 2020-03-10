@@ -14,14 +14,14 @@ QuanserDI::QuanserDI(QuanserDaq& d,QuanserHandle& h, const ChanNums& channel_num
     Fused<DIModule,QuanserDaq>(d), m_h(h)
 {
     // Quanser uses char type as their buffer
-    set_name(d.get_name() + ".DI");
+    set_name(d.name() + ".DI");
     set_channel_numbers(channel_numbers);    
     auto on_read_impl = [this](const ChanNum* chs, Logic* vals, std::size_t n) {
         t_error result = hil_read_digital(m_h, chs, static_cast<t_uint32>(n), vals);
         if (result == 0)
             return true;
         else {
-            LOG(Error) << "Failed to read " << get_name() << " digital inputs " << get_quanser_error_message(result);
+            LOG(Error) << "Failed to read " << name() << " digital inputs " << get_quanser_error_message(result);
             return false;
         }
         return true;

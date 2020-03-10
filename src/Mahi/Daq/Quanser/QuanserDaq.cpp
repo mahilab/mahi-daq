@@ -17,14 +17,14 @@ namespace daq {
 //==============================================================================
 
 QuanserDaq::QuanserDaq(const std::string& card_type, ChanNum id, QuanserOptions options) :
-    DaqBase(card_type + "_" + std::to_string(id)),
+    Daq(card_type + "_" + std::to_string(id)),
     card_type_(card_type),
     id_(id),
     options_(options)
 {
 }
 
-bool QuanserDaq::on_open() {
+bool QuanserDaq::on_daq_open() {
     t_error result;
     // Try to open in 5 attempts
     for (int attempt = 0; attempt < 5; attempt++) {
@@ -49,7 +49,7 @@ bool QuanserDaq::on_open() {
     return false;
 }
 
-bool QuanserDaq::on_close() {
+bool QuanserDaq::on_daq_close() {
     t_error result;
     result = hil_close(handle_);
     util::sleep(milliseconds(10));

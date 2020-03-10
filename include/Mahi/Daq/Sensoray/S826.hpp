@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <Mahi/Daq/DaqBase.hpp>
+#include <Mahi/Daq/Daq.hpp>
 #include <Mahi/Daq/Sensoray/S826AI.hpp>
 #include <Mahi/Daq/Sensoray/S826AO.hpp>
 #include <Mahi/Daq/Sensoray/S826DIO.hpp>
@@ -26,7 +26,7 @@
 namespace mahi {
 namespace daq {
 
-class S826 : public DaqBase {
+class S826 : public Daq {
 public:
 
     S826(int board = 0);

@@ -30,7 +30,7 @@ public:
 
     bool update_channel(ChanNum channel_number) override;
     bool reset_count(ChanNum channel_number, int count) override;
-    bool set_quadrature_factor(ChanNum channel_number, QuadFactor factor) override;
+    bool set_quadrature_factor(ChanNum channel_number, QuadMode factor) override;
 
     /// Returns values per second for all channels
     std::vector<double>& get_values_per_sec();

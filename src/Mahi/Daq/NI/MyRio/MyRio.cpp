@@ -104,7 +104,7 @@ bool close_myrio(bool reset) {
 }
 
 MyRio::MyRio() :
-    DaqBase("myRIO"),
+    Daq("myRIO"),
     mxpA(*this, MyRioConnector::Type::MxpA),
     mxpB(*this, MyRioConnector::Type::MxpB),
     mspC(*this, MyRioConnector::Type::MspC)

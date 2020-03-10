@@ -15,6 +15,7 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
+#include <Mahi/Daq/Module.hpp>
 #include <Mahi/Util/Timing/Time.hpp>
 
 namespace mahi {
@@ -25,10 +26,10 @@ namespace daq {
 //==============================================================================
 
 /// Encapsulates a hardware watchdog timer
-class Watchdog {
+class Watchdog : public Module {
 public:
     /// Default constructor
-    Watchdog(util::Time timeout);
+    Watchdog(Daq& daq);
 
     /// Default destructor
     virtual ~Watchdog();
@@ -59,12 +60,8 @@ public:
     virtual void set_timeout(util::Time timeout);
 
 protected:
-    util::Time timeout_; ///< The timeout period for this Watchdog
-    bool watching_;  ///< True if watchdog has been started, false if stopped
-
-private:
-    Watchdog( const Watchdog& ) = delete; // non construction-copyable
-    Watchdog& operator=( const Watchdog& ) = delete; // non copyable
+    util::Time m_timout; ///< The timeout period for this Watchdog
+    bool m_watching;     ///< True if watchdog has been started, false if stopped
 };
 
 } // namespace daq

@@ -15,7 +15,7 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <Mahi/Daq/DaqBase.hpp>
+#include <Mahi/Daq/Daq.hpp>
 #include <Mahi/Daq/Quanser2/QuanserHandle.hpp>
 #include <Mahi/Daq/Quanser2/QuanserOptions.hpp>
 #include <Mahi/Daq/Io.hpp>
@@ -23,6 +23,7 @@
 namespace mahi {
 namespace daq {
 
+// Forward declarations
 class QuanserAI;
 class QuanserAO;
 class QuanserDI;
@@ -32,15 +33,17 @@ class QuanserPwm;
 class QuanserOtherInput;
 class QuanserOtherOutput;
 
-class QuanserDaq : public DaqBase {
+/// Base class from which all Quanser DAQs (Q8Usb, Q2Usb, QPid) derive
+class QuanserDaq : public Daq {
 public:
-
+    /// Constructor
     QuanserDaq(const char* card_type);
-    ~QuanserDaq();  
-
+    /// Destructor
+    virtual ~QuanserDaq();      
+    /// Overrides read_all to use a more efficient Quanser API call
     virtual bool read_all() override;
+    /// Override write_all to use a more efficient Quanser API call
     virtual bool write_all() override;
-
     /// Set Quanser DAQ specific options
     bool set_options(const QuanserOptions& options);
     /// Set Quanser DAQ specific options
@@ -57,34 +60,31 @@ public:
     static std::string hil_version();
 protected:
     /// Provides QuanserDaq with your modules so that it can perform more efficient read operations.
-    /// Pass nullptr for those that your DAQ does not have.
-    void config_read(QuanserAI* AI, QuanserDI* DI, QuanserEncoder* enc, QuanserOtherInput* other);
+    /// Pass nullptr for those that your DAQ does not have. If this isn't called, then the default
+    /// Daq implementation is use (i.e. Module recursion)
+    void config_read(QuanserAI* AI, QuanserDI* DI, QuanserEncoder* ENC, QuanserOtherInput* OI);
     /// Provides QuanserDaq with your modules so that it can perform more efficient write operations
-    /// Pass nullptr for those that your DAQ does not have.
-    void config_write(QuanserAO* AO, QuanserDO* DO, QuanserPwm* pwm, QuanserOtherOutput* other);
-
+    /// Pass nullptr for those that your DAQ does not have. If this isn't called, then the default
+    /// Daq implementation is use (i.e. Module recursion)
+    void config_write(QuanserAO* AO, QuanserDO* DO, QuanserPwm* PWM, QuanserOtherOutput* OO);
 protected:
-
-    bool on_open() override;
-    bool on_close() override;
-    bool on_enable() override;
-    bool on_disable() override;
-
+    /// Quanser DAQ open impl
+    bool on_daq_open() override;
+    /// Quanser DAQ close impl
+    bool on_daq_close() override;
+protected:
+    /// Qunaser card type string
     const char* m_card_type;
-    int m_id;
-    QuanserHandle m_handle;
+    /// Quanser integer ID
+    const int m_id;
+    /// Quanser card handle, valid after open is called
+    QuanserHandle m_h;
+    /// The current options
     QuanserOptions m_options;
-
 private:
-    QuanserAI* m_AI = nullptr;
-    QuanserAO* m_AO = nullptr;
-    QuanserDI* m_DI = nullptr;
-    QuanserDO* m_DO = nullptr;
-    QuanserEncoder* m_enc = nullptr;
-    QuanserPwm* m_pwm = nullptr;   
-    QuanserOtherInput*  m_other_read = nullptr;
-    QuanserOtherOutput* m_other_write = nullptr;
-    std::size_t m_other_in_off = 0, m_other_out_off = 0;
+    /// PIMPL idiom for implementing synced read/write operations
+    struct ReadWriteImpl;
+    std::unique_ptr<ReadWriteImpl> m_rw;
 };
 
 } // namespace daq

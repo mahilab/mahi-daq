@@ -4,8 +4,10 @@ target_sources(daq
     QuanserAI.cpp
     QuanserAO.cpp
     QuanserDI.cpp
+    QuanserDO.cpp
     QuanserEncoder.cpp
     QuanserOther.cpp
+    QuanserWatchdog.cpp
     QuanserOptions.cpp
     QuanserUtils.cpp
     Q8Usb.cpp

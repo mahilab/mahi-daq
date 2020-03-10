@@ -15,7 +15,7 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <Mahi/Daq/DaqBase.hpp>
+#include <Mahi/Daq/Daq.hpp>
 #include <Mahi/Daq/Input.hpp>
 #include <Mahi/Daq/Output.hpp>
 #include <Mahi/Daq/InputOutput.hpp>
@@ -103,7 +103,7 @@ private:
 //==============================================================================
 
 /// Virtual DAQ for testing/prototyping the absence of actual hardware
-class VirtualDaq : public DaqBase {
+class VirtualDaq : public Daq {
 public:
     VirtualDaq(const std::string& name);
     ~VirtualDaq();

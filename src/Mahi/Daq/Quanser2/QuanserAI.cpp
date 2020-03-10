@@ -13,7 +13,7 @@ QuanserAI::QuanserAI(QuanserDaq& d,QuanserHandle& h, const ChanNums& channel_num
     Fused<AIModule,QuanserDaq>(d),
     min_values(*this, -10), max_values(*this, 10), m_h(h)
 {
-    set_name(d.get_name() + ".AI");
+    set_name(d.name() + ".AI");
     set_channel_numbers(channel_numbers);
     
     auto on_read_impl = [this](const ChanNum* chs, Voltage* vals, std::size_t n) {
@@ -21,7 +21,7 @@ QuanserAI::QuanserAI(QuanserDaq& d,QuanserHandle& h, const ChanNums& channel_num
         if (result == 0)
             return true;
         else {
-            LOG(Error) << "Failed to read " << get_name() << " analog inputs " << get_quanser_error_message(result);
+            LOG(Error) << "Failed to read " << name() << " analog inputs " << get_quanser_error_message(result);
             return false;
         }
         return true;
@@ -35,11 +35,11 @@ QuanserAI::QuanserAI(QuanserDaq& d,QuanserHandle& h, const ChanNums& channel_num
             temp_max[i] = max_values[chs[i]];
         t_error result = hil_set_analog_input_ranges(m_h, chs, static_cast<t_uint32>(n), vals, &temp_max[0]);
         if (result == 0) {
-            LOG(Verbose) << "Set " << get_name() << " analog input ranges"; 
+            LOG(Verbose) << "Set " << name() << " analog input ranges"; 
             return true;
         }
         else {
-            LOG(Error) << "Failed to set " << get_name() << " analog input ranges " << get_quanser_error_message(result);
+            LOG(Error) << "Failed to set " << name() << " analog input ranges " << get_quanser_error_message(result);
             return false;
         }
     };
@@ -52,11 +52,11 @@ QuanserAI::QuanserAI(QuanserDaq& d,QuanserHandle& h, const ChanNums& channel_num
             temp_min[i] = min_values[chs[i]];
         t_error result = hil_set_analog_input_ranges(m_h, chs, static_cast<t_uint32>(n), &temp_min[0], vals);
         if (result == 0) {
-            LOG(Verbose) << "Set " << get_name() << " analog input ranges"; 
+            LOG(Verbose) << "Set " << name() << " analog input ranges"; 
             return true;
         }
         else {
-            LOG(Error) << "Failed to set " << get_name() << " analog input ranges " << get_quanser_error_message(result);
+            LOG(Error) << "Failed to set " << name() << " analog input ranges " << get_quanser_error_message(result);
             return false;
         }
     };

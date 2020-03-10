@@ -10,7 +10,7 @@ namespace mahi {
 namespace daq {
     
 S826::S826(int board) :
-    DaqBase("s826_" + std::to_string(board)),
+    Daq("s826_" + std::to_string(board)),
     board_(board),
     AI(*this),
     AO(*this),

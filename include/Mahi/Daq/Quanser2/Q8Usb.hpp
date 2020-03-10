@@ -21,18 +21,22 @@
 #include <Mahi/Daq/Quanser2/QuanserDI.hpp>
 #include <Mahi/Daq/Quanser2/QuanserDO.hpp>
 #include <Mahi/Daq/Quanser2/QuanserEncoder.hpp>
+#include <Mahi/Daq/Quanser2/QuanserWatchdog.hpp>
 
 namespace mahi {
 namespace daq {
 
-class Q8Usb : public QuanserDaq {
+class Q8Usb final : public QuanserDaq {
 public:
     Q8Usb();
-    Fused<QuanserAI,Q8Usb> AI;
+    ~Q8Usb();
+    QuanserAI AI;
     QuanserAO AO;
     QuanserDI DI;
+    QuanserDO DO;
     QuanserEncoder encoder;
-    Fused<QuanserEncoderVelocity,Q8Usb> velocity;
+    QuanserEncoderVelocity velocity;    
+    QuanserWatchdog watchdog;
 };
 
 } // namespace daq

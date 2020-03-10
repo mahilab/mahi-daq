@@ -46,49 +46,11 @@ void read(Readable* readable) {
 
 int main(int argc, char const *argv[])
 {
-    // VirtualEncoder enc({0,1,2,3});
-
-    // for (auto& ch : enc.channels_internal())
-    //     enc.units[ch] = 1.0 / 1024.0;
-    // print("Counts:    {}",enc);
-    // print("Positions: {}",enc.positions);
-    // print("Quads:     {}",enc.quadratures);
-    // enc.read();
-    // print("Counts:    {}",enc);
-    // print("Positions: {}",enc.positions);
-    // enc.write({40,40,40,40});
-    // print("Counts:    {}",enc);
-    // enc.zero(3);
-    // print("Counts:    {}",enc);
-    // enc.zero();
-    // print("Counts:    {}",enc);
-
-    // Printer printer(enc.positions[0]);
-    // print("{}",QuanserDaq::hil_version());
-    // Q8Usb q8;
-    // // print("{}", q8.AI.channels());
-    // // print("{}", q8.AO.channels());
-    // // print("{}", q8.encoder.channels());
-    // print("{}", q8.velocity.channels());
-    // print("{}", q8.velocity.channels_internal());
-    // q8.velocity.read(4);
-    // // q8.velocity.
-
-    // for (auto& mod: q8.modules())
-    //     print("{}",mod->get_name());
-
-    // q8.open();
-    // q8.set_options(QuanserOptions());
-    // q8.AO.min_values;
-    // q8.AO.write();
-    // q8.AO.write(1,0);
-    // q8.AO.write({0,1,2,3,4,5,6,7});
-    // q8.AI.read();
-    // q8.AI.read(0);
-    // print("hey!");
-
-    Q8Usb q8;
-    q8.write_all();
+    MahiLogger->set_max_severity(Verbose);
+    Q8Usb q8;    
+  
+    for (auto& m : q8.modules())
+        print("{}", m->name());
 
     return 0;
 }

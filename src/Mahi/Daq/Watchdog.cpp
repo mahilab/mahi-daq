@@ -7,18 +7,16 @@ namespace daq {
 // CLASS DEFINTIONS
 //==============================================================================
 
-Watchdog::Watchdog(util::Time timeout) :
-    timeout_(timeout),
-    watching_(false)
-{
-}
+Watchdog::Watchdog(Daq& daq) :
+    Module(daq),
+    m_timout(util::Time::Inf),
+    m_watching(false)
+{ }
 
-Watchdog::~Watchdog() {
-
-}
+Watchdog::~Watchdog() { }
 
 void Watchdog::set_timeout(util::Time timeout) {
-    timeout_ = timeout;
+    m_timout = timeout;
 }
 
 } // namespace daq
