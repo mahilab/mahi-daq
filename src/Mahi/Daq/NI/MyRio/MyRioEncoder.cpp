@@ -114,7 +114,7 @@ void MyRioEncoder::sync() {
         }
     }
     // set module channels
-    set_channel_numbers(chs);
+    set_channels(chs);
 }
 
 } // namespace daq

@@ -85,8 +85,8 @@ namespace daq {
     }
 
     template <typename T>
-    void InputOutput<T>::set_channel_numbers(const ChanNums& channel_numbers) {
-        Output<T>::set_channel_numbers(channel_numbers);
+    void InputOutput<T>::set_channels(const ChanNums& channel_numbers) {
+        Output<T>::set_channels(channel_numbers);
         sort_input_output_channel_numbers();
     }
 

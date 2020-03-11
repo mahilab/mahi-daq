@@ -25,7 +25,7 @@ class QuanserDaq;
 
 class QuanserAO : public Fused<AOModule,QuanserDaq> {
 public:
-    QuanserAO(QuanserDaq& d, QuanserHandle& h, const ChanNums& chs);
+    QuanserAO(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
     Fused<WriteBuffer<Voltage>,QuanserAO> expire_values;
     Fused<WriteBuffer<Voltage>,QuanserAO> min_values;
     Fused<WriteBuffer<Voltage>,QuanserAO> max_values;

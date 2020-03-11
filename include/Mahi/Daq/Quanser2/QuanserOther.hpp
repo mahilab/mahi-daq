@@ -10,14 +10,14 @@ class QuanserDaq;
 
 class QuanserOtherInput : public ChannelsModule, public Fused<ReadBuffer<double>,QuanserDaq> {
 public:
-    QuanserOtherInput(QuanserDaq& d, QuanserHandle& h);
+    QuanserOtherInput(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
 protected:
     QuanserHandle m_h;
 };
 
 class QuanserOtherOutput : public ChannelsModule, public Fused<WriteBuffer<double>,QuanserDaq> {
 public:
-    QuanserOtherOutput(QuanserDaq& d, QuanserHandle& h);
+    QuanserOtherOutput(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
 protected:
     QuanserHandle m_h;
 };

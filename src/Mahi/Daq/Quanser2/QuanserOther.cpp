@@ -9,8 +9,8 @@ using namespace mahi::util;
 namespace mahi {
 namespace daq {
 
-QuanserOtherInput::QuanserOtherInput(QuanserDaq& d, QuanserHandle& h) : 
-    ChannelsModule(d),
+QuanserOtherInput::QuanserOtherInput(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed) : 
+    ChannelsModule(d,allowed),
     Fused<ReadBuffer<double>,QuanserDaq>(*this, 0), 
     m_h(h)
 { 
@@ -30,8 +30,8 @@ QuanserOtherInput::QuanserOtherInput(QuanserDaq& d, QuanserHandle& h) :
 }
 
 
-QuanserOtherOutput::QuanserOtherOutput(QuanserDaq& d, QuanserHandle& h) : 
-    ChannelsModule(d),
+QuanserOtherOutput::QuanserOtherOutput(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed) : 
+    ChannelsModule(d,allowed),
     Fused<WriteBuffer<double>,QuanserDaq>(*this, 0), 
     m_h(h)
 { 

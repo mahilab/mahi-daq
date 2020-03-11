@@ -25,7 +25,7 @@ class QuanserDaq;
 
 class QuanserDI : public Fused<DIModule,QuanserDaq> {
 public:
-    QuanserDI(QuanserDaq& d, QuanserHandle& h, const ChanNums& chs);
+    QuanserDI(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
 private:
     QuanserHandle& m_h;
 };

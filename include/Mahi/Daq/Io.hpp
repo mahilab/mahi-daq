@@ -116,8 +116,8 @@ public:
     /// Typedef this type for convenienve
     typedef InputModule<T> This;
     /// Constructor
-    InputModule(Daq& daq) : 
-        ChannelsModule(daq), ReadBuffer<T>(*this, T()) 
+    InputModule(Daq& daq, const ChanNums& allowed) : 
+        ChannelsModule(daq, allowed), ReadBuffer<T>(*this, T()) 
     { read_with_all = true; }
     /// Destructor
     virtual ~InputModule() { }
@@ -142,8 +142,8 @@ public:
     /// Typedef this type for convenienve
     typedef OutputModule<T> This;
     /// Constructor
-    OutputModule(Daq& daq) : 
-        ChannelsModule(daq), WriteBuffer<T>(*this, T()), enable_values(*this, T()), disable_values(*this, T()) 
+    OutputModule(Daq& daq, const ChanNums& allowed) : 
+        ChannelsModule(daq, allowed), WriteBuffer<T>(*this, T()), enable_values(*this, T()), disable_values(*this, T()) 
     { write_with_all = true; }
     /// Destructor
     virtual ~OutputModule() { }
@@ -199,8 +199,8 @@ public:
     /// Typedef this type for convenienve.
     typedef EncoderModule<Crtp> This;
     /// Constructor.
-    EncoderModule(Daq& daq) : 
-        ChannelsModule(daq),
+    EncoderModule(Daq& daq, const ChanNums& allowed) : 
+        ChannelsModule(daq, allowed),
         ReadWriteBuffer<Counts>(*this, 0),
         quadratures(*this, QuadMode::X4), units(*this, 1), converted(*this, 0)
     { 

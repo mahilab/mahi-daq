@@ -28,7 +28,7 @@ class QuanserDaq;
 class QuanserEncoder : public Fused<EncoderModule<QuanserEncoder>,QuanserDaq> {
 public:
     /// Constructor
-    QuanserEncoder(QuanserDaq& d, QuanserHandle& h, const ChanNums& chs);
+    QuanserEncoder(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
 private:
     QuanserHandle& m_h;
 };
@@ -37,7 +37,7 @@ private:
 class QuanserEncoderVelocity : public QuanserOtherInput {
 public:
     /// Constructor
-    QuanserEncoderVelocity(QuanserDaq& d, QuanserHandle& h, QuanserEncoder& e, const ChanNums& chs);
+    QuanserEncoderVelocity(QuanserDaq& d, QuanserHandle& h, QuanserEncoder& e, const ChanNums& allowed);
     /// The computed velocities in the units defined by the user,
     /// i.e. [counts_per_sec * unit_per_count / quadratue factor]
     /// It is automatically update when the the velocity is read. 

@@ -9,12 +9,11 @@ using namespace mahi::util;
 namespace mahi {
 namespace daq {
 
-QuanserAO::QuanserAO(QuanserDaq& d, QuanserHandle& h, const ChanNums& channel_numbers)  : 
-    Fused<AOModule,QuanserDaq>(d),
+QuanserAO::QuanserAO(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed)  : 
+    Fused<AOModule,QuanserDaq>(d,allowed),
     expire_values(*this, 0), min_values(*this, -10), max_values(*this, 10), m_h(h)
 {
     set_name(d.name() + ".AO");
-    set_channel_numbers(channel_numbers);
     /// Write Channels
     auto on_write_impl = [this](const ChanNum *chs, const Voltage *vals, std::size_t n) {
         t_error result = hil_write_analog(m_h, chs, static_cast<t_uint32>(n), vals);

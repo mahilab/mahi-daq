@@ -37,8 +37,6 @@ protected:
     virtual void remap_channels(const ChanMap& old_map, const ChanMap& new_map) = 0;
     /// Returns internal channel number
     ChanNum intern(ChanNum public_facing);
-    /// This Event is invoked when the channel numbers are set or changed
-    util::Event<void(const ChanNums& old_channels, const ChanNums& new_channels)> on_channels_changed;
 protected:
     ChannelsModule& m_module; ///< pointer to parent module
 };

@@ -11,12 +11,11 @@ using namespace mahi::util;
 namespace mahi {
 namespace daq {
 
-QuanserEncoder::QuanserEncoder(QuanserDaq& d, QuanserHandle& h, const ChanNums& channel_numbers) : 
-    Fused<EncoderModule<QuanserEncoder>,QuanserDaq>(d),
+QuanserEncoder::QuanserEncoder(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed) : 
+    Fused<EncoderModule<QuanserEncoder>,QuanserDaq>(d,allowed),
     m_h(h)
 {
     set_name(d.name() + ".encoder");
-    set_channel_numbers(channel_numbers);
     // Read Encoders
     auto read_impl = [this](const ChanNum* chs, int* counts, std::size_t n) {
         t_error result = hil_read_encoder(m_h, chs, static_cast<t_uint32>(n), counts);
@@ -78,13 +77,12 @@ namespace {
     constexpr std::size_t g_v_off = 14000; 
 }
 
-QuanserEncoderVelocity::QuanserEncoderVelocity(QuanserDaq& d, QuanserHandle& h, QuanserEncoder& e, const ChanNums& channel_numbers) :
-    QuanserOtherInput(d, h),
+QuanserEncoderVelocity::QuanserEncoderVelocity(QuanserDaq& d, QuanserHandle& h, QuanserEncoder& e, const ChanNums& allowed) :
+    QuanserOtherInput(d, h, allowed),
     converted(*this, 0),
     m_e(e)
 {  
     set_name(d.name() + ".velocity");
-    set_channel_numbers(channel_numbers);
     auto convert = [this](const ChanNum * chs, const double* cps, std::size_t n) {
         for (int i = 0; i < n; ++i) {
             /// public facing channel

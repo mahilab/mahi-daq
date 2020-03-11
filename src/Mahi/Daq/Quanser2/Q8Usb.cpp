@@ -7,16 +7,23 @@
 namespace mahi {
 namespace daq {
 
+namespace {
+ChanNums EIGHT = {0,1,2,3,4,5,6,7};
+}
+
 Q8Usb::Q8Usb() :
     QuanserDaq("q8_usb"),
-    AI(*this, m_h, {0,1,2,3,4,5,6,7}),
-    AO(*this, m_h, {0,1,2,3,4,5,6,7}),
-    DI(*this, m_h, {0,1,2,3,4,5,6,7}),
-    DO(*this, m_h, {0,1,2,3,4,5,6,7}),
-    encoder(*this, m_h, {0,1,2,3,4,5,6,7}),
-    velocity(*this, m_h, encoder, {0,1,2,3,4,5,6,7}),
+    AI(*this, m_h, EIGHT), AO(*this, m_h, EIGHT),
+    DI(*this, m_h, EIGHT), DO(*this, m_h, EIGHT),
+    encoder(*this, m_h, EIGHT), velocity(*this, m_h, encoder, EIGHT),
     watchdog(*this, m_h, util::milliseconds(100))
 {
+    // set the intial channels
+    AI.set_channels(EIGHT); AO.set_channels(EIGHT);
+    DI.set_channels(EIGHT); DO.set_channels(EIGHT);
+    encoder.set_channels(EIGHT); velocity.set_channels(EIGHT);
+    // establish shared pins relationships
+    // ...
     // configure synced reads
     config_read(&AI, &DI, &encoder, &velocity);
     // configure synced writes

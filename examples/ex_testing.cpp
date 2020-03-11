@@ -9,7 +9,7 @@ using namespace mahi::daq;
 // class VirtualEncoder : public EncoderModule<void> {
 // public:
 //     VirtualEncoder(const ChanNums& channels) {
-//         set_channel_numbers(channels);
+//         set_channels(channels);
 //         auto read_impl = [this](const ChanNum* chs, int* counts, std::size_t n) {
 //             for (int i = 0; i < n; ++i)
 //                 counts[i] += (i+1) * 128;
@@ -49,6 +49,7 @@ int main(int argc, char const *argv[])
 {
     MahiLogger->set_max_severity(Verbose);
     // Q8Usb q8;   
+
     // q8.open(); 
     // q8.enable();
     // print("Manufacturer:  {}",q8.manufactuer());
@@ -73,14 +74,30 @@ int main(int argc, char const *argv[])
     // q8.enable();
 
     Daq daq;
-    DOModule d(daq); d.set_name("d");
-    EncoderModule<> e(daq); e.set_name("e");
-    ChannelsModule::share(&e,&d,{{{0,1},{0}},{{2,3},{1}}});
-    d.set_channel_numbers({0,1,2,3});
-    e.set_channel_numbers({0,1});
+
+    ChannelsModule DIO(daq, {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15});
+    DIO.set_name("DIO");
+    ChannelsModule I2C(daq, {0});
+    I2C.set_name("I2C");
+    ChannelsModule ENC(daq, {0});
+    ENC.set_name("ENC");
+    ChannelsModule PWM(daq,{0,1,2});
+    PWM.set_name("PWM");
+    ChannelsModule SPI(daq, {0});
+    SPI.set_name("SPI");
+
+    ChannelsModule::share(&DIO,&I2C,{{{14,15},{0}}});
+    ChannelsModule::share(&DIO,&ENC,{{{11,12},{0}}});
+    ChannelsModule::share(&DIO,&PWM,{{{8},{0}},{{9},{1}},{{10},{2}}});
+    ChannelsModule::share(&DIO,&SPI,{{{5,6,7},{0}}});
 
 
-
+    DIO.set_channels({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15});
+    I2C.set_channels({0});
+    ENC.set_channels({0});
+    PWM.set_channels({0,1,2});
+    SPI.set_channels({0});
+    DIO.set_channels({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15});
     return 0;
 }
 

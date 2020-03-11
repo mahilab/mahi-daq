@@ -108,7 +108,7 @@ void MyRioDIO::sync() {
             chs.push_back(7);
     }
     // set module channels
-    set_channel_numbers(chs);
+    set_channels(chs);
     // update directions
     chs = channels_internal();
     for (auto& ch : chs) {

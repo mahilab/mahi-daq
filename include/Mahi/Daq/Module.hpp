@@ -62,8 +62,9 @@ private:
 /// e.g. separate ModuleInterfaces for buffers and registry settings. 
 class ChannelsModule : public Module {
 public:
-    /// Constructor.
-    ChannelsModule(Daq& daq);
+    /// Constructor. Sets the allowed channels, but does not set the current channels.
+    /// Make an explicit call to set_channels. 
+    ChannelsModule(Daq& daq, const ChanNums& allowed);
     /// Gets the vector of channel numbers this Module maintains.
     const ChanNums& channels() const;
     /// Gets the vector of channel numbers this Module maintains in the internal representation.
@@ -79,9 +80,10 @@ public:
     /// invalidate those references, so use this only on startup before pulling
     /// references. If this Module share's pins with other Modules, they will
     /// be updated as well if needed.
-    void set_channel_numbers(const ChanNums& chs);
+    bool set_channels(const ChanNums& chs);
     //// Returns true if this Module shares pins
-    bool shares_pins();
+    bool shares_pins() const;
+    static void print_shared_pins();
 public:
     /// Transforms a public facing channel number to the internal representation.
     /// Passes through by default. Override if your DAQ API channel indexing is 
@@ -95,16 +97,10 @@ public:
     /// channels 0,1, and a's channels 1,2 shares with b's channel 2.
     static void share(ChannelsModule* a, ChannelsModule* b, ShareList share_list);
 private:
-    /// Updates the channel Map and notifies ModuleInterfaces
-    void update_map();
-    /// Updates internal channel numbers
-    void update_internal();
-    /// Updates shared pins
-    void update_shared();
-private:
     friend ModuleInterfaceBase;
-    ChanNums m_chs_public;                      ///< The public facing channel numbers
-    ChanNums m_chs_internal;                    ///< The internal facing channel numbers
+    ChanNums m_chs_allowed;                     ///< The allowed public facing channel numbers
+    ChanNums m_chs_public;                      ///< The current public facing channel numbers
+    ChanNums m_chs_internal;                    ///< The current internal facing channel numbers
     ChanMap  m_ch_map;                          ///< Maps a public facing channel number to a buffer index position
     std::vector<ModuleInterfaceBase*> m_ifaces; ///< Interfaces maintained  by this Module
 };
