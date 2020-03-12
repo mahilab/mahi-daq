@@ -56,14 +56,12 @@ private:
     std::string m_name; ///< This Module's string name
 };
 
-/// ChannelModules expose one type of array-like I/O functionality of the DAQ, but
-/// may use any number of ModuleInterfaces to implement the functionality,
-/// e.g. separate ModuleInterfaces for I/O buffers and registry settings. 
-class ChannelsModule : public Module {
+/// ChannelModules expose one type of array-like I/O functionality of the DAQ
+class ChanneledModule : public Module {
 public:
     /// Constructor. Sets the allowed channels, but does not set the current channels.
     /// Make an explicit call to set_channels. 
-    ChannelsModule(Daq& daq, const ChanNums& allowed);
+    ChanneledModule(Daq& daq, const ChanNums& allowed);
     /// Sets the channel numbers this Module maintains. The channels requested
     /// must be a subset of the Modue's allowed channels. If this Module shares
     /// pins/channels with another, those Modules will have their pins reclaimed.
@@ -79,18 +77,19 @@ public:
     const ChanNums& channels_internal() const;
     //// Returns true if this Module shares pins with another.
     bool shares_pins() const;
-public:
+    /// Shared pins data structure
+    typedef std::vector<std::pair<ChanNums,ChanNums>> ShareList;
+protected:
     /// Transforms a public facing channel number to the internal representation.
     /// Passes through by default. Override if your DAQ API channel indexing is 
     /// different from the interface indexing you you want clients to use. 
     virtual ChanNum transform_channel_number(ChanNum public_facing) const;
-    /// Share pins data structure
-    typedef std::vector<std::pair<ChanNums,ChanNums>> ShareList;
     /// Use this to facilitate pin sharing between ChannelsModules e.g. DIOs 
     /// commonly share pins with w/ PWM, I2C, encoders, etc.
-    /// ShareList({{{0},{0,1}},{{1,2},{2}}}) means a's channel 0 shares with b's 
-    /// channels 0,1, and a's channels 1,2 shares with b's channel 2.
-    static void share(ChannelsModule* a, ChannelsModule* b, ShareList share_list);
+    /// ShareList({{{0},{0,1}},{{1,2},{2}}}) means this Module's channel 0
+    /// shares with others's channels 0,1, and this Modules's channels 1,2 
+    /// shares with others's channel 2.
+    void share_pins_with(ChanneledModule* other, ShareList share_list);
     /// Called when new channels have been gained
     util::Event<bool(const ChanNums&),util::CollectorBooleanAnd> on_gain_channels;
     /// Called when old channels have been freed
@@ -106,5 +105,3 @@ private:
 
 } // namespace daq
 } // namespace mahi
-
-// #include <Mahi/Daq/Detail/Module.inl>

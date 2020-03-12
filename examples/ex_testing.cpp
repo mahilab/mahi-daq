@@ -44,32 +44,32 @@ void read(Readable* readable) {
     readable->read();
 };
 
-void share_test() {
-    Daq daq;
+// void share_test() {
+//     Daq daq;
 
-    ChannelsModule DIO(daq, {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15});
-    DIO.set_name("DIO");
-    ChannelsModule I2C(daq, {0});
-    I2C.set_name("I2C");
-    ChannelsModule ENC(daq, {0});
-    ENC.set_name("ENC");
-    ChannelsModule PWM(daq,{0,1,2});
-    PWM.set_name("PWM");
-    ChannelsModule SPI(daq, {0});
-    SPI.set_name("SPI");
+//     ChanneledModule DIO(daq, {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15});
+//     DIO.set_name("DIO");
+//     ChanneledModule I2C(daq, {0});
+//     I2C.set_name("I2C");
+//     ChanneledModule ENC(daq, {0});
+//     ENC.set_name("ENC");
+//     ChanneledModule PWM(daq,{0,1,2});
+//     PWM.set_name("PWM");
+//     ChanneledModule SPI(daq, {0});
+//     SPI.set_name("SPI");
 
-    ChannelsModule::share(&DIO,&I2C,{{{14,15},{0}}});
-    ChannelsModule::share(&DIO,&ENC,{{{11,12},{0}}});
-    ChannelsModule::share(&DIO,&PWM,{{{8},{0}},{{9},{1}},{{10},{2}}});
-    ChannelsModule::share(&DIO,&SPI,{{{5,6,7},{0}}});
+//     DIO.share_pins_with(&I2C,{{{14,15},{0}}});
+//     DIO.share_pins_with(&ENC,{{{11,12},{0}}});
+//     DIO.share_pins_with(&PWM,{{{8},{0}},{{9},{1}},{{10},{2}}});
+//     DIO.share_pins_with(&SPI,{{{5,6,7},{0}}});
 
-    DIO.set_channels({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15});
-    I2C.set_channels({0});
-    ENC.set_channels({0});
-    PWM.set_channels({0,1,2});
-    SPI.set_channels({0});
-    DIO.set_channels({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15});
-}
+//     DIO.set_channels({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15});
+//     I2C.set_channels({0});
+//     ENC.set_channels({0});
+//     PWM.set_channels({0,1,2});
+//     SPI.set_channels({0});
+//     DIO.set_channels({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15});
+// }
 
 int main(int argc, char const *argv[])
 {

@@ -8,7 +8,7 @@ using namespace mahi::util;
 namespace mahi {
 namespace daq {
 
-ModuleInterfaceBase::ModuleInterfaceBase(ChannelsModule& module) :
+ModuleInterfaceBase::ModuleInterfaceBase(ChanneledModule& module) :
     m_module(module) 
 {
     module.m_ifaces.push_back(this);    
@@ -18,7 +18,7 @@ ChanNum ModuleInterfaceBase::intern(ChanNum public_facing) {
     return m_module.transform_channel_number(public_facing);
 }
 
-const ChannelsModule& ModuleInterfaceBase::module() const {
+const ChanneledModule& ModuleInterfaceBase::module() const {
     return m_module;
 }
 
@@ -44,12 +44,12 @@ std::size_t ModuleInterfaceBase::index(ChanNum channel_number) const {
     return m_module.m_ch_map.at(channel_number);
 }
 
-Readable::Readable(ChannelsModule& module) : read_with_all(false)
+Readable::Readable(ChanneledModule& module) : read_with_all(false)
 {
     module.daq().m_readables.push_back(this);
 }
 
-Writeable::Writeable(ChannelsModule& module) : write_with_all(false)
+Writeable::Writeable(ChanneledModule& module) : write_with_all(false)
 {
     module.daq().m_writeables.push_back(this);
 }

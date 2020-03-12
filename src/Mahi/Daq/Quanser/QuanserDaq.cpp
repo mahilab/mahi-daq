@@ -135,14 +135,15 @@ bool QuanserDaq::write_all() {
 }
 
 bool QuanserDaq::set_options(const QuanserOptions& options) {
-    m_options = options;
     char options_str[4096];
-    std::strcpy(options_str, m_options.str().c_str());
+    auto temp = options;
+    std::strcpy(options_str, temp.str().c_str());
     if (valid()) {
         t_error result;
         result = hil_set_card_specific_options(m_h, options_str, std::strlen(options_str));
-        util::sleep(util::milliseconds(10));
+        util::sleep(10_ms);
         if (result == 0) {
+            m_options = options;
             LOG(Verbose) << "Set " << name() << " options to: \"" << m_options.str() << "\"";
             return true;
         }

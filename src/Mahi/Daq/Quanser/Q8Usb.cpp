@@ -21,7 +21,7 @@ Q8Usb::Q8Usb() :
     // open
     open();
     // establish shared pins relationships
-    ChannelsModule::share(&DO, &PWM, {{{0},{0}},{{1},{1}},{{2},{2}},{{3},{3}},{{4},{4}},{{5},{5}},{{6},{6}},{{7},{7}}});
+    DO.share_pins_with(&PWM, {{{0},{0}},{{1},{1}},{{2},{2}},{{3},{3}},{{4},{4}},{{5},{5}},{{6},{6}},{{7},{7}}});
     // connect PWM gain callback
     auto on_pwm_gain = [this](const ChanNums& gain) {
         auto opts = get_options();

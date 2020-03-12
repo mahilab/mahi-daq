@@ -10,7 +10,7 @@ namespace mahi {
 namespace daq {
 
 QuanserOtherInput::QuanserOtherInput(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed) : 
-    ChannelsModule(d,allowed),
+    ChanneledModule(d,allowed),
     Fused<ReadBuffer<double>,QuanserDaq>(*this, 0), 
     m_h(h)
 { 
@@ -31,7 +31,7 @@ QuanserOtherInput::QuanserOtherInput(QuanserDaq& d, QuanserHandle& h, const Chan
 
 
 QuanserOtherOutput::QuanserOtherOutput(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed) : 
-    ChannelsModule(d,allowed),
+    ChanneledModule(d,allowed),
     Fused<WriteBuffer<double>,QuanserDaq>(*this, 0), 
     m_h(h)
 { 

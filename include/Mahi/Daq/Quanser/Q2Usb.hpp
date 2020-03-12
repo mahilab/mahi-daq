@@ -36,33 +36,33 @@ public:
     /// The Quanser Q2-USB supports two 12-bit single-ended analog inputs with
     /// a ±10V range. Hence analog channel numbers range from 0 to 1.The range
     /// of the analog inputs is fixed at ±10V.
-    QuanserAI AI;
+    Fused<QuanserAI,Q2Usb> AI;
     /// The Quanser Q2-USB supports two 12-bit single-ended analog outputs with
     /// a ±10V range. Hence analog channel numbers range from 0 to 1.
-    QuanserAO AO;
+    Fused<QuanserAO,Q2Usb> AO;
     /// The Quanser Q2-USB supports 8 bidirectional digital I/O lines. Hence 
     /// digital input channel numbers range from 0 to 7. A digital I/O line 
     /// cannot be used as an input and output at the same time.
-    QuanserDI DI;
+    Fused<QuanserDI,Q2Usb> DI;
     /// The Quanser Q2-USB supports 8 bidirectional digital I/O lines and 1 LED. 
     /// Hence digital output channel numbers range from 0 to 8. A digital I/O 
     /// line cannot be used as an input and output at the same time. The LED 
     /// can be controlled as digital output 8.
-    QuanserDO DO;
+    Fused<QuanserDO,Q2Usb> DO;
     /// The Quanser Q2-USB driver supports two PWM output channels. The PWM outputs
     /// are shared with digital I/O lines 0 and 1. he PWM base frequencies can range 
     /// from 2.384Hz up to 40MHz. It only supports QuanserPwm::Mode::DutyCycle.
-    QuanserPwm PWM;
+    Fused<QuanserPwm,Q2Usb> PWM;
     /// The Quanser Q2-USB supports two quadrature encoder inputs with 16-bit 
     /// count values. Hence encoder channel numbers range from 0 to 1. It only
     //  supports  the 4X quadrature mode. Since the Quanser Q2-USB has 16-bit 
     /// counters, valid initial count values range from -32,768 to +32,767.
-    QuanserEncoder encoder;
+    Fused<QuanserEncoder,Q2Usb> encoder;
     /// Q2-USB watchdog timer. The timer may be programmed with any interval 
     /// between 125us and 8.1 seconds. Set AO, DO, and PWM expire values you
     /// desire on those Modules. They will be set automatically through 
     /// hardware in the event of a software failure (i.e. watchdog timout).
-    QuanserWatchdog watchdog;
+    Fused<QuanserWatchdog,Q2Usb> watchdog;
 };
 
 } // namespace daq

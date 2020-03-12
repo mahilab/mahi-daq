@@ -111,13 +111,13 @@ using Register = IWrite<IGet<ModuleInterface<T>>>;
 /// It will automatically  read on calls to Daq::read_all unless 
 /// the bool memeber read_with_all is manually set to false.
 template <typename T>
-class InputModule : public ChannelsModule, public ReadBuffer<T> {
+class InputModule : public ChanneledModule, public ReadBuffer<T> {
 public:
     /// Typedef this type for convenienve
     typedef InputModule<T> This;
     /// Constructor
     InputModule(Daq& daq, const ChanNums& allowed) : 
-        ChannelsModule(daq, allowed), ReadBuffer<T>(*this, T()) 
+        ChanneledModule(daq, allowed), ReadBuffer<T>(*this, T()) 
     { read_with_all = true; }
     /// Destructor
     virtual ~InputModule() { }
@@ -137,13 +137,13 @@ typedef InputModule<Logic> DIModule;
 /// It will automatically  write on calls to Daq::write_all unless 
 /// the bool memeber write_with_all is manually set to false.
 template <typename T>
-class OutputModule : public ChannelsModule, public WriteBuffer<T> {
+class OutputModule : public ChanneledModule, public WriteBuffer<T> {
 public:
     /// Typedef this type for convenienve
     typedef OutputModule<T> This;
     /// Constructor
     OutputModule(Daq& daq, const ChanNums& allowed) : 
-        ChannelsModule(daq, allowed), WriteBuffer<T>(*this, T()), enable_values(*this, T()), disable_values(*this, T()) 
+        ChanneledModule(daq, allowed), WriteBuffer<T>(*this, T()), enable_values(*this, T()), disable_values(*this, T()) 
     { write_with_all = true; }
     /// Destructor
     virtual ~OutputModule() { }
@@ -193,14 +193,14 @@ typedef OutputModule<Logic> DOModule;
 /// 2) auto cnt = encoder.read(0);      // user reads ch 0, gets 256
 /// 3) auto pos = encoder.converted[0]  // will be 22.5 degrees (assuming 4x quadrature)
 template <class Crtp = void>
-class EncoderModule : public ChannelsModule, public ReadWriteBuffer<Counts> {
+class EncoderModule : public ChanneledModule, public ReadWriteBuffer<Counts> {
 public:
     friend Crtp;
     /// Typedef this type for convenienve.
     typedef EncoderModule<Crtp> This;
     /// Constructor.
     EncoderModule(Daq& daq, const ChanNums& allowed) : 
-        ChannelsModule(daq, allowed),
+        ChanneledModule(daq, allowed),
         ReadWriteBuffer<Counts>(*this, 0),
         quadratures(*this, QuadMode::X4), units(*this, 1), converted(*this, 0)
     { 

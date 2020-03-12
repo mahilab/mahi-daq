@@ -8,14 +8,14 @@ namespace daq {
 
 class QuanserDaq;
 
-class QuanserOtherInput : public ChannelsModule, public Fused<ReadBuffer<double>,QuanserDaq> {
+class QuanserOtherInput : public ChanneledModule, public Fused<ReadBuffer<double>,QuanserDaq> {
 public:
     QuanserOtherInput(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
 protected:
     QuanserHandle m_h;
 };
 
-class QuanserOtherOutput : public ChannelsModule, public Fused<WriteBuffer<double>,QuanserDaq> {
+class QuanserOtherOutput : public ChanneledModule, public Fused<WriteBuffer<double>,QuanserDaq> {
 public:
     QuanserOtherOutput(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
 protected:

@@ -21,10 +21,6 @@
 namespace mahi {
 namespace daq {
 
-//==============================================================================
-// CLASS DECLARATION
-//==============================================================================
-
 /// Encapsulates a hardware watchdog timer
 class Watchdog : public Module {
 public:

@@ -13,6 +13,8 @@ namespace daq {
 
 namespace  {
 
+std::unordered_map<ChanneledModule*,std::vector<std::pair<ChanneledModule*,ChanneledModule::ShareList>>> g_share_list_map; 
+
 inline void sort_and_reduce(ChanNums& chs) {
     std::sort(chs.begin(), chs.end());
     chs.erase(std::unique(chs.begin(), chs.end()), chs.end());
@@ -29,7 +31,24 @@ inline ChanMap make_channel_map(const ChanNums& channel_numbers) {
     return channel_map;
 }
 
-std::unordered_map<ChannelsModule*,std::vector<std::pair<ChannelsModule*,ChannelsModule::ShareList>>> g_share_list_map; 
+void create_shared_pins_entry(ChanneledModule* a, ChanneledModule* b, ChanneledModule::ShareList share_list) {
+    // make sure entries exist
+    if (g_share_list_map.count(a) == 0)
+        g_share_list_map[a] = {};
+    if (g_share_list_map.count(b) == 0)
+        g_share_list_map[b] = {};
+    // add share lists for a
+    g_share_list_map[a].push_back({b,share_list});
+    // reverse share list
+    ChanNums temp;
+    for (auto& p : share_list)
+    {
+        temp = p.first;
+        p.first = p.second;
+        p.second = temp;
+    } 
+    g_share_list_map[b].push_back({a,share_list});
+}
 
 } // namespace private
 
@@ -49,12 +68,12 @@ Daq& Module::daq() const {
     return m_daq;
 }
 
-ChannelsModule::ChannelsModule(Daq& daq, const ChanNums& allowed) : 
+ChanneledModule::ChanneledModule(Daq& daq, const ChanNums& allowed) : 
     Module(daq),
     m_chs_allowed(allowed)
 { }
 
-bool ChannelsModule::set_channels(const ChanNums& chs) {
+bool ChanneledModule::set_channels(const ChanNums& chs) {
     // sort and reduce the requested channels
     auto requested = chs;
     sort_and_reduce(requested);
@@ -102,7 +121,7 @@ bool ChannelsModule::set_channels(const ChanNums& chs) {
     // relinquish shared pins
     if (shares_pins()) {
         for (auto relation : g_share_list_map[this]) {
-            ChannelsModule* other = relation.first;
+            ChanneledModule* other = relation.first;
             ChanNums must_remove;
             for (auto& mapping : relation.second) {
                 for (auto& lch : mapping.first) {
@@ -136,38 +155,23 @@ bool ChannelsModule::set_channels(const ChanNums& chs) {
     return true;
 }
 
-const ChanNums& ChannelsModule::channels() const {
+const ChanNums& ChanneledModule::channels() const {
     return m_chs_public;
 }
 
-const ChanNums& ChannelsModule::channels_internal() const {
+const ChanNums& ChanneledModule::channels_internal() const {
     return m_chs_internal;
 }
 
-ChanNum ChannelsModule::transform_channel_number(ChanNum public_facing) const {
+ChanNum ChanneledModule::transform_channel_number(ChanNum public_facing) const {
     return public_facing;
 }
 
-void ChannelsModule::share(ChannelsModule* a, ChannelsModule* b, ShareList share_list) {
-    // make sure entries exist
-    if (g_share_list_map.count(a) == 0)
-        g_share_list_map[a] = {};
-    if (g_share_list_map.count(b) == 0)
-        g_share_list_map[b] = {};
-    // add share lists for a
-    g_share_list_map[a].push_back({b,share_list});
-    // reverse share list
-    ChanNums temp;
-    for (auto& p : share_list)
-    {
-        temp = p.first;
-        p.first = p.second;
-        p.second = temp;
-    } 
-    g_share_list_map[b].push_back({a,share_list});
+void ChanneledModule::share_pins_with(ChanneledModule* other, ShareList share_list) {
+    create_shared_pins_entry(this, other, share_list);
 }
 
-bool ChannelsModule::shares_pins() const {
+bool ChanneledModule::shares_pins() const {
     for (auto& entry : g_share_list_map) {
         if (entry.first == this)
             return true;
@@ -175,7 +179,7 @@ bool ChannelsModule::shares_pins() const {
     return false;
 }
 
-// void ChannelsModule::print_shared_pins() {
+// void ChanneledModule::print_shared_pins() {
 //     for (auto& entry : g_share_list_map) {
 //         for (auto& other : entry.second) {
 //             std::cout << entry.first->name() << " <=> " << other.first->name() << std::endl;

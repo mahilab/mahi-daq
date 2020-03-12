@@ -26,9 +26,9 @@ Q2Usb::Q2Usb() :
     opts.d1 = QuanserOptions::DoMode::Digital;
     set_options(opts);
     // established shared pins
-    ChannelsModule::share(&DI, &DO, {{{0},{0}},{{1},{1}},{{2},{2}},{{3},{3}},{{4},{4}},{{5},{5}},{{6},{6}},{{7},{7}}});
-    ChannelsModule::share(&PWM, &DO, {{{0},{0}},{{1},{1}}});
-    ChannelsModule::share(&PWM, &DI, {{{0},{0}},{{1},{1}}});
+    DI.share_pins_with(&DO,  {{{0},{0}},{{1},{1}},{{2},{2}},{{3},{3}},{{4},{4}},{{5},{5}},{{6},{6}},{{7},{7}}});
+    PWM.share_pins_with(&DO, {{{0},{0}},{{1},{1}}});
+    PWM.share_pins_with(&DI, {{{0},{0}},{{1},{1}}});
     // conect PWM gain callback
     auto on_pwm_gain = [this](const ChanNums& gain) {
         auto opts = get_options();

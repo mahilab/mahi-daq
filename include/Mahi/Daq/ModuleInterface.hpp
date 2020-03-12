@@ -24,17 +24,17 @@ namespace mahi {
 namespace daq {
 
 class Module;
-class ChannelsModule;
+class ChanneledModule;
 
 /// Base class for Module array types
 class ModuleInterfaceBase : util::NonCopyable {
 public:
     /// Constructor
-    ModuleInterfaceBase(ChannelsModule& module);
+    ModuleInterfaceBase(ChanneledModule& module);
     /// Returns const reference to this interfaces owning Module
-    const ChannelsModule& module() const;
+    const ChanneledModule& module() const;
 protected:
-    friend ChannelsModule;
+    friend ChanneledModule;
     /// Called by Module when channel numbers change
     virtual void remap_channels(const ChanMap& old_map, const ChanMap& new_map) = 0;
     /// Returns internal channel number
@@ -46,7 +46,7 @@ protected:
     /// Returns buffer index associated with channel number.
     std::size_t index(ChanNum ch) const;
 private:
-    ChannelsModule& m_module; ///< pointer to parent module
+    ChanneledModule& m_module; ///< pointer to parent module
 };
 
 /// Templated ModuleInterface
@@ -56,7 +56,7 @@ public:
     /// Typedef  of the interfaces's value Type for external use
     typedef T ValueType;
     /// Constructor
-    ModuleInterface(ChannelsModule& module, T default_value);
+    ModuleInterface(ChanneledModule& module, T default_value);
     /// Overload stream operator
     template <typename U>
     friend std::ostream& operator<<(std::ostream& os, const ModuleInterface<U>& array);
@@ -81,7 +81,7 @@ private:
 class Readable {
 public:
     /// Constructor
-    Readable(ChannelsModule& module);
+    Readable(ChanneledModule& module);
     /// Read implementation that will be called from a read_all 
     virtual bool read() = 0;
     /// If true, read will be called when a read_all call is made
@@ -92,7 +92,7 @@ public:
 class Writeable {
 public:
     /// Constructor
-    Writeable(ChannelsModule& module);
+    Writeable(ChanneledModule& module);
     /// Write implementation that will be called from a write_all 
     virtual bool write() = 0;
     /// If true, write will be called when a write_all call is made
@@ -111,12 +111,19 @@ template <typename Base>
 class IGet : public Base {
 public:
     /// Constructor
-    IGet(ChannelsModule& module, typename Base::ValueType default_value) : Base(module, default_value) { }
+    IGet(ChanneledModule& module, typename Base::ValueType default_value) : Base(module, default_value) { }
     /// Buffer read access with operator[] (does NOT validate channel number, invalid numbers will cause undefined behavior)
     const typename Base::ValueType& operator[](ChanNum ch) const { return this->buffer(ch); }
     /// Get all buffer values at once
     const std::vector<typename Base::ValueType>& get() const {
         return this->buffer();
+    }
+    /// Get a copy to a single buffer value (channel number is validated,, and returns type default value if invalid)
+    typename Base::ValueType get(ChanNum ch) const {
+        if (this->valid_channel(ch))
+            return this->buffer(ch);
+        else
+            return Base::ValueType();
     }
 };
 
@@ -125,13 +132,31 @@ template <typename Base>
 class ISet : public IGet<Base> {
 public:
     /// Constructor
-    ISet(ChannelsModule& module, typename Base::ValueType default_value) : IGet<Base>(module, default_value) { }
+    ISet(ChanneledModule& module, typename Base::ValueType default_value) : IGet<Base>(module, default_value) { }
     /// Buffer write access with operator[] (does NOT validate channel number, invalid numbers will cause undefined behavior)
     typename Base::ValueType& operator[](ChanNum ch) { return this->buffer(ch); }
     /// Set all buffer values at once (does size check)
     void set(const std::vector<typename Base::ValueType>& values) {
         if (this->valid_count(values.size()))
             this->buffer() = values;
+    }
+    /// Sets a single channel. The channel must be valid.
+    bool set(ChanNum ch, typename Base::ValueType value) {
+        if (this->valid_channel(ch))
+            this->buffer(ch) = value;
+    }
+    /// Sets a subset of channels. The channels and values passed must have the same size,
+    /// and all channel numbers must be valid.
+    bool set(const ChanNums& chs, const std::vector<typename Base::ValueType>& values) {
+        if (chs.size() != values.size())
+            return false;
+        for (auto& ch : chs) {
+            if (!this->valid_channel(ch))
+                return false;
+        }
+        for (int i = 0; i < chs.size(); ++i) 
+                this->buffer(chs[i]) = values[i];        
+        return true;
     }
 };
 
@@ -140,7 +165,7 @@ template <typename Base>
 class IRead : public Base, public Readable {
 public:
     /// Constructor
-    IRead(ChannelsModule& module, typename Base::ValueType default_value) :
+    IRead(ChanneledModule& module, typename Base::ValueType default_value) :
         Base(module, default_value), 
         Readable(module),
         on_read(nullptr), post_read(nullptr)
@@ -181,7 +206,7 @@ template <typename Base>
 class IWrite : public Base, public Writeable {
 public:
     /// Constructor
-    IWrite(ChannelsModule& module, typename Base::ValueType default_value) : 
+    IWrite(ChanneledModule& module, typename Base::ValueType default_value) : 
         Base(module, default_value), Writeable(module), on_write(nullptr)        
     { }
     /// Immediately writes the values currently stored in the software buffer. 
@@ -215,11 +240,11 @@ public:
         }
         return false;   
     }
-    /// Immediately writes a subset of channels (up to 32). The channel numbers must be valid and
+    /// Immediately writes a subset of channels (up to 64). The channel numbers must be valid and
     /// chs and values must be the same size. Returns true for success, false otherwise.
     bool write(const ChanNums& chs, const std::vector<typename Base::ValueType>& values) {
-        std::size_t n = chs.size() > 32 ? 32 : chs.size();
-        ChanNum intern_chs[32];  
+        std::size_t n = chs.size() > 64 ? 64 : chs.size();
+        ChanNum intern_chs[64];  
         for (int i = 0; i < n; ++i) { 
             if (!this->valid_channel(chs[i])) 
                 return false; 

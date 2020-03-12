@@ -24,7 +24,7 @@ namespace daq {
 class QuanserDaq;
 
 /// Encapsulates a Quanser hardware watchdog timer
-class QuanserWatchdog final : public Watchdog {
+class QuanserWatchdog : public Watchdog {
 public:
     /// Default constructor
     QuanserWatchdog(QuanserDaq& d, QuanserHandle& h, util::Time timeout);
