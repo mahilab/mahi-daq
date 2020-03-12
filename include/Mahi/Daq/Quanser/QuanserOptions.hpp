@@ -67,11 +67,11 @@ struct QuanserOptions {
     /// Function:       Sets digital I/O mode on line 0 of Q2-USB
     /// Quanser option: d0
     /// Applies to:     Q2Usb
-    DoMode d0;
+    DoMode d0 = DoMode::None;
     /// Function:       Sets digital I/O mode on line 1 of Q2-USB
     /// Quanser option: d1
     /// Applies to:     Q2Usb
-    DoMode d1;
+    DoMode d1 = DoMode::None;
     /// Function:       Reverses an encoder direction
     /// Quanser option: encX_dir
     /// Applies to:     Q8Usb, QPid
