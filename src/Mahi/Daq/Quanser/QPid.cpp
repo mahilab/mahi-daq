@@ -75,7 +75,7 @@ bool QPid::on_open() {
     std::vector<double> pwm_exp_vals(8, 0.0);
     t_error result = hil_watchdog_set_pwm_expiration_state(handle_, &pwm_channels[0], 8, &pwm_exp_vals[0]);
     if (result != 0)
-        LOG(Error) << "Failed to set PWM expiration states on QPID " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to set PWM expiration states on QPID " << get_name() << " " << QuanserDaq::quanser_msg(result);
 
     // allow changes to take effect
     util::sleep(milliseconds(10));
@@ -156,7 +156,7 @@ bool QPid::update_input() {
     if (result == 0)
         return true;
     else {
-        LOG(Error) << "Failed to update " << get_name() << " input " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to update " << get_name() << " input " << QuanserDaq::quanser_msg(result);
         return false;
     }
 }
@@ -183,7 +183,7 @@ bool QPid::update_output() {
     if (result == 0)
         return true;
     else {
-        LOG(Error) << "Failed to update " << get_name() << " output " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to update " << get_name() << " output " << QuanserDaq::quanser_msg(result);
         return false;
     }
 }

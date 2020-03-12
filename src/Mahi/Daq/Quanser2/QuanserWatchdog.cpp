@@ -28,11 +28,11 @@ QuanserWatchdog::~QuanserWatchdog() {
 bool QuanserWatchdog::start() {
     t_error result = hil_watchdog_start(m_h, m_timout.as_seconds());
     if (result == 0) {
-        LOG(Verbose) << "Started watchdog on " << name();
+        LOG(Verbose) << "Started watchdog on " << name() << ".";
         return true;
     }
     else {
-        LOG(Error) << "Failed to start watchdog on " << name() << " " << get_quanser_error_message(result);
+        LOG(Error) << "Failed to start watchdog on " << name() << " " << quanser_msg(result);
 
         return false;
     }
@@ -45,12 +45,12 @@ bool QuanserWatchdog::kick() {
         return true;
     }
     else if (result == 0) {
-        LOG(Warning) << "Watchdog on " << name() << " expired";
+        LOG(Warning) << "Watchdog on " << name() << " expired.";
         m_watching = false;
         return false;
     }
     else {
-        LOG(Error) << "Failed to kick watchdog on " << name() << " "  << get_quanser_error_message(result);
+        LOG(Error) << "Failed to kick watchdog on " << name() << " "  << quanser_msg(result);
         return false;
     }
 }
@@ -59,12 +59,12 @@ bool QuanserWatchdog::stop() {
     t_error result;
     result = hil_watchdog_stop(m_h);
     if (result == 0) {
-        LOG(Verbose) << "Stopped watchdog on " << name();
+        LOG(Verbose) << "Stopped watchdog on " << name() << ".";
         m_watching = false;
         return true;
     }
     else {
-        LOG(Error) << "Failed to stop watchdog on " << name() << " "  << get_quanser_error_message(result);
+        LOG(Error) << "Failed to stop watchdog on " << name() << " "  << quanser_msg(result);
         return false;
     }
 }
@@ -80,7 +80,7 @@ bool QuanserWatchdog::is_expired() {
         return false;
     }
     else {
-        LOG(Error) << "Failed to check expiration of watchdog on " << name() << " " << get_quanser_error_message(result);
+        LOG(Error) << "Failed to check expiration of watchdog on " << name() << " " << quanser_msg(result);
         return false;
     }
 }
@@ -89,11 +89,11 @@ bool QuanserWatchdog::clear() {
     t_error result;
     result = hil_watchdog_clear(m_h);
     if (result == 0) {
-        LOG(Verbose) << "Cleared watchdog on " << name();
+        LOG(Verbose) << "Cleared watchdog on " << name() << ".";
         return true;
     }
     else {
-        LOG(Error) << "Failed to clear watchdog on " << name() << " " << get_quanser_error_message(result);
+        LOG(Error) << "Failed to clear watchdog on " << name() << " " << quanser_msg(result);
         return false;
     }
 }

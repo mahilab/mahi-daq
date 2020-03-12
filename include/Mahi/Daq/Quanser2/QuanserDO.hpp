@@ -26,10 +26,7 @@ class QuanserDaq;
 class QuanserDO : public Fused<DOModule,QuanserDaq> {
 public:
     QuanserDO(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
-    Fused<WriteBuffer<Logic>,QuanserDO> expire_values;
-private:
-    /// Sets expire_values to LOW by default
-    bool on_daq_open() override;
+    Fused<Register<Logic>,QuanserDO> expire_values;
 private:
     QuanserHandle& m_h;
 };

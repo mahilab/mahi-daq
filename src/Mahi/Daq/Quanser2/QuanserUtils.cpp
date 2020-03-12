@@ -5,7 +5,7 @@
 namespace mahi {
 namespace daq {
 
-std::string get_quanser_error_message(int error, bool format)
+std::string quanser_msg(int error, bool format)
 {
     char message[512];
     msg_get_error_message(NULL, error, message, sizeof(message));

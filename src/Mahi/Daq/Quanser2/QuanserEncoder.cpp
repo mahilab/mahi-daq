@@ -22,7 +22,7 @@ QuanserEncoder::QuanserEncoder(QuanserDaq& d, QuanserHandle& h, const ChanNums& 
         if (result == 0)
             return true;
         else {
-            LOG(Error) << "Failed to read " << name() << " " << get_quanser_error_message(result);
+            LOG(Error) << "Failed to read " << name() << " " << quanser_msg(result);
             return false;
         }
     };
@@ -32,11 +32,11 @@ QuanserEncoder::QuanserEncoder(QuanserDaq& d, QuanserHandle& h, const ChanNums& 
         t_error result = hil_set_encoder_counts(m_h, chs, static_cast<t_uint32>(n), counts);
         util::sleep(milliseconds(10));
         if (result == 0) {
-            LOG(Verbose) << "Reset " << name() << " counts";
+            LOG(Verbose) << "Wrote " << name() << " encoder counts.";
             return true;
         }
         else {
-            LOG(Error) << "Failed to write " << name() << " counts " << get_quanser_error_message(result);
+            LOG(Error) << "Failed to write " << name() << " encoder counts " << quanser_msg(result);
             return false;
         }
     };
@@ -54,22 +54,27 @@ QuanserEncoder::QuanserEncoder(QuanserDaq& d, QuanserHandle& h, const ChanNums& 
             else if (quads[i] == QuadMode::X4)
                 converted_factors[i] = ENCODER_QUADRATURE_4X;
             else {
-                LOG(Error) << "QuadMode X" << static_cast<int>(quads[i]) << " not supported by Quanser";
+                LOG(Error) << "QuadMode X" << static_cast<int>(quads[i]) << " not supported by Quanser.";
                 return false;
             }
         }
         t_error result = hil_set_encoder_quadrature_mode(m_h, chs, static_cast<t_uint32>(n), &converted_factors[0]);
         util::sleep(milliseconds(10));
         if (result == 0) {
-            LOG(Verbose) << "Wrote " << name() << " quadrature factors";
+            LOG(Verbose) << "Wrote " << name() << " quadrature factors.";
             return true;
         }
         else {
-            LOG(Error) << "Failed to write " << name() << " quadrature factors " << get_quanser_error_message(result);
+            LOG(Error) << "Failed to write " << name() << " quadrature factors " << quanser_msg(result);
             return false;
         }
     };
     quadratures.on_write.connect(write_quad_impl);
+    /// on channels gained
+    auto on_gain = [this](const ChanNums& gained) {
+        return quadratures.write(gained, std::vector<QuadMode>(gained.size(), QuadMode::X4));
+    };
+    on_gain_channels.connect(on_gain);
 }
 
 namespace {

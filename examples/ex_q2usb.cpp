@@ -28,114 +28,67 @@ bool handler(CtrlEvent event) {
     return true;
 }
 
-int main() {
+int main(int argc, char const *argv[])
+{
+    MahiLogger->set_max_severity(Verbose);
 
-    // register CTRL-C handler
-    register_ctrl_handler(handler);
-
-    //==============================================================================
-    // CONSTUCT/OPEN/CONFIGURE
-    //==============================================================================
-
-    // create default Q28 USB object (all channels enabled)
+    // For this example, connect AO0 to AI0 and DIO0 to DIO1, 
+    // and connect an encoder to channel 0.
     Q2Usb q2;
-    if (!q2.open())
-        return 1;
 
-    //==============================================================================
-    // ENABLE
-    //==============================================================================
+    /// Print the module names
+    for (auto& m : q2.modules())
+        print("{}", m->name());
 
-    // ask for user input
-    prompt("Press ENTER to open and enable Q8 USB.");
-    // enable Q8 USB
-    if (!q2.enable())
-        return 1;
+    // Q2-USB DI and DO share pins. All pins default to inputs, 
+    /// so set the pins you wish to use as DO
+    q2.DO.set_channels({1,8}); // note: 8 is the LED
 
-    //==============================================================================
-    // ENCODER
-    //==============================================================================
+    // set enable values
+    q2.AO.enable_values[0] = 1.0;
+    q2.DO.enable_values[1] = HIGH;
+    
+    // set the units on one of our encoders
+    q2.encoder.units[0] = 360.0 / 512;
+    // zero the encoder
+    q2.encoder.zero(0);
 
-    // ask for user input
-    prompt("Connect an encoder to channel 0 then press ENTER to start test.");
-    // create 10 Hz Timer
-    Timer timer(milliseconds(100));
-    // start encoder loop
-    while (timer.get_elapsed_time() < seconds(5) && !stop) {
-        q2.update_input();
-        print_var(q2.encoder.get(0));
-        timer.wait();
+    /// enable, this will set enable values on AO and DO
+    q2.enable();
+    sleep(1_ms);
+    q2.AI.read();
+    q2.DI.read();
+    print("AI[0]: {:+.2f} V", q2.AI[0]);
+    print("DI[0]: {}",(int)q2.DI[0]);
+
+    prompt("Press ENTER to start I/O loop");
+
+    /// Loop back and encoder read
+    for (int i = 0; i < 500; ++i) {
+        q2.read_all();
+        print("AI[0]: {:+.2f} V | DI[0]: {} | encoder[0]: {} = {:+.2f} deg.", q2.AI[0], (int)q2.DI[0], q2.encoder[0], q2.encoder.converted[0]);
+        double out = 5 * std::sin(TWOPI * i * 0.01);
+        q2.AO[0] = out;
+        q2.DO[1] = out > 0 ? HIGH : LOW;
+        q2.DO[8] = q2.DO[1]; // blink LED
+        q2.write_all();
+        sleep(10_ms);
     }
 
-    //==============================================================================
-    // ANALOG INPUT/OUTPUT
-    //==============================================================================
+    prompt("Press ENTER to start PWM loop");
 
-    // ask for user input
-    prompt("Connect AO0 to AI0 then press ENTER to start test.");
-    // create Waveform
-    Waveform wave(Waveform::Sin, seconds(0.25), 5.0);
-    // start analog loopback loop
-    timer.restart();
-    while (timer.get_elapsed_time() < seconds(5) && !stop) {
-        q2.update_input();
-        print_var(q2.AI.get(0));
-        double voltage = wave.evaluate(timer.get_elapsed_time());
-        q2.AO.set(0, voltage);
-        q2.update_output();
-        timer.wait();
+    // enable PWM
+    q2.PWM.set_channels({0,1});
+    q2.PWM.frequencies.write(0, 20000);
+
+    /// Loop back and encoder read
+    for (int i = 0; i < 500; ++i) {
+        q2.read_all();
+        double out = 0.5f + 0.5f * std::sin(TWOPI * i * 0.01);
+        q2.PWM.write(0,out);
+        sleep(10_ms);
     }
 
-    //==============================================================================
-    // DIGITAL INPUT/OUTPUT
-    //==============================================================================
-
-    // ask for user input
-    prompt("Connect DIO0 to DIO7 then press ENTER to start test.");
-    // set directions
-    q2.DIO.set_direction(7, Out);
-    Logic signal = High;
-    // start analog loopback loop
-    timer.restart();
-    while (timer.get_elapsed_time() < seconds(5) && !stop) {
-        q2.DIO.update();
-        print_var((int)q2.DIO[0]);
-        signal = (Logic)(High - signal);
-        q2.DIO[7] = signal;
-        q2.DIO.update();
-        timer.wait();
-    }
-
-    //==============================================================================
-    // LED
-    //==============================================================================
-
-    // ask for user input
-    prompt("Press enter then press any key to turn on LED.");
-    // make sure LED Mode is set to User
-    QuanserOptions options;
-    options.set_led_mode(QuanserOptions::LedMode::User);
-    q2.set_options(options);
-    timer.restart();
-    while (timer.get_elapsed_time() < seconds(10) && !stop) {
-        if (get_key_nb())
-            q2.set_led(High);
-        else
-            q2.set_led(Low);
-        q2.update_output();
-        timer.wait();
-    }
-
-    //==============================================================================
-    // DISABLE
-    //==============================================================================
-
-    // ask for user input
-    prompt("Press Enter to disable the Q2 USB.");
-    // disable Q8 USB
-    q2.disable();
-    // close Q8 USB
-    q2.close();
 
     return 0;
 }

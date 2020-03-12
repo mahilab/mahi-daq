@@ -49,5 +49,18 @@ enum QuadMode {
 /// Represents a duty cycle (e.g 0.5 = 50%)
 typedef double DutyCycle;
 
+/// Represents a value range (e.g. min/max voltages of an analog output)
+template <typename T>
+struct Range {
+    T min_val;
+    T max_val;
+};
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const Range<T>& r) {
+    os << "(" << r.min_val << ":" << r.max_val << ")";
+    return os;
+}
+
 } // namespace daq
 } // namespace mahi

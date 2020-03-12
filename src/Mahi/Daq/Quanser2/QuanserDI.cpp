@@ -20,7 +20,7 @@ QuanserDI::QuanserDI(QuanserDaq& d,QuanserHandle& h, const ChanNums& allowed) :
         if (result == 0)
             return true;
         else {
-            LOG(Error) << "Failed to read " << name() << " digital inputs " << get_quanser_error_message(result);
+            LOG(Error) << "Failed to read " << name() << " digital inputs " << quanser_msg(result);
             return false;
         }
         return true;

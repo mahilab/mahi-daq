@@ -42,6 +42,7 @@
     // #include <Mahi/Daq/Quanser/QuanserPwm.hpp>
     // #include <Mahi/Daq/Quanser/QuanserWatchdog.hpp>
     #include <Mahi/Daq/Quanser2/Q8Usb.hpp>
+    #include <Mahi/Daq/Quanser2/Q2Usb.hpp>
 #endif
 
 #ifdef MAHI_SENSORAY

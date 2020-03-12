@@ -2,6 +2,10 @@
 #pragma warning( disable : 4505 )
 #endif
 
+#include <type_traits>
+#include <ostream>
+#include <Mahi/Daq/Module.hpp>
+
 namespace mahi {
 namespace daq {
 
@@ -10,26 +14,43 @@ namespace daq {
         ModuleInterfaceBase(module),
         m_default(default_value)
     { 
-        m_buffer.resize(this->m_module.channels_internal().size());        
+        m_buffer.resize(this->module().channels_internal().size());        
         std::fill(m_buffer.begin(), m_buffer.end(), m_default);
     }
 
     /// Overload stream operator for ModuleInterface
     template <typename T>
     std::ostream& operator<<(std::ostream& os, const ModuleInterface<T>& iface) {
-        if (iface.m_module.channels_internal().size() > 0) {
-            os << "{";
-            for (std::size_t i = 0; i < iface.m_module.channels_internal().size() - 1; i++) {
-                ChanNum ch = iface.m_module.channels_internal()[i];
-                os << "[" << ch << "]:" << iface.m_buffer[iface.m_module.index(ch)] << ", ";
+        if (iface.module().channels_internal().size() > 0) {
+            os << "{ ";
+            for (std::size_t i = 0; i < iface.module().channels_internal().size() - 1; i++) {
+                ChanNum ch = iface.module().channels_internal()[i];
+                os << "[" << ch << "]:" << iface.m_buffer[iface.index(ch)] << ", ";
             }
-            ChanNum ch = iface.m_module.channels_internal()[iface.m_module.channels_internal().size() - 1];
-            os << "[" << ch << "]:" << iface.m_buffer[iface.m_module.index(ch)] << "}";
+            ChanNum ch = iface.module().channels_internal()[iface.module().channels_internal().size() - 1];
+            os << "[" << ch << "]:" << iface.m_buffer[iface.index(ch)] << " }";
         }
         else {
-            os << "{}";
+            os << "{ }";
         }
         return os;
+    }
+
+    template <>
+    inline std::ostream& operator<< <char>(std::ostream& os, const ModuleInterface<char>& iface) {
+        if (iface.module().channels_internal().size() > 0) {
+            os << "{ ";
+            for (std::size_t i = 0; i < iface.module().channels_internal().size() - 1; i++) {
+                ChanNum ch = iface.module().channels_internal()[i];
+                os << "[" << ch << "]:" << (int)iface.m_buffer[iface.index(ch)] << ", ";
+            }
+            ChanNum ch = iface.module().channels_internal()[iface.module().channels_internal().size() - 1];
+            os << "[" << ch << "]:" << (int)iface.m_buffer[iface.index(ch)] << " }";
+        }
+        else {
+            os << "{ }";
+        }
+        return os;        return os;
     }
 
     template <typename T>

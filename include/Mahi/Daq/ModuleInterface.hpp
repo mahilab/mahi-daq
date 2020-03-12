@@ -31,13 +31,21 @@ class ModuleInterfaceBase : util::NonCopyable {
 public:
     /// Constructor
     ModuleInterfaceBase(ChannelsModule& module);
+    /// Returns const reference to this interfaces owning Module
+    const ChannelsModule& module() const;
 protected:
     friend ChannelsModule;
     /// Called by Module when channel numbers change
     virtual void remap_channels(const ChanMap& old_map, const ChanMap& new_map) = 0;
     /// Returns internal channel number
     ChanNum intern(ChanNum public_facing);
-protected:
+    /// Checks if a channel number is a number currently maintained on this Module.
+    bool valid_channel(ChanNum ch, bool quiet = false) const;
+    /// Checks if #size equals the number of maintained channels.
+    bool valid_count(std::size_t size, bool quiet = false) const;
+    /// Returns buffer index associated with channel number.
+    std::size_t index(ChanNum ch) const;
+private:
     ChannelsModule& m_module; ///< pointer to parent module
 };
 
@@ -58,9 +66,9 @@ protected:
     /// Returns a non-constant reference to the entire internal buffer
     std::vector<T>& buffer() { return m_buffer; }
     /// Returns a constant reference to buffer elemented indexed by channel number (write access)
-    const T& buffer(ChanNum ch) const { return m_buffer[m_module.index(ch)]; }
+    const T& buffer(ChanNum ch) const { return m_buffer[index(ch)]; }
     /// Returns a non-const reference (read access)
-    T& buffer(ChanNum ch) { return m_buffer[m_module.index(ch)]; }
+    T& buffer(ChanNum ch) { return m_buffer[index(ch)]; }
 private:
     /// Called by ModuleInterface when channel numbers change
     void remap_channels(const ChanMap& old_map, const ChanMap& new_map) override;
@@ -95,8 +103,8 @@ public:
 // MIXINS
 //=============================================================================
 
-// These mixins allow you to inject public and private functionality into a ModuleInterface<T>
-// For instance, they can be combined to expose array like buffering and/or immediate mode read/write.
+// These mixins allow you to inject public and protected functionality into a ModuleInterface<T>
+// For instance, they can be combined to expose array like buffering and/or immediate mode read/write
 
 /// Mixin this to inject buffer get access into a ModuleInterface<T> (see Io.hpp)
 template <typename Base>
@@ -122,7 +130,7 @@ public:
     typename Base::ValueType& operator[](ChanNum ch) { return this->buffer(ch); }
     /// Set all buffer values at once (does size check)
     void set(const std::vector<typename Base::ValueType>& values) {
-        if (this->m_module.valid_count(values.size()))
+        if (this->valid_count(values.size()))
             this->buffer() = values;
     }
 };
@@ -140,23 +148,20 @@ public:
     /// Immediately reads values into the software buffer. 
     /// Returns true for success, false otherwise. Overrides Readable::read.
     virtual bool read() override {
-        if (on_read.size() > 0 && on_read.emit(&this->m_module.channels_internal()[0], &this->buffer()[0], this->m_module.channels_internal().size()))
+        if (on_read.emit(&this->module().channels_internal()[0], &this->buffer()[0], this->module().channels_internal().size()))
         {
-            if (post_read.size() > 0)
-                post_read.emit(&this->m_module.channels_internal()[0], &this->buffer()[0], this->m_module.channels_internal().size());
+            post_read.emit(&this->module().channels_internal()[0], &this->buffer()[0], this->module().channels_internal().size());
             return true;
         }
         return false;
     }
-
     /// Immediately reads a single channel into the software buffer. 
     /// Returns true for success, false otherwise.
     bool read(ChanNum ch) {
-        ChanNum int_ch = this->intern(ch);
-        if (this->m_module.valid_channel(ch) && on_read.size() > 0 && on_read.emit(&int_ch, &this->buffer(ch), 1))
+        ChanNum intern_ch = this->intern(ch);
+        if (this->valid_channel(ch) && on_read.emit(&intern_ch, &this->buffer(ch), 1))
         {
-            if (post_read.size() > 0)
-                post_read.emit(&int_ch, &this->buffer(ch), 1);
+            post_read.emit(&intern_ch, &this->buffer(ch), 1);
             return true;
         }
         return false;
@@ -175,46 +180,58 @@ protected:
 template <typename Base>
 class IWrite : public Base, public Writeable {
 public:
+    /// Constructor
     IWrite(ChannelsModule& module, typename Base::ValueType default_value) : 
         Base(module, default_value), Writeable(module), on_write(nullptr)        
     { }
-
     /// Immediately writes the values currently stored in the software buffer. 
     /// Returns true for success, false otherwise. Overrides Writeable::write.
     virtual bool write() override {
-        if (on_write.size() > 0 && on_write.emit(&this->m_module.channels_internal()[0], &this->buffer()[0], this->m_module.channels_internal().size())) {
-            if (post_write.size() > 0)
-                post_write.emit(&this->m_module.channels_internal()[0], &this->buffer()[0], this->m_module.channels_internal().size());
+        if (on_write.emit(&this->module().channels_internal()[0], &this->buffer()[0], this->module().channels_internal().size())) {
+            post_write.emit(&this->module().channels_internal()[0], &this->buffer()[0], this->module().channels_internal().size());
             return true;
         }
         return false;
     }
-
     /// Immediately writes the passed vector. It's size must be equal to the number of channels.
     /// Returns true for success, false otherwise.
     bool write(const std::vector<typename Base::ValueType>& values) {
-        if (this->m_module.valid_count(values.size()) && on_write.size() > 0 &&
-            on_write.emit(&this->m_module.channels_internal()[0], &values[0], this->m_module.channels_internal().size())) 
+        if (this->valid_count(values.size()) && on_write.emit(&this->module().channels_internal()[0], &values[0], this->module().channels_internal().size())) 
         {
             this->buffer() = values;
-            if (post_write.size() > 0)
-                post_write.emit(&this->m_module.channels_internal()[0], &this->buffer()[0], this->m_module.channels_internal().size());
+            post_write.emit(&this->module().channels_internal()[0], &this->buffer()[0], this->module().channels_internal().size());
             return true;
         }
         return false;
     }
-
     /// Immediately writes a single channel value. The channel number must be valid. 
     /// Returns true for success, false otherwise.
     bool write(ChanNum ch, typename Base::ValueType value) {
-        ChanNum int_ch = this->intern(ch);
-        if (this->m_module.valid_channel(ch) && on_write.size() > 0 && on_write.emit(&int_ch, &value, 1)) {
+        ChanNum intern_ch = this->intern(ch);
+        if (this->valid_channel(ch) && on_write.emit(&intern_ch, &value, 1)) {
             this->buffer(ch) = value;
-            if (post_write.size() > 0)
-                post_write.emit(&int_ch, &this->buffer(ch), 1);
+            post_write.emit(&intern_ch, &this->buffer(ch), 1);
             return true;
         }
         return false;   
+    }
+    /// Immediately writes a subset of channels (up to 32). The channel numbers must be valid and
+    /// chs and values must be the same size. Returns true for success, false otherwise.
+    bool write(const ChanNums& chs, const std::vector<typename Base::ValueType>& values) {
+        std::size_t n = chs.size() > 32 ? 32 : chs.size();
+        ChanNum intern_chs[32];  
+        for (int i = 0; i < n; ++i) { 
+            if (!this->valid_channel(chs[i])) 
+                return false; 
+            intern_chs[i] = this->intern(chs[i]);
+        }
+        if (chs.size() == values.size() && on_write.emit(intern_chs, &values[0], n)) {
+            for (int i = 0; i < chs.size(); ++i)
+                this->buffer(chs[i]) = values[i];
+            post_write.emit(intern_chs, &values[0], n);
+            return true;
+        }
+        return false;
     }
 protected:
     /// Connect to this Event to write all requested channel numbers from the buffer.

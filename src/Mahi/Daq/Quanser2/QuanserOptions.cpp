@@ -3,117 +3,107 @@
 namespace mahi {
 namespace daq {
 
-//==============================================================================
-// CLASS DEFINTIONS
-//==============================================================================
+std::string QuanserOptions::str() {
+    std::string options = "";
 
-QuanserOptions::QuanserOptions()
-{ }
-
-void QuanserOptions::set_decimation(ChanNum decimation) {    
-    if (decimation != 1)
-        options_ += "decimation=" + std::to_string(decimation) + ";";
-}
-
-void QuanserOptions::set_update_rate(UpdateRate update_rate) {
     if (update_rate == UpdateRate::Fast)
-        options_ += "update_rate=fast;";
-}
+        options += "update_rate=fast;";
 
-void QuanserOptions::set_encoder_direction(ChanNum channel_number, EncoderDirection direction) {
-    if (direction == EncoderDirection::Reversed)
-        options_ += "enc" + std::to_string(channel_number) + "_dir=1;";
-}
+    if (decimation != 1)
+        options += "decimation=" + std::to_string(decimation) + ";";
 
-void QuanserOptions::set_encoder_filter(ChanNum channel_number, EncoderFilter filter) {
-    if (filter == EncoderFilter::Filtered)
-        options_ += "enc" + std::to_string(channel_number) + "_filter=1;";
+    if (led == LedMode::Auto)
+        options += "led=auto;";
+    else if (led == LedMode::User)
+        options += "led=user;";
 
-}
+    if (d0 == DoMode::Digital)
+        options += "d0=digital;";
+    else if (d0 ==DoMode::Pwm)
+        options += "d0=pwm;";
 
-void QuanserOptions::set_encoder_detection_a(ChanNum channel_number, EncoderDetection detection) {
-    if (detection == EncoderDetection::Low)
-        options_ += "enc" + std::to_string(channel_number) + "_a=1;";
+    if (d1 == DoMode::Digital)
+        options += "d1=digital;";
+    else if (d1 ==DoMode::Pwm)
+        options += "d1=pwm;";    
 
-}
-
-void QuanserOptions::set_encoder_detection_b(ChanNum channel_number, EncoderDetection detection) {
-    if (detection == EncoderDetection::Low)
-        options_ += "enc" + std::to_string(channel_number) + "_b=1;";
-
-}
-
-void QuanserOptions::set_encoder_detection_z(ChanNum channel_number, EncoderDetection detection) {
-    if (detection == EncoderDetection::Low)
-        options_ += "enc" + std::to_string(channel_number) + "_z=1;";
-
-}
-
-void QuanserOptions::set_encoder_reload(ChanNum channel_number, EncoderReload reload) {
-    if (reload == EncoderReload::OnPulse)
-        options_ += "enc" + std::to_string(channel_number) + "_reload=1;";
-
-}
-
-void QuanserOptions::set_encoder_velocity(ChanNum channel_number, double velocity) {
-    if (velocity > 0.0) {
-        std::string v = std::to_string(velocity);
-        v.resize(7);
-        options_ += "enc" + std::to_string(channel_number) + "_velocity=" + v + ";";
+    for (auto& x : encX_dir) {
+        if (x.second == EncoderDirection::Reversed)
+            options += "enc" + std::to_string(x.first) + "_dir=1;";
     }
-}
 
-void QuanserOptions::enable_pwm(ChanNum channel_number, bool enable) {
-    if (enable)
-        options_ += "pwm" + std::to_string(channel_number) + "_en=1;";
-    else
-        options_ += "pwm" + std::to_string(channel_number) + "_en=0;";
-}
+    for (auto& x : encX_filter) {
+        if (x.second == EncoderFilter::Filtered)
+            options += "enc" + std::to_string(x.first) + "_filter=1;";
+    }
+
+    for (auto& x : encX_a) {
+        if (x.second == EncoderDetection::Low)
+            options += "enc" + std::to_string(x.first) + "_a=1;";
+    }
+
+    for (auto& x : encX_b) {
+        if (x.second == EncoderDetection::Low)
+            options += "enc" + std::to_string(x.first) + "_b=1;";
+    }
+
+    for (auto& x : encX_z) {
+        if (x.second == EncoderDetection::Low)
+            options += "enc" + std::to_string(x.first) + "_z=1;";
+    }
+
+    for (auto& x : encX_reload) {
+        if (x.second == EncoderReload::OnPulse)
+            options += "enc" + std::to_string(x.first) + "_reload=1;";
+    }
+
+    for (auto& x : encX_velocity) {
+        std::string v = std::to_string(x.second);
+        v.resize(7);
+        options += "enc" + std::to_string(x.first) + "_velocity=" + v + ";";
+    }
+
+    for (auto& x : pwmX_en) {
+        if (x.second)
+            options += "pwm" + std::to_string(x.first) + "_en=1;";
+        else
+            options += "pwm" + std::to_string(x.first) + "_en=0;";
+    }
 
 
-void QuanserOptions::set_analog_output_mode(ChanNum channel_number, AoMode mode, double kff,
-    double a0, double a1, double a2, double b0, double b1, double post) {
+    for (auto& x : aoX_params) {
+        std::string ch = "ch" + std::to_string(x.first) + "_";
 
-    std::string ch = "ch" + std::to_string(channel_number) + "_";
+        std::string mode_str = std::to_string(static_cast<int>(x.second.ch_mode));
+        std::string kff_str  = std::to_string(x.second.ch_kff);     kff_str.resize(7);
+        std::string a0_str   = std::to_string(x.second.ch_a0);      a0_str.resize(7);
+        std::string a1_str   = std::to_string(x.second.ch_a1);      a1_str.resize(7);
+        std::string a2_str   = std::to_string(x.second.ch_a2);      a2_str.resize(7);
+        std::string b0_str   = std::to_string(x.second.ch_b0);      b0_str.resize(7);
+        std::string b1_str   = std::to_string(x.second.ch_b1);      b1_str.resize(7);
+        std::string post_str = std::to_string(x.second.ch_post);    post_str.resize(7);
 
-    std::string mode_str = std::to_string(static_cast<int>(mode));
-    std::string kff_str  = std::to_string(kff);     kff_str.resize(7);
-    std::string a0_str   = std::to_string(a0);      a0_str.resize(7);
-    std::string a1_str   = std::to_string(a1);      a1_str.resize(7);
-    std::string a2_str   = std::to_string(a2);      a2_str.resize(7);
-    std::string b0_str   = std::to_string(b0);      b0_str.resize(7);
-    std::string b1_str   = std::to_string(b1);      b1_str.resize(7);
-    std::string post_str = std::to_string(post);    post_str.resize(7);
+        options += ch + "mode=" + mode_str + ";";
+        options += ch + "kff="  + kff_str  + ";";
+        options += ch + "a0="   + a0_str   + ";";
+        options += ch + "a1="   + a1_str   + ";";
+        options += ch + "a2="   + a2_str   + ";";
+        options += ch + "b0="   + b0_str   + ";";
+        options += ch + "b1="   + b1_str   + ";";
+        options += ch + "post=" + post_str + ";";
+    }
 
-    options_ += ch + "mode=" + mode_str + ";";
-    options_ += ch + "kff="  + kff_str  + ";";
-    options_ += ch + "a0="   + a0_str   + ";";
-    options_ += ch + "a1="   + a1_str   + ";";
-    options_ += ch + "a2="   + a2_str   + ";";
-    options_ += ch + "b0="   + b0_str   + ";";
-    options_ += ch + "b1="   + b1_str   + ";";
-    options_ += ch + "post=" + post_str + ";";
-}
-
-void QuanserOptions::set_led_mode(LedMode mode) {
-    if (mode == LedMode::Auto)
-        options_ += "led=auto;";
-    else if (mode == LedMode::User)
-        options_ += "led=user;";
-}
-
-void QuanserOptions::set_special_option(std::string option) {
-    if (option[option.length()-1] != ';')
-        option += ";";
-    options_ += option;
-}
-
-std::string QuanserOptions::get_string() {
-    return options_;
+    if (special.length() > 0) {
+        if (special[special.length()-1] != ';')
+            special += ";";
+        options += special;
+    }
+    
+    return options;
 }
 
 void QuanserOptions::clear() {
-    options_.clear();
+    *this = QuanserOptions();
 }
 
 } // namespace daq

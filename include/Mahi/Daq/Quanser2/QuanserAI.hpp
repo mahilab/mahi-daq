@@ -26,8 +26,7 @@ class QuanserDaq;
 class QuanserAI : public Fused<AIModule,QuanserDaq> {
 public:
     QuanserAI(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
-    Fused<WriteBuffer<Voltage>, QuanserAI> min_values;
-    Fused<WriteBuffer<Voltage>, QuanserAI> max_values;
+    Fused<Register<Range<Voltage>>, QuanserAI> ranges;
 private:
     QuanserHandle& m_h;
 };

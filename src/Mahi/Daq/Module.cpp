@@ -126,11 +126,11 @@ bool ChannelsModule::set_channels(const ChanNums& chs) {
 
     // LOG(Verbose) << "Set Module " << name() << " channel numbers to [" << m_chs_public << "].";
     if (gained.size() > 0) {
-        // print("{}::on_add_channels()",name());
+        on_gain_channels.emit(gained);
         LOG(Verbose) << "Module " << name() << " gained channel numbers [" << gained << "].";
     }
     if (freed.size() > 0) {
-        // print("{}:on_rem_channels()",name());
+        on_free_channels.emit(freed);
         LOG(Verbose) << "Module " << name() << " freed channel numbers [" << freed << "].";
     }
     return true;
@@ -142,28 +142,6 @@ const ChanNums& ChannelsModule::channels() const {
 
 const ChanNums& ChannelsModule::channels_internal() const {
     return m_chs_internal;
-}
-
-bool ChannelsModule::valid_channel(ChanNum channel_number, bool quiet) const {
-    if (m_ch_map.count(channel_number) > 0)
-        return true;
-    if (!quiet) {
-        LOG(Error) << "Invalid channel number " << channel_number << " not declared in channel numbers on Module " << name() << ".";
-    }
-    return false;
-}
-
-bool ChannelsModule::valid_count(std::size_t size, bool quiet) const {
-    if (m_chs_public.size() == size)
-        return true;
-    if (!quiet) {
-        LOG(Error) << "The number of elements (" << size << ") does not equal to channel count ("  << channels().size() << ") of Module " << name() << ".";
-    }
-    return false;
-}
-
-std::size_t ChannelsModule::index(ChanNum channel_number) const {
-    return m_ch_map.at(channel_number);
 }
 
 ChanNum ChannelsModule::transform_channel_number(ChanNum public_facing) const {
@@ -197,16 +175,16 @@ bool ChannelsModule::shares_pins() const {
     return false;
 }
 
-void ChannelsModule::print_shared_pins() {
-    for (auto& entry : g_share_list_map) {
-        for (auto& other : entry.second) {
-            std::cout << entry.first->name() << " <=> " << other.first->name() << std::endl;
-            for (auto& p : other.second) {
-                std::cout << "  " << p.first << " <=> " << p.second << std::endl;
-            }
-        }
-    }   
-}
+// void ChannelsModule::print_shared_pins() {
+//     for (auto& entry : g_share_list_map) {
+//         for (auto& other : entry.second) {
+//             std::cout << entry.first->name() << " <=> " << other.first->name() << std::endl;
+//             for (auto& p : other.second) {
+//                 std::cout << "  " << p.first << " <=> " << p.second << std::endl;
+//             }
+//         }
+//     }   
+// }
 
 } // namespace daq
 } // namespace mahi

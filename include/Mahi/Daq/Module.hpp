@@ -37,7 +37,7 @@ public:
     virtual ~Module() { }
     /// Returns the Module's name.
     const std::string& name() const;
-    /// Gets const reference to this Module's DAQ
+    /// Returns reference to this Module's parent DAQ
     Daq& daq() const;
 public:
     /// Called when the DAQ opens.
@@ -56,34 +56,29 @@ private:
     std::string m_name; ///< This Module's string name
 };
 
-/// A DAQ interface may expose one or more Modules.
-/// Modules should expose one type of I/O functionality of the DAQ, but
+/// ChannelModules expose one type of array-like I/O functionality of the DAQ, but
 /// may use any number of ModuleInterfaces to implement the functionality,
-/// e.g. separate ModuleInterfaces for buffers and registry settings. 
+/// e.g. separate ModuleInterfaces for I/O buffers and registry settings. 
 class ChannelsModule : public Module {
 public:
     /// Constructor. Sets the allowed channels, but does not set the current channels.
     /// Make an explicit call to set_channels. 
     ChannelsModule(Daq& daq, const ChanNums& allowed);
-    /// Gets the vector of channel numbers this Module maintains.
-    const ChanNums& channels() const;
-    /// Gets the vector of channel numbers this Module maintains in the internal representation.
-    const ChanNums& channels_internal() const;
-    /// Checks if a channel number is a number defined on this Module.
-    bool valid_channel(ChanNum ch, bool quiet = false) const;
-    /// Checks if the size of a vector equals the number of channels.
-    bool valid_count(std::size_t size, bool quiet = false) const;
-    /// Returns buffer index associated with channel number.
-    std::size_t index(ChanNum ch) const;
-    /// Sets the channel numbers this Module maintains. Understand that if you
-    /// are holding references to any buffer values, this may, and likely will, 
-    /// invalidate those references, so use this only on startup before pulling
-    /// references. If this Module share's pins with other Modules, they will
-    /// be updated as well if needed.
+    /// Sets the channel numbers this Module maintains. The channels requested
+    /// must be a subset of the Modue's allowed channels. If this Module shares
+    /// pins/channels with another, those Modules will have their pins reclaimed.
+    /// Understand that if you are holding references to any buffer values, this 
+    /// may, and likely will, invalidate those references, so use this only on 
+    // startup before pulling references. 
     bool set_channels(const ChanNums& chs);
-    //// Returns true if this Module shares pins
+    /// Gets the channel numbers this Module is currently maintaining.
+    const ChanNums& channels() const;
+    /// Gets the list of channels allowed on the Module.
+    const ChanNums& channels_allowed() const;
+    /// Gets the channel numbers this Module maintains in the internal representation.
+    const ChanNums& channels_internal() const;
+    //// Returns true if this Module shares pins with another.
     bool shares_pins() const;
-    static void print_shared_pins();
 public:
     /// Transforms a public facing channel number to the internal representation.
     /// Passes through by default. Override if your DAQ API channel indexing is 
@@ -91,11 +86,15 @@ public:
     virtual ChanNum transform_channel_number(ChanNum public_facing) const;
     /// Share pins data structure
     typedef std::vector<std::pair<ChanNums,ChanNums>> ShareList;
-    /// Use this to facilitate pin sharing between ChannelsModules
-    /// #share_pins establishes the channel sharing policy, e.g.
-    /// {{{0},{0,1}},{{1,2},{2}}} means a's channel 0 shares with b's 
+    /// Use this to facilitate pin sharing between ChannelsModules e.g. DIOs 
+    /// commonly share pins with w/ PWM, I2C, encoders, etc.
+    /// ShareList({{{0},{0,1}},{{1,2},{2}}}) means a's channel 0 shares with b's 
     /// channels 0,1, and a's channels 1,2 shares with b's channel 2.
     static void share(ChannelsModule* a, ChannelsModule* b, ShareList share_list);
+    /// Called when new channels have been gained
+    util::Event<bool(const ChanNums&),util::CollectorBooleanAnd> on_gain_channels;
+    /// Called when old channels have been freed
+    util::Event<bool(const ChanNums&),util::CollectorBooleanAnd> on_free_channels;
 private:
     friend ModuleInterfaceBase;
     ChanNums m_chs_allowed;                     ///< The allowed public facing channel numbers

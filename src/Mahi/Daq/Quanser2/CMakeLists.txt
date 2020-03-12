@@ -6,10 +6,12 @@ target_sources(daq
     QuanserDI.cpp
     QuanserDO.cpp
     QuanserEncoder.cpp
+    QuanserPwm.cpp
     QuanserOther.cpp
     QuanserWatchdog.cpp
     QuanserOptions.cpp
     QuanserUtils.cpp
+    Q2Usb.cpp
     Q8Usb.cpp
 )
 

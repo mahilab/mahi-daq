@@ -9,6 +9,7 @@
 #include <Mahi/Daq/Quanser2/QuanserAO.hpp>
 #include <Mahi/Daq/Quanser2/QuanserDI.hpp>
 #include <Mahi/Daq/Quanser2/QuanserDO.hpp>
+#include <Mahi/Daq/Quanser2/QuanserPWM.hpp>
 #include <Mahi/Daq/Quanser2/QuanserEncoder.hpp>
 #include <Mahi/Daq/Quanser2/QuanserOther.hpp>
 
@@ -56,7 +57,7 @@ QuanserDaq::QuanserDaq(const char* card_type) :
     m_h(nullptr),
     m_rw(std::make_unique<QuanserDaq::ReadWriteImpl>())
 {
-    set_name(std::string(m_card_type) + "_" + std::to_string(m_id));
+    set_name(std::string(m_card_type) + "-" + std::to_string(m_id));
 }
 
 QuanserDaq::~QuanserDaq() {
@@ -79,10 +80,10 @@ bool QuanserDaq::read_all() {
             read_DI ? static_cast<t_uint32>(m_rw->DI->channels_internal().size()) : 0, // num digital channels 
             read_OI ? &m_rw->OI->channels_internal()[0] : nullptr,                     // other channels
             read_OI ? static_cast<t_uint32>(m_rw->OI->channels_internal().size()) : 0, // num other channels 
-            read_AI ? &m_rw->AI->buffer()[0] : nullptr,                       // analog buffer
-            read_EN ? &m_rw->EN->buffer()[0] : nullptr,                       // encoder buffer
-            read_DI ? &m_rw->DI->buffer()[0] : nullptr,                       // digital buffer
-            read_OI ? &m_rw->OI->buffer()[0] : nullptr                        // other buffer
+            read_AI ? &m_rw->AI->buffer()[0] : nullptr,                                // analog buffer
+            read_EN ? &m_rw->EN->buffer()[0] : nullptr,                                // encoder buffer
+            read_DI ? &m_rw->DI->buffer()[0] : nullptr,                                // digital buffer
+            read_OI ? &m_rw->OI->buffer()[0] : nullptr                                 // other buffer
         );
         if (result == 0) {
             // call post read callbacks
@@ -92,7 +93,7 @@ bool QuanserDaq::read_all() {
             if (read_OI) { m_rw->OI->post_read.emit(&m_rw->OI->channels_internal()[0], &m_rw->OI->buffer()[0], m_rw->OI->channels_internal().size()); }
             return true;
         }
-        LOG(Error) << "Failed to read all inputs on " << name() << " " << get_quanser_error_message(result);
+        LOG(Error) << "Failed to read all inputs on " << name() << " " << quanser_msg(result);
         return false;
     }
     return Daq::read_all();
@@ -102,32 +103,32 @@ bool QuanserDaq::write_all() {
     if (m_rw->synced_write) {
         // check: 1) not nullptr, 2) has more than 0 channels, and 3) client wants it to be read with read_all
         const bool read_AO = (m_rw->AO != nullptr && m_rw->AO->channels_internal().size() > 0 && m_rw->AO->write_with_all );
-        // const bool read_PW = (m_rw->PW != nullptr && m_rw->PW->channels_internal().size() > 0 && m_rw->PW->write_with_all );
+        const bool read_PW = (m_rw->PW != nullptr && m_rw->PW->channels_internal().size() > 0 && m_rw->PW->write_with_all );
         const bool read_DO = (m_rw->DO != nullptr && m_rw->DO->channels_internal().size() > 0 && m_rw->DO->write_with_all );;
         const bool read_OO = (m_rw->OO != nullptr && m_rw->OO->channels_internal().size() > 0 && m_rw->OO->write_with_all );
         auto result = hil_write(m_h, 
             read_AO ? &m_rw->AO->channels_internal()[0] : nullptr,                     // analog channels
             read_AO ? static_cast<t_uint32>(m_rw->AO->channels_internal().size()) : 0, // num analog channels 
-            nullptr, // read_PW ? &m_rw->PW->channels_internal()[0] : nullptr,                     // encoder channels
-            0, // read_PW ? static_cast<t_uint32>(m_rw->PW->channels_internal().size()) : 0, // num encoder channels    
+            read_PW ? &m_rw->PW->channels_internal()[0] : nullptr,                     // pwm channels
+            read_PW ? static_cast<t_uint32>(m_rw->PW->channels_internal().size()) : 0, // num pwm channels    
             read_DO ? &m_rw->DO->channels_internal()[0] : nullptr,                     // digital channels
             read_DO ? static_cast<t_uint32>(m_rw->DO->channels_internal().size()) : 0, // num digital channels 
             read_OO ? &m_rw->OO->channels_internal()[0] : nullptr,                     // other channels
             read_OO ? static_cast<t_uint32>(m_rw->OO->channels_internal().size()) : 0, // num other channels 
-            read_AO ? &m_rw->AO->buffer()[0] : nullptr,                       // analog buffer
-            nullptr, // read_PW ? &m_rw->PW->buffer()[0] : nullptr,                       // encoder buffer
-            read_DO ? &m_rw->DO->buffer()[0] : nullptr,                       // digital buffer
-            read_OO ? &m_rw->OO->buffer()[0] : nullptr                        // other buffer
+            read_AO ? &m_rw->AO->buffer()[0] : nullptr,                                // analog buffer
+            read_PW ? &m_rw->PW->buffer()[0] : nullptr,                                // pwm buffer
+            read_DO ? &m_rw->DO->buffer()[0] : nullptr,                                // digital buffer
+            read_OO ? &m_rw->OO->buffer()[0] : nullptr                                 // other buffer
         );
         if (result == 0) {
             // call post read callbacks
             if (read_AO) { m_rw->AO->post_write.emit(&m_rw->AO->channels_internal()[0], &m_rw->AO->buffer()[0], m_rw->AO->channels_internal().size()); }
-            // if (read_PW) { m_rw->PW->post_write.emit(&m_rw->PW->channels_internal()[0], &m_rw->PW->buffer()[0], m_rw->PW->channels_internal().size()); }
+            if (read_PW) { m_rw->PW->post_write.emit(&m_rw->PW->channels_internal()[0], &m_rw->PW->buffer()[0], m_rw->PW->channels_internal().size()); }
             if (read_DO) { m_rw->DO->post_write.emit(&m_rw->DO->channels_internal()[0], &m_rw->DO->buffer()[0], m_rw->DO->channels_internal().size()); }
             if (read_OO) { m_rw->OO->post_write.emit(&m_rw->OO->channels_internal()[0], &m_rw->OO->buffer()[0], m_rw->OO->channels_internal().size()); }
             return true;
         }
-        LOG(Error) << "Failed to write all outputs on " << name() << " " << get_quanser_error_message(result);
+        LOG(Error) << "Failed to write all outputs on " << name() << " " << quanser_msg(result);
         return false;
     }
     return Daq::write_all();
@@ -136,17 +137,17 @@ bool QuanserDaq::write_all() {
 bool QuanserDaq::set_options(const QuanserOptions& options) {
     m_options = options;
     char options_str[4096];
-    std::strcpy(options_str, m_options.get_string().c_str());
+    std::strcpy(options_str, m_options.str().c_str());
     if (valid()) {
         t_error result;
         result = hil_set_card_specific_options(m_h, options_str, std::strlen(options_str));
         util::sleep(util::milliseconds(10));
         if (result == 0) {
-            LOG(Verbose) << "Set " << name() << " options to: \"" << m_options.get_string() << "\"";
+            LOG(Verbose) << "Set " << name() << " options to: \"" << m_options.str() << "\"";
             return true;
         }
         else {
-            LOG(Error) << "Failed to set " << name() << " options to: \"" << m_options.get_string() << "\" " << get_quanser_error_message(result);
+            LOG(Error) << "Failed to set " << name() << " options to: \"" << m_options.str() << "\" " << quanser_msg(result);
             return false;
         }
     }
@@ -166,7 +167,7 @@ std::string QuanserDaq::manufactuer() const {
     t_error result = hil_get_string_property(m_h, PROPERTY_STRING_MANUFACTURER, buf, ARRAY_LENGTH(buf));
     if (result == 0)
         return std::string(buf);    
-    LOG(Error) << "Failed to get HIL string property PROPERTY_STRING_MANUFACTURER " << get_quanser_error_message(result);
+    LOG(Error) << "Failed to get HIL string property PROPERTY_STRING_MANUFACTURER " << quanser_msg(result);
     return "";
 }
 
@@ -175,7 +176,7 @@ std::string QuanserDaq::product_name() const {
     t_error result = hil_get_string_property(m_h, PROPERTY_STRING_PRODUCT_NAME, buf, ARRAY_LENGTH(buf));
     if (result == 0)
         return std::string(buf);    
-    LOG(Error) << "Failed to get HIL string property PROPERTY_STRING_PRODUCT_NAME " << get_quanser_error_message(result);
+    LOG(Error) << "Failed to get HIL string property PROPERTY_STRING_PRODUCT_NAME " << quanser_msg(result);
     return "";
 }
 
@@ -184,7 +185,7 @@ std::string QuanserDaq::model_name() const {
     t_error result = hil_get_string_property(m_h, PROPERTY_STRING_MODEL_NAME, buf, ARRAY_LENGTH(buf));
     if (result == 0)
         return std::string(buf);    
-    LOG(Error) << "Failed to get HIL string property PROPERTY_STRING_MODEL_NAME " << get_quanser_error_message(result);
+    LOG(Error) << "Failed to get HIL string property PROPERTY_STRING_MODEL_NAME " << quanser_msg(result);
     return "";
 }
 
@@ -193,7 +194,7 @@ std::string QuanserDaq::serial_number() const {
     t_error result = hil_get_string_property(m_h, PROPERTY_STRING_SERIAL_NUMBER, buf, ARRAY_LENGTH(buf));
     if (result == 0)
         return std::string(buf);    
-    LOG(Error) << "Failed to get HIL string property PROPERTY_STRING_SERIAL_NUMBER " << get_quanser_error_message(result);
+    LOG(Error) << "Failed to get HIL string property PROPERTY_STRING_SERIAL_NUMBER " << quanser_msg(result);
     return "";
 }
 
@@ -203,7 +204,7 @@ std::string QuanserDaq::hil_version() {
     t_error result = hil_get_version(&v);
     if (result == 0) 
         return fmt::format("{}.{}.{}",v.major, v.minor, v.release);
-    LOG(Error) << "Failed to get HIL SDK version " << get_quanser_error_message(result);
+    LOG(Error) << "Failed to get HIL SDK version " << quanser_msg(result);
     return "";
 }
 
@@ -231,12 +232,12 @@ bool QuanserDaq::on_daq_open() {
         if (!set_options(m_options)) {
             // options didn't take so close
             hil_close(m_h);
-            LOG(Error) << "Opened " << name() << " but automatically closing because specified options failed to take effect";
+            LOG(Error) << "Opened " << name() << " but automatically closing because specified options failed to take effect.";
             return false;
         }
         return true;
     }
-    LOG(Error) << "Failed to open " << name() << " " << get_quanser_error_message(result);
+    LOG(Error) << "Failed to open " << name() << " " << quanser_msg(result);
     return false;
 }
 
@@ -246,7 +247,7 @@ bool QuanserDaq::on_daq_close() {
         return true;
     }
     else {
-        LOG(Error) << get_quanser_error_message(result, true);
+        LOG(Error) << quanser_msg(result, true);
         return false;
     }
 }

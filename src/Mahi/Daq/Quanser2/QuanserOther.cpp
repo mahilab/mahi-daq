@@ -20,7 +20,7 @@ QuanserOtherInput::QuanserOtherInput(QuanserDaq& d, QuanserHandle& h, const Chan
         if (result == 0)
             return true;
         else {
-            LOG(Error) << "Failed to read " << name() << " " << get_quanser_error_message(result);
+            LOG(Error) << "Failed to read " << name() << " " << quanser_msg(result);
             return false;
         }
         return true;
@@ -41,7 +41,7 @@ QuanserOtherOutput::QuanserOtherOutput(QuanserDaq& d, QuanserHandle& h, const Ch
         if (result == 0)
             return true;
         else {
-            LOG(Error) << "Failed to write " << name() << " " << get_quanser_error_message(result);
+            LOG(Error) << "Failed to write " << name() << " " << quanser_msg(result);
             return false;
         }
         return true;

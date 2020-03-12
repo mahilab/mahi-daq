@@ -21,7 +21,7 @@ bool QuanserPwm::update() {
     if (result == 0)
         return true;
     else {
-        LOG(Error) << "Failed to update " << get_name() << " " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to update " << get_name() << " " << QuanserDaq::quanser_msg(result);
         return false;
     }
 }
@@ -32,7 +32,7 @@ bool QuanserPwm::update_channel(ChanNum channel_number) {
     if (result == 0)
         return true;
     else {
-        LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to update " << get_name() << " channel number " << channel_number << " " << QuanserDaq::quanser_msg(result);
         return false;
     }
 }
@@ -47,7 +47,7 @@ bool QuanserPwm::set_expire_values(const std::vector<DutyCycle>& expire_values) 
         return true;
     }
     else {
-        LOG(Error) << "Failed to set " << get_name() << " expire values " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to set " << get_name() << " expire values " << QuanserDaq::quanser_msg(result);
         return false;
     }
 }
@@ -62,7 +62,7 @@ bool QuanserPwm::set_expire_value(ChanNum channel_number, DutyCycle expire_value
         return true;
     }
     else {
-        LOG(Error) << "Failed to set " << get_name() << " channel number " << channel_number << " expire value " << QuanserDaq::get_quanser_error_message(result);
+        LOG(Error) << "Failed to set " << get_name() << " channel number " << channel_number << " expire value " << QuanserDaq::quanser_msg(result);
         return false;
     }
 }

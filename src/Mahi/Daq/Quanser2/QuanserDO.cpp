@@ -18,7 +18,7 @@ QuanserDO::QuanserDO(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed)  
     auto on_write_impl = [this](const ChanNum *chs, const Logic *vals, std::size_t n) {
         t_error result = hil_write_digital(m_h, chs, static_cast<t_uint32>(n), vals);
         if (result != 0) {
-            LOG(Error) << "Failed to write " << this->name() << " digital outputs " << get_quanser_error_message(result);
+            LOG(Error) << "Failed to write " << this->name() << " digital outputs " << quanser_msg(result);
             return false;
         }
         return true;
@@ -37,21 +37,20 @@ QuanserDO::QuanserDO(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed)  
         t_error result;
         result = hil_watchdog_set_digital_expiration_state(m_h, chs, static_cast<ChanNum>(n), &converted[0]);
         if (result == 0) {
-            LOG(Verbose) << "Set " << name() << " digital output expiration sates";
+            LOG(Verbose) << "Wrote " << name() << " digital output expiration sates.";
             return true;
         }
         else {
-            LOG(Error) << "Failed to set " << name() << " digital output expire states " << get_quanser_error_message(result);
+            LOG(Error) << "Failed to write " << name() << " digital output expire states " << quanser_msg(result);
             return false;
         }
     };
     expire_values.on_write.connect(expire_write_impl);
-}
-
-bool QuanserDO::on_daq_open() {
-    for (auto& ch : channels())
-        expire_values[ch] = LOW;
-    return expire_values.write(); // may need a sleep here
+    // on channels gained
+    auto on_gain = [this](const ChanNums& gained) {
+        return expire_values.write(gained, std::vector<Logic>(gained.size(), LOW));
+    };
+    on_gain_channels.connect(on_gain);
 }
 
 } // namespace daq 
