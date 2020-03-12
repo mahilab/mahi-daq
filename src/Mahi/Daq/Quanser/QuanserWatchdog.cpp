@@ -1,6 +1,6 @@
 #include <hil.h>
-#include <Mahi/Daq/Quanser2/QuanserDaq.hpp>
-#include <Mahi/Daq/Quanser2/QuanserWatchdog.hpp>
+#include <Mahi/Daq/Quanser/QuanserDaq.hpp>
+#include <Mahi/Daq/Quanser/QuanserWatchdog.hpp>
 #include "QuanserUtils.hpp"
 
 #include <Mahi/Util/Logging/Log.hpp>

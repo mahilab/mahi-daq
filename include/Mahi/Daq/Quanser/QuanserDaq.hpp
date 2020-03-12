@@ -16,8 +16,8 @@
 
 #pragma once
 #include <Mahi/Daq/Daq.hpp>
-#include <Mahi/Daq/Quanser2/QuanserHandle.hpp>
-#include <Mahi/Daq/Quanser2/QuanserOptions.hpp>
+#include <Mahi/Daq/Quanser/QuanserHandle.hpp>
+#include <Mahi/Daq/Quanser/QuanserOptions.hpp>
 #include <Mahi/Daq/Io.hpp>
 
 namespace mahi {

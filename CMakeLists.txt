@@ -103,7 +103,7 @@ if(WIN32)
             option(MAHI_QUANSER "Turn ON to build Quanser support"  OFF) 
         endif()
         if (MAHI_QUANSER)
-            add_subdirectory(src/mahi/daq/Quanser2)
+            add_subdirectory(src/mahi/daq/Quanser)
         endif()
 
         #=======================================================================

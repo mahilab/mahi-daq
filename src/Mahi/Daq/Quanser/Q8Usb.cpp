@@ -1,4 +1,4 @@
-#include <Mahi/Daq/Quanser2/Q8Usb.hpp>
+#include <Mahi/Daq/Quanser/Q8Usb.hpp>
 #include <Mahi/Util/Logging/Log.hpp>
 #include <hil.h>
 
@@ -11,17 +11,33 @@ Q8Usb::Q8Usb() :
     QuanserDaq("q8_usb"),
     AI(*this, m_h, {0,1,2,3,4,5,6,7}), 
     AO(*this, m_h, {0,1,2,3,4,5,6,7}),
-    DI(*this, m_h, {0,1,2,3,4,5,6,7,8,9}), 
-    DO(*this, m_h, {0,1,2,3,4,5,6,7}),
+    DI(*this, m_h, false, {0,1,2,3,4,5,6,7,8,9}), 
+    DO(*this, m_h, false, {0,1,2,3,4,5,6,7}),
+    PWM(*this, m_h, {0,1,2,3,4,5,6,7}),
     encoder(*this, m_h, {0,1,2,3,4,5,6,7}), 
     velocity(*this, m_h, encoder, {0,1,2,3,4,5,6,7}),
-    watchdog(*this, m_h, util::milliseconds(100))
+    watchdog(*this, m_h, 100_ms)
 {   
     // open
     open();
     // establish shared pins relationships
-    // ...
-    // set the intial channels
+    ChannelsModule::share(&DO, &PWM, {{{0},{0}},{{1},{1}},{{2},{2}},{{3},{3}},{{4},{4}},{{5},{5}},{{6},{6}},{{7},{7}}});
+    // connect PWM gain callback
+    auto on_pwm_gain = [this](const ChanNums& gain) {
+        auto opts = get_options();
+        for (auto& g : gain) 
+            opts.pwmX_en[g] = true;
+        return set_options(opts);
+    };
+    PWM.on_gain_channels.connect(on_pwm_gain);
+    // connect PWM free callback
+    auto on_pwm_free = [this](const ChanNums& gain) {
+        auto opts = get_options();
+        for (auto& g : gain) 
+            opts.pwmX_en[g] = false;        
+        return set_options(opts);
+    };
+    // set the initial channels
     AI.set_channels({0,1,2,3,4,5,6,7}); 
     AO.set_channels({0,1,2,3,4,5,6,7});
     DI.set_channels({0,1,2,3,4,5,6,7}); 
@@ -31,7 +47,7 @@ Q8Usb::Q8Usb() :
     // configure synced reads
     config_read(&AI, &DI, &encoder, &velocity);
     // configure synced writes
-    config_write(&AO, &DO, nullptr, nullptr);
+    config_write(&AO, &DO, &PWM, nullptr);
 }
 
 Q8Usb::~Q8Usb() {

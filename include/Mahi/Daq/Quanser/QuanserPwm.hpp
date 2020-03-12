@@ -15,38 +15,37 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <Mahi/Daq/Output.hpp>
+#include <Mahi/Daq/Io.hpp>
+#include <Mahi/Daq/Quanser/QuanserHandle.hpp>
+#include <Mahi/Util/Timing/Frequency.hpp>
 
 namespace mahi {
 namespace daq {
 
-//==============================================================================
-// FORWARD DECLARATIONS
-//==============================================================================
-
 class QuanserDaq;
 
-//==============================================================================
-// CLASS DECLARATION
-//==============================================================================
-
-class QuanserPwm : public PwmOutput {
+/// Quanser PWM output Module
+class QuanserPwm : public Fused<OutputModule<double>,QuanserDaq> {
 public:
-    QuanserPwm(QuanserDaq& daq, const ChanNums& channel_numbers);
-
-    bool update() override;
-
-    bool update_channel(ChanNum channel_number) override;
-
-    bool set_expire_values(const std::vector<double>& expire_values) override;
-
-    bool set_expire_value(ChanNum channel_number, double expire_value) override;
-
+    /// The output mode to be use when write is called
+    enum class Mode {
+        DutyCycle, /// PWM outputs vary in duty cycle by percentage, with frequency fixed (default).
+        Frequency, /// PWM outputs vary in frequency, with duty cycle fixed. 
+        Period,    /// PWM outputs vary in period, with duty cycle fixed
+        OneShot    /// PWM outputs vary in duty cycle, only a single pulse generated per write
+    };
+    /// Constructor
+    QuanserPwm(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
+        /// The writing output mode of each channel
+    Fused<Register<Mode>,QuanserPwm> modes;
+    /// The values to default to if the DAQ watchdog expires.
+    Fused<Register<double>,QuanserPwm> expire_values;
+    /// The frequencies to be used in Mode::DutyCycle in Hz
+    Fused<Register<double>,QuanserPwm> frequencies;
+    /// The duty cycles to be use in Mode::Frequency and Mode::Period in range 0 to 1
+    Fused<Register<double>,QuanserPwm> duty_cycles;
 private:
-    QuanserDaq& daq_;  ///< Reference to parent QuanserDaq
-
-    QuanserPwm( const QuanserPwm& ) = delete; // non construction-copyable
-    QuanserPwm& operator=( const QuanserPwm& ) = delete; // non copyable
+    QuanserHandle& m_h;
 };
 
 } // namespace daq

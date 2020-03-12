@@ -1,18 +1,19 @@
 target_sources(daq
     PRIVATE
-    Q2Usb.cpp
-    Q8Usb.cpp
-    QPid.cpp
+    QuanserDaq.cpp
     QuanserAI.cpp
     QuanserAO.cpp
-    QuanserDaq.cpp
     QuanserDI.cpp
-    QuanserDIO.cpp
     QuanserDO.cpp
     QuanserEncoder.cpp
     QuanserPwm.cpp
-    QuanserOptions.cpp
+    QuanserOther.cpp
     QuanserWatchdog.cpp
+    QuanserOptions.cpp
+    QuanserUtils.cpp
+    Q2Usb.cpp
+    Q8Usb.cpp
+    QPid.cpp
 )
 
 target_link_libraries(daq

@@ -15,31 +15,20 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <Mahi/Daq/Watchdog.hpp>
-#include <Mahi/Daq/Quanser2/QuanserHandle.hpp>
+#include <Mahi/Daq/Io.hpp>
+#include <Mahi/Daq/Quanser/QuanserHandle.hpp>
 
 namespace mahi {
 namespace daq {
 
 class QuanserDaq;
 
-/// Encapsulates a Quanser hardware watchdog timer
-class QuanserWatchdog final : public Watchdog {
+class QuanserAI : public Fused<AIModule,QuanserDaq> {
 public:
-    /// Default constructor
-    QuanserWatchdog(QuanserDaq& d, QuanserHandle& h, util::Time timeout);
-    /// Default destructor. Stops the watchdog if watching
-    ~QuanserWatchdog();
-    bool start() override;
-    bool kick() override;
-    bool stop() override;
-    bool is_expired() override;
-    bool clear() override;
+    QuanserAI(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
+    Fused<Register<Range<Voltage>>, QuanserAI> ranges;
 private:
-    bool on_daq_open() override;
-    bool on_daq_close() override;
-private:
-    QuanserHandle& m_h;  ///< Reference to parent QuanserHandle
+    QuanserHandle& m_h;
 };
 
 } // namespace daq

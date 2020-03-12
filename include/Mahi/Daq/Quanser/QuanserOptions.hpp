@@ -46,17 +46,11 @@ struct QuanserOptions {
     enum class LedMode { Ignore, Auto, User };
     enum class DoMode { Ignore, Digital, Pwm };
     enum class AoMode { VoltageMode  = 0, CurrentMode2 = 1, CurrentMode1 = 2, CurrentMode0 = 3, ControlMode2 = 4, ControlMode1 = 5, ControlMode0 = 6};
-    struct AoPrams {
-        AoMode ch_mode;
-        double ch_kff; 
-        double ch_a0; double ch_a1; double ch_a2; 
-        double ch_b0; double ch_b1; 
-        double ch_post;
-    };
+    struct AoPrams { AoMode ch_mode; double ch_kff, ch_a0, ch_a1, ch_a2, ch_b0, ch_b1, ch_post; };
     
     /// Makes the Quanser formatted options string
     std::string str();    
-    /// Clears all options
+    /// Return  all options to default
     void clear();
 
     /// Function:       Set normal (1kHz) or fast (8kHz) board updating

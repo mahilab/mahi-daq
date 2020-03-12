@@ -16,7 +16,7 @@
 
 #pragma once
 #include <Mahi/Daq/Io.hpp>
-#include <Mahi/Daq/Quanser2/QuanserHandle.hpp>
+#include <Mahi/Daq/Quanser/QuanserHandle.hpp>
 
 namespace mahi {
 namespace daq {
@@ -25,9 +25,10 @@ class QuanserDaq;
 
 class QuanserDI : public Fused<DIModule,QuanserDaq> {
 public:
-    QuanserDI(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
+    QuanserDI(QuanserDaq& d, QuanserHandle& h, bool bidirectional, const ChanNums& allowed);
 private:
     QuanserHandle& m_h;
+    bool m_bidirectional;
 };
 
 } // namespace daq

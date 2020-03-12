@@ -1,4 +1,4 @@
-#include <Mahi/Daq/Quanser2/Q2Usb.hpp>
+#include <Mahi/Daq/Quanser/Q2Usb.hpp>
 #include <Mahi/Util/Logging/Log.hpp>
 #include <hil.h>
 
@@ -11,11 +11,11 @@ Q2Usb::Q2Usb() :
     QuanserDaq("q2_usb"),
     AI(*this, m_h, {0,1}), 
     AO(*this, m_h, {0,1}),
-    DI(*this, m_h, {0,1,2,3,4,5,6,7}), 
-    DO(*this, m_h, {0,1,2,3,4,5,6,7,8}),
+    DI(*this, m_h, true, {0,1,2,3,4,5,6,7}), 
+    DO(*this, m_h, true, {0,1,2,3,4,5,6,7,8}),
     PWM(*this, m_h, {0,1}),
     encoder(*this, m_h, {0,1}), 
-    watchdog(*this, m_h, util::milliseconds(100))
+    watchdog(*this, m_h, 100_ms)
 {
     // open
     open();
@@ -29,29 +29,6 @@ Q2Usb::Q2Usb() :
     ChannelsModule::share(&DI, &DO, {{{0},{0}},{{1},{1}},{{2},{2}},{{3},{3}},{{4},{4}},{{5},{5}},{{6},{6}},{{7},{7}}});
     ChannelsModule::share(&PWM, &DO, {{{0},{0}},{{1},{1}}});
     ChannelsModule::share(&PWM, &DI, {{{0},{0}},{{1},{1}}});
-    // connect DI gain callback
-    auto on_di_gain = [this](const ChanNums& gain) {
-        auto result = hil_set_digital_directions(m_h, &gain[0], static_cast<t_uint32>(gain.size()), nullptr, 0);
-        if (result != 0) {
-            LOG(Error) << "Failed to set " << DI.name() << " channels [" << gain << "] directions to inputs.";
-            return false;
-        }
-        LOG(Verbose) << "Set " << DI.name() << " channels [" << gain << "] directions to inputs.";
-        return true;
-    };
-    DI.on_gain_channels.connect(on_di_gain);
-    // connect DO gain callback
-    auto on_do_gain = [this](const ChanNums& gain) {
-        auto result = hil_set_digital_directions(m_h, nullptr, 0, &gain[0], static_cast<t_uint32>(gain.size()));
-        if (result != 0) {
-            LOG(Error) << "Failed to set " << DO.name() << " channels [" << gain << "] directions to outputs.";
-            return false;
-        }
-        LOG(Verbose) << "Set " << DO.name() << " channels [" << gain << "] directions to outputs.";
-        DO.expire_values.write(std::vector<Logic>(DO.channels().size(), LOW));
-        return true;
-    };
-    DO.on_gain_channels.connect(on_do_gain);
     // conect PWM gain callback
     auto on_pwm_gain = [this](const ChanNums& gain) {
         auto opts = get_options();
@@ -63,8 +40,7 @@ Q2Usb::Q2Usb() :
             else 
                 LOG(Error) << "Channel " << g << " is not a supported PWM channel on the Q2-USB.";
         }
-        set_options(opts);
-        return true;
+        return set_options(opts);
     };
     PWM.on_gain_channels.connect(on_pwm_gain);
     // connect PWM free callback
@@ -78,11 +54,10 @@ Q2Usb::Q2Usb() :
             else 
                 LOG(Error) << "Channel " << g << " is not a supported PWM channel on the Q2-USB.";
         }
-        set_options(opts);
-        return true;
+        return set_options(opts);
     };
     PWM.on_free_channels.connect(on_pwm_free);
-    // set the intial channels
+    // set the initial channels
     AI.set_channels({0,1}); 
     AO.set_channels({0,1});
     DI.set_channels({0,1,2,3,4,5,6,7}); 

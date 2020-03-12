@@ -1,6 +1,6 @@
-#include <Mahi/Daq/Quanser2/QuanserEncoder.hpp>
-#include <Mahi/Daq/Quanser2/QuanserAO.hpp>
-#include <Mahi/Daq/Quanser2/QuanserDaq.hpp>
+#include <Mahi/Daq/Quanser/QuanserEncoder.hpp>
+#include <Mahi/Daq/Quanser/QuanserAO.hpp>
+#include <Mahi/Daq/Quanser/QuanserDaq.hpp>
 #include <hil.h>
 #include "QuanserUtils.hpp"
 #include <Mahi/Util/Logging/Log.hpp>

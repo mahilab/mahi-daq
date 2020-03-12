@@ -16,19 +16,20 @@
 
 #pragma once
 #include <Mahi/Daq/Io.hpp>
-#include <Mahi/Daq/Quanser2/QuanserHandle.hpp>
+#include <Mahi/Daq/Quanser/QuanserHandle.hpp>
 
 namespace mahi {
 namespace daq {
 
 class QuanserDaq;
 
-class QuanserAI : public Fused<AIModule,QuanserDaq> {
+class QuanserDO : public Fused<DOModule,QuanserDaq> {
 public:
-    QuanserAI(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
-    Fused<Register<Range<Voltage>>, QuanserAI> ranges;
+    QuanserDO(QuanserDaq& d, QuanserHandle& h, bool bidirectional, const ChanNums& allowed);
+    Fused<Register<Logic>,QuanserDO> expire_values;
 private:
     QuanserHandle& m_h;
+    bool m_bidirectional;
 };
 
 } // namespace daq

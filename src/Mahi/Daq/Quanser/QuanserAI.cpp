@@ -1,5 +1,5 @@
-#include <Mahi/Daq/Quanser2/QuanserAI.hpp>
-#include <Mahi/Daq/Quanser2/QuanserDaq.hpp>
+#include <Mahi/Daq/Quanser/QuanserAI.hpp>
+#include <Mahi/Daq/Quanser/QuanserDaq.hpp>
 #include <Mahi/Util/Logging/Log.hpp>
 #include <hil.h>
 #include "QuanserUtils.hpp"

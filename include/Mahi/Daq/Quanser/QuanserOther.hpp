@@ -1,7 +1,7 @@
 #pragma once
 #include <Mahi/Daq/Io.hpp>
-#include <Mahi/Daq/Quanser2/QuanserHandle.hpp>
-#include <Mahi/Daq/Quanser2/QuanserDaq.hpp>
+#include <Mahi/Daq/Quanser/QuanserHandle.hpp>
+#include <Mahi/Daq/Quanser/QuanserDaq.hpp>
 
 namespace mahi {
 namespace daq {
