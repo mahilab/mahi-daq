@@ -37,8 +37,7 @@ namespace daq {
 struct QuanserOptions {
 
     // Structs, enums, etc.
-
-    enum class UpdateRate {Normal, Fast};
+    enum class UpdateRate { Normal, Fast };
     enum class EncoderDirection { Nonreversed = 0, Reversed = 1 };
     enum class EncoderFilter { Unfiltered = 0, Filtered = 1 };
     enum class EncoderDetection { High = 0, Low = 1 };
