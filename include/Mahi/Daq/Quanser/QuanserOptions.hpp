@@ -43,8 +43,8 @@ struct QuanserOptions {
     enum class EncoderFilter { Unfiltered = 0, Filtered = 1 };
     enum class EncoderDetection { High = 0, Low = 1 };
     enum class EncoderReload { NoReload = 0, OnPulse = 1 };
-    enum class LedMode { Ignore, Auto, User };
-    enum class DoMode { Ignore, Digital, Pwm };
+    enum class LedMode { None, Auto, User };
+    enum class DoMode { None, Digital, Pwm };
     enum class AoMode { VoltageMode  = 0, CurrentMode2 = 1, CurrentMode1 = 2, CurrentMode0 = 3, ControlMode2 = 4, ControlMode1 = 5, ControlMode0 = 6};
     struct AoPrams { AoMode ch_mode; double ch_kff, ch_a0, ch_a1, ch_a2, ch_b0, ch_b1, ch_post; };
     
@@ -64,7 +64,7 @@ struct QuanserOptions {
     /// Function:       Set LED mode on Q2-USB
     /// Quanser option: led
     /// Applies to:     Q2Usb
-    LedMode led = LedMode::Ignore;
+    LedMode led = LedMode::None;
     /// Function:       Sets digital I/O mode on line 0 of Q2-USB
     /// Quanser option: d0
     /// Applies to:     Q2Usb
