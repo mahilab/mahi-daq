@@ -2,23 +2,21 @@
 #include <windows.h>
 #include <826api.h> 
 #include <bitset>
-
 #include <Mahi/Util/Logging/Log.hpp>
+#include "SensorayUtils.hpp"
+
 using namespace mahi::util;
 
 namespace mahi {
 namespace daq {
     
 S826::S826(int board) :
-    Daq("s826_" + std::to_string(board)),
-    board_(board),
-    AI(*this),
-    AO(*this),
-    DIO(*this),
-    encoder(*this),
-    watchdog(*this, 10_ms)
+    m_board(board)
 {
-
+    // set name
+    set_name("s826_" + std::to_string(board));
+    // open
+    open();
 }
 
 S826::~S826() {
@@ -28,7 +26,7 @@ S826::~S826() {
         close();
 }
 
-bool S826::on_open() {
+bool S826::on_daq_open() {
     // open comms with all boards
     bool success = true;
     int detected_boards = S826_SystemOpen();
@@ -40,67 +38,45 @@ bool S826::on_open() {
         LOG(Error) << "No S826 boards detected.";
         success = false;
     }
-    std::bitset<32> board_bits(detected_boards);
-    if (board_bits[board_]) {
+    std::bitset<32> m_boardbits(detected_boards);
+    if (m_boardbits[m_board]) {
         // call on_open for modules
-        if (!AI.on_open())
-            success = false;
-        if (!AO.on_open())
-            success = false;
-        if (!encoder.on_open())
-            success = false;
+        // if (!AI.on_open())
+        //     success = false;
+        // if (!AO.on_open())
+        //     success = false;
+        // if (!encoder.on_open())
+        //     success = false;
         return true;
     }
     else {
-        LOG(Error) << "The requested S826 board " << board_ << " was not detected.";
+        LOG(Error) << "The requested S826 board " << m_board << " was not detected.";
         success = false;
     }
     return success;
 }
 
-bool S826::on_close() {
-    // close comms with all boards
+bool S826::on_daq_close() {
     S826_SystemClose();
     return true;
 }
 
-bool S826::on_enable() {
+bool S826::on_daq_enable() {
     return true;
 }
 
-bool S826::on_disable() {
+bool S826::on_daq_disable() {
     return true;
 }
 
-util::Time S826::get_time() const {
+util::Time S826::time() const {
     unsigned int timestamp;
-    int result = S826_TimestampRead(board_, &timestamp);
+    int result = S826_TimestampRead(m_board, &timestamp);
     if (result != S826_ERR_OK) {
-        LOG(Error) << "Failed to read " << get_name() << " timestamp (" << get_error_message(result) << ").";
+        LOG(Error) << "Failed to read " << name() << " timestamp (" << sensoray_msg(result) << ").";
         return Time::Zero;
     }
     return util::microseconds(timestamp);
-}
-
-std::string S826::get_error_message(int error) {
-    switch(error) {
-        case S826_ERR_OK           : return "No error";
-        case S826_ERR_BOARD        : return "Illegal board number";
-        case S826_ERR_VALUE        : return "Illegal argument value";
-        case S826_ERR_NOTREADY     : return "Device not ready or timeout waiting for device";
-        case S826_ERR_CANCELLED    : return "Wait cancelled";
-        case S826_ERR_DRIVER       : return "Driver call failed";
-        case S826_ERR_MISSEDTRIG   : return "Missed adc trigger";
-        case S826_ERR_DUPADDR      : return "Two boards set to same board number";
-        case S826_ERR_BOARDCLOSED  : return "Board is not open";
-        case S826_ERR_CREATEMUTEX  : return "Can't create mutex";
-        case S826_ERR_MEMORYMAP    : return "Can't map board to memory address";
-        case S826_ERR_MALLOC       : return "Can't allocate memory";
-        case S826_ERR_FIFOOVERFLOW : return "Counter's snapshot fifo overflowed";
-        case S826_ERR_LOCALBUS     : return "Can't read local bus (register contains illegal value)";
-        case S826_ERR_OSSPECIFIC   : return "Port-specific error (base error number)";
-        default                    : return "Unknown error code";
-    }
 }
 
 } // namespace daq

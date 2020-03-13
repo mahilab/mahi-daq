@@ -112,7 +112,7 @@ if(WIN32)
 
         find_package(Sensoray826)
         if (Sensoray826_FOUND)
-            option(MAHI_SENSORAY826 "Turn ON to build Sensoray 826 support" OFF)  
+            option(MAHI_SENSORAY826 "Turn ON to build Sensoray 826 support" ON)  
         else()
             option(MAHI_SENSORAY826 "Turn ON to build Sensoray 826 support" OFF)
         endif() 

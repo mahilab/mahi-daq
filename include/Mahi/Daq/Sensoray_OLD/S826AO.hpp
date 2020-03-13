@@ -16,35 +16,32 @@
 
 #pragma once
 
-#include <Mahi/Daq/Daq.hpp>
-// #include <Mahi/Daq/Sensoray/S826AI.hpp>
-// #include <Mahi/Daq/Sensoray/S826AO.hpp>
-// #include <Mahi/Daq/Sensoray/S826DIO.hpp>
-// #include <Mahi/Daq/Sensoray/S826Encoder.hpp>
-// #include <Mahi/Daq/Sensoray/S826Watchdog.hpp>
-#include <Mahi/Util/Timing/Time.hpp>
+#include <Mahi/Daq/Output.hpp>
 
 namespace mahi {
 namespace daq {
 
-class S826 : public Daq {
+class S826;
+
+class S826AO : public AnalogOutput {
 public:
-    /// Constructor 
-    S826(int board = 0);
-    /// Destructor
-    ~S826();
-    /// Returns the current board time
-    util::Time time() const;
-public:
-    // ...
-private:    
-    virtual bool on_daq_open() override;
-    virtual bool on_daq_close() override;
-    virtual bool on_daq_enable() override;
-    virtual bool on_daq_disable() override;
+
+    bool update_channel(ChanNum channel_number) override;
+
 private:
-    /// S826 board identification number
-    unsigned int m_board; 
+    friend class S826;
+
+    /// Private constructor used by S826
+    S826AO(S826& s826);
+
+    /// Caled by S826 when it opens
+    bool on_open();
+
+private:
+    S826& s826_;
+
+    S826AO( const S826AO& ) = delete; // non construction-copyable
+    S826AO& operator=( const S826AO& ) = delete; // non copyable
 };
 
 } // namespace daq

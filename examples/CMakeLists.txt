@@ -23,7 +23,7 @@ if (MAHI_QUANSER)
 endif()
 
 if (MAHI_SENSORAY826)
-    mahi_daq_example(s826)
+    # mahi_daq_example(s826)
 endif()
 
 if (MAHI_MYRIO)

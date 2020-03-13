@@ -16,35 +16,34 @@
 
 #pragma once
 
-#include <Mahi/Daq/Daq.hpp>
-// #include <Mahi/Daq/Sensoray/S826AI.hpp>
-// #include <Mahi/Daq/Sensoray/S826AO.hpp>
-// #include <Mahi/Daq/Sensoray/S826DIO.hpp>
-// #include <Mahi/Daq/Sensoray/S826Encoder.hpp>
-// #include <Mahi/Daq/Sensoray/S826Watchdog.hpp>
-#include <Mahi/Util/Timing/Time.hpp>
+#include <Mahi/Daq/InputOutput.hpp>
 
 namespace mahi {
 namespace daq {
 
-class S826 : public Daq {
+class S826;
+
+class S826DIO : public DigitalInputOutput {
 public:
-    /// Constructor 
-    S826(int board = 0);
-    /// Destructor
-    ~S826();
-    /// Returns the current board time
-    util::Time time() const;
-public:
-    // ...
-private:    
-    virtual bool on_daq_open() override;
-    virtual bool on_daq_close() override;
-    virtual bool on_daq_enable() override;
-    virtual bool on_daq_disable() override;
+
+    bool update() override;
+    bool update_channel(ChanNum channel_number) override;
+    bool set_direction(ChanNum channel_number, Direction direction) override;
+
 private:
-    /// S826 board identification number
-    unsigned int m_board; 
+    friend class S826;
+
+    /// Private constructor used by S826
+    S826DIO(S826& s826);
+
+    /// Called by S826 when it opens
+    bool on_open();
+
+private:
+    S826& s826_;
+
+    S826DIO( const S826DIO& ) = delete; // non construction-copyable
+    S826DIO& operator=( const S826DIO& ) = delete; // non copyable
 };
 
 } // namespace daq

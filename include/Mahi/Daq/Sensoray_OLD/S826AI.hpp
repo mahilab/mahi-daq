@@ -16,35 +16,24 @@
 
 #pragma once
 
-#include <Mahi/Daq/Daq.hpp>
-// #include <Mahi/Daq/Sensoray/S826AI.hpp>
-// #include <Mahi/Daq/Sensoray/S826AO.hpp>
-// #include <Mahi/Daq/Sensoray/S826DIO.hpp>
-// #include <Mahi/Daq/Sensoray/S826Encoder.hpp>
-// #include <Mahi/Daq/Sensoray/S826Watchdog.hpp>
+#include <Mahi/Daq/Io.hpp>
 #include <Mahi/Util/Timing/Time.hpp>
 
 namespace mahi {
 namespace daq {
 
-class S826 : public Daq {
+class S826;
+
+class S826AI : public AOModule {
 public:
-    /// Constructor 
-    S826(int board = 0);
-    /// Destructor
-    ~S826();
-    /// Returns the current board time
-    util::Time time() const;
-public:
-    // ...
-private:    
-    virtual bool on_daq_open() override;
-    virtual bool on_daq_close() override;
-    virtual bool on_daq_enable() override;
-    virtual bool on_daq_disable() override;
+    Fused<Register<util::Time>,S826AI> settling_times;
 private:
-    /// S826 board identification number
-    unsigned int m_board; 
+    friend class S826;
+    S826AI(S826& s826, unsigned int board);
+    bool on_daq_open() override;
+private:
+    unsigned int m_board;
+    int adc_buffer_[16];
 };
 
 } // namespace daq

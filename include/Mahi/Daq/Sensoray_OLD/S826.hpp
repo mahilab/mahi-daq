@@ -44,7 +44,7 @@ private:
     virtual bool on_daq_disable() override;
 private:
     /// S826 board identification number
-    unsigned int m_board; 
+    int m_board; 
 };
 
 } // namespace daq
