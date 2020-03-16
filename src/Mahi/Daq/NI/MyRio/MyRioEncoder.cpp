@@ -16,7 +16,7 @@ MyRioEncoder::MyRioEncoder(MyRioConnector& connector, const ChanNums& allowed) :
     m_conn(connector)
 {
     // set name
-    set_name(m_conn.name() + ".DO");
+    set_name(m_conn.name() + ".encoder");
     // read impl
     auto read_impl = [this](const ChanNum* chs, Counts* vals, std::size_t n) {
         bool success = true;
@@ -37,8 +37,8 @@ MyRioEncoder::MyRioEncoder(MyRioConnector& connector, const ChanNums& allowed) :
         bool success = true;
         for (std::size_t i = 0; i < n; ++i) {
             if (vals[i] == 0) {
-                set_register_bit(ENC_CNFG[m_conn.type][chs[i]], 1);
-                clr_register_bit(ENC_CNFG[m_conn.type][chs[i]], 1);
+                set_bit(ENC_CNFG[m_conn.type][chs[i]], 1);
+                clr_bit(ENC_CNFG[m_conn.type][chs[i]], 1);
                 success = true;
             }
             else  {
@@ -55,19 +55,19 @@ MyRioEncoder::MyRioEncoder(MyRioConnector& connector, const ChanNums& allowed) :
         for (auto& ch : chs) {
             if (m_conn.type == MyRioConnector::MxpA || m_conn.type == MyRioConnector::MxpB) {
                 switch(ch) {
-                    case 0: set_register_bit(ss, 5); break; // disables DIO 11,12
+                    case 0: set_bit(ss, 5); break; // disables DIO 11,12
                     default: break;
                 }
             }
             else if (m_conn.type == MyRioConnector::MspC) {
                 switch(ch) {
-                    case 0: set_register_bit(ss, 0); break; // disables DIO 0,2
-                    case 1: set_register_bit(ss, 2); break; // disables DIO 4,6
+                    case 0: set_bit(ss, 0); break; // disables DIO 0,2
+                    case 1: set_bit(ss, 2); break; // disables DIO 4,6
                     default: break;
                 }
             }
-            clr_register_bit(ENC_CNFG[m_conn.type][ch], 2); // set to quadrature mode
-            set_register_bit(ENC_CNFG[m_conn.type][ch], 0); // enable encoder
+            clr_bit(ENC_CNFG[m_conn.type][ch], 2); // set to quadrature mode
+            set_bit(ENC_CNFG[m_conn.type][ch], 0); // enable encoder
         }
         return true;
     };
@@ -75,7 +75,7 @@ MyRioEncoder::MyRioEncoder(MyRioConnector& connector, const ChanNums& allowed) :
     // free impl
     auto free_impl = [this](const ChanNums& chs) {
         for (auto& ch : chs) 
-            clr_register_bit(ENC_CNFG[m_conn.type][ch], 0); // disable encoder
+            clr_bit(ENC_CNFG[m_conn.type][ch], 0); // disable encoder
         return true;
     };
     on_free_channels.connect(free_impl);
@@ -84,9 +84,9 @@ MyRioEncoder::MyRioEncoder(MyRioConnector& connector, const ChanNums& allowed) :
         bool success = true;
         for (std::size_t i = 0; i < n; ++i) {
             if (vals[i] == QuadMode::X4) 
-                clr_register_bit(ENC_CNFG[m_conn.type][chs[i]], 2);
+                clr_bit(ENC_CNFG[m_conn.type][chs[i]], 2);
             else if (vals[i] == QuadMode::X0) 
-                set_register_bit(ENC_CNFG[m_conn.type][chs[i]], 2);
+                set_bit(ENC_CNFG[m_conn.type][chs[i]], 2);
             else {
                 LOG(Error) << "myRIO encoders only support X0 and X4 quadrature modes";
                 success = false;
@@ -101,10 +101,10 @@ void MyRioEncoder::sync() {
     // determine which channels are currently enabled on FPGA
     ChanNums chs;
     for (auto& ch : allowed_) {
-        if (get_register_bit(sysselect_, bits_[ch])) {
+        if (get_bit(sysselect_, bits_[ch])) {
             chs.push_back(ch);
-            clr_register_bit(cnfg_[ch], 2); // set to quadrature mode
-            set_register_bit(cnfg_[ch], 0); // enable encoder
+            clr_bit(cnfg_[ch], 2); // set to quadrature mode
+            set_bit(cnfg_[ch], 0); // enable encoder
         }
     }
     // set module channels

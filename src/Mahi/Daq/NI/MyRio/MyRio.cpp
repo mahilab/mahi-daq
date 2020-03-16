@@ -182,14 +182,14 @@ bool MyRio::write_all() {
 }
 
 bool MyRio::is_button_pressed() const {
-    return get_register_bit(DIBTN, 0);
+    return get_bit(DIBTN, 0);
 }
 
 void MyRio::set_led(int led, bool on) {
     if (on)
-        set_register_bit(DOLED30, led);
+        set_bit(DOLED30, led);
     else
-        clr_register_bit(DOLED30, led);
+        clr_bit(DOLED30, led);
 }
 
 
