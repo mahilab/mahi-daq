@@ -111,18 +111,6 @@ MyRio::MyRio() :
 {
     // open
     open();
-
-    mxpA.AI.set_channels({0,1,2,3});
-    mxpA.AO.set_channels({0,1});
-    mxpA.DI.set_channels({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15});
-
-    mxpB.AI.set_channels({0,1,2,3});
-    mxpB.AO.set_channels({0,1});
-    mxpB.DI.set_channels({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15});
-
-    mspC.AI.set_channels({0,1});
-    mspC.AO.set_channels({0,1});
-    mspC.DI.set_channels({{0,1,2,3,4,5,6,7}});
 }
 
 MyRio::~MyRio() {
