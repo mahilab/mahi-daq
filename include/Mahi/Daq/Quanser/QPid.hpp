@@ -20,7 +20,7 @@
 #include <Mahi/Daq/Quanser/QuanserAO.hpp>
 #include <Mahi/Daq/Quanser/QuanserDI.hpp>
 #include <Mahi/Daq/Quanser/QuanserDO.hpp>
-#include <Mahi/Daq/Quanser/QuanserPWM.hpp>
+#include <Mahi/Daq/Quanser/QuanserPwm.hpp>
 #include <Mahi/Daq/Quanser/QuanserEncoder.hpp>
 #include <Mahi/Daq/Quanser/QuanserWatchdog.hpp>
 
@@ -51,14 +51,14 @@ public:
     /// he Quanser Q8-USB supports 8 digital output lines. Hence channel 
     /// numbers range from 0 to 7. 
     Fused<QuanserDO,QPid> DO;
+    /// TODO
+    Fused<QuanserPwm,QPid> PWM;
     /// The Quanser Q8-USB supports eight quadrature encoder inputs with 24-bit
     /// count values. Hence encoder channel numbers range from 0 to 7. The 
     /// Quanser Q8-USB supports 0X non-quadrature (count and direction) and 4X 
     /// quadrature. Since the Quanser Q8-USB has 24-bit counters, valid initial 
     /// count values range from -8,388,608 to +8,388,607.
     Fused<QuanserEncoder,QPid> encoder;
-    /// TODO
-    Fused<QuanserPwm,QPid> PWM;
     /// The Quanser Q8-USB supports eight quadrature encoder velcity inputs.
     /// Hence encoder channel numbers range from 0 to 7. The encoder velocity 
     /// measurements provide velocity information with no differentiation 

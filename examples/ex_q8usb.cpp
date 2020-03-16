@@ -32,9 +32,8 @@ int main(int argc, char const *argv[])
     if (!q8.is_open())
         return 1;
 
-    /// Print the module names
-    for (auto& m : q8.modules())
-        print("{}", m->name());
+    /// Print the DAQ info
+    print_info(q8);
 
     // Set enable values
     q8.AO.enable_values[0] = 3.14;

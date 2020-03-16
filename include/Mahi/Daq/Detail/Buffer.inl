@@ -10,17 +10,17 @@ namespace mahi {
 namespace daq {
 
 template <typename T>
-ModuleInterface<T>::ModuleInterface(ChanneledModule& module, T default_value) :
-    ModuleInterfaceBase(module),
+Buffer<T>::Buffer(ChanneledModule& module, T default_value) :
+    BufferBase(module),
     m_default(default_value)
 { 
     m_buffer.resize(this->module().channels_internal().size());        
     std::fill(m_buffer.begin(), m_buffer.end(), m_default);
 }
 
-/// Overload stream operator for ModuleInterface
+/// Overload stream operator for Buffer
 template <typename T>
-std::ostream& operator<<(std::ostream& os, const ModuleInterface<T>& iface) {
+std::ostream& operator<<(std::ostream& os, const Buffer<T>& iface) {
     if (iface.module().channels().size() > 0) {
         os << "{ ";
         for (std::size_t i = 0; i < iface.module().channels().size() - 1; i++) {
@@ -37,7 +37,7 @@ std::ostream& operator<<(std::ostream& os, const ModuleInterface<T>& iface) {
 }
 
 template <>
-inline std::ostream& operator<< <char>(std::ostream& os, const ModuleInterface<char>& iface) {
+inline std::ostream& operator<< <char>(std::ostream& os, const Buffer<char>& iface) {
     if (iface.module().channels().size() > 0) {
         os << "{ ";
         for (std::size_t i = 0; i < iface.module().channels().size() - 1; i++) {
@@ -54,7 +54,7 @@ inline std::ostream& operator<< <char>(std::ostream& os, const ModuleInterface<c
 }
 
 template <typename T>
-void ModuleInterface<T>::remap_channels(const ChanMap& old_map, const ChanMap& new_map)
+void Buffer<T>::remap(const ChanMap& old_map, const ChanMap& new_map)
 {
     std::vector<T> new_values(new_map.size(), m_default);
     for (auto it = old_map.begin(); it != old_map.end(); ++it) {
@@ -64,9 +64,9 @@ void ModuleInterface<T>::remap_channels(const ChanMap& old_map, const ChanMap& n
     m_buffer = new_values;
 }
 
-//=============================================================================
+//==============================================================================
 // MIXINS
-//=============================================================================
+//==============================================================================
 
 
 

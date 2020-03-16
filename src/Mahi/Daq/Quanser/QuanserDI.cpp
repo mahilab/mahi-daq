@@ -31,10 +31,10 @@ QuanserDI::QuanserDI(QuanserDaq& d,QuanserHandle& h, bool bidirectional, const C
         auto on_gain_impl = [this](const ChanNums& gain) {
             auto result = hil_set_digital_directions(m_h, &gain[0], static_cast<t_uint32>(gain.size()), nullptr, 0);
             if (result != 0) {
-                LOG(Error) << "Failed to set " << name() << " channels [" << gain << "] directions to inputs.";
+                LOG(Error) << "Failed to set " << name() << " channels " << gain << " directions to inputs.";
                 return false;
             }
-            LOG(Verbose) << "Set " << name() << " channels [" << gain << "] directions to inputs.";
+            LOG(Verbose) << "Set " << name() << " channels " << gain << " directions to inputs.";
             return true;
         };
         on_gain_channels.connect(on_gain_impl);

@@ -1,13 +1,13 @@
 #include <Mahi/Daq/Daq.hpp>
 #include <Mahi/Util/Logging/Log.hpp>
-#include <Mahi/Daq/ModuleInterface.hpp>
+#include <Mahi/Daq/Buffer.hpp>
 
 using namespace mahi::util;
 
 namespace mahi {
 namespace daq {
 
-Daq::Daq()
+Daq::Daq(const std::string& name) : Device(name)
 { }
 
 Daq::~Daq() {
@@ -46,6 +46,8 @@ bool Daq::on_open() {
 }
 
 bool Daq::on_close() {
+    if (is_enabled())
+        disable();
     bool all_success = true;
     for (auto& m : m_modules) 
         all_success = m->on_daq_close() ? all_success : false;

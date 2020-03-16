@@ -19,98 +19,138 @@
 
 #include <Mahi/Daq/NI/MyRio/MyRioAI.hpp>
 #include <Mahi/Daq/NI/MyRio/MyRioAO.hpp>
-#include <Mahi/Daq/NI/MyRio/MyRioDIO.hpp>
+#include <Mahi/Daq/NI/MyRio/MyRioDI.hpp>
+#include <Mahi/Daq/NI/MyRio/MyRioDO.hpp>
 #include <Mahi/Daq/NI/MyRio/MyRioEncoder.hpp>
-#include <Mahi/Daq/NI/MyRio/MyRioI2C.hpp>
 
 namespace mahi {
 namespace daq {
 
 class MyRio;
 
-/// myRIo Connector
+/// myRIO Connector Base Class
 class MyRioConnector : public Daq {
 public:
-
-    /// Types of myRIO connector
-    enum Type {
-        MxpA = 0,
-        MxpB = 1,
-        MspC = 2
-    };
-
-    /// Updates all Input Modules simultaenously
-    bool update_input();
-
-    /// Updates all Output Modules simultaenously
-    bool update_output();
-
-    /// Resets the connector digital pin configurations
-    virtual void reset();
-
+    enum Type { MxpA = 0, MxpB = 1, MspC = 2 };
 public:
-
     const Type type;      ///< connector Type
-    MyRioAI AI;           ///< connector analog input
-    MyRioAO AO;           ///< connector analog output
-    MyRioDIO DIO;         ///< connector digital input/output
-    MyRioEncoder encoder; ///< connector encoder
-
 protected:
-
     friend class MyRio;
-
-    /// Private constructor
     MyRioConnector(MyRio& myrio, Type type);
-
-    // Hide open/close functins
     using Daq::open;
     using Daq::close;
-
-    // Implement virtual functions
-    bool on_open() override;
-    bool on_close() override;
-    bool on_enable() override;
-    bool on_disable() override;
-
+    using Daq::enable;
+    using Daq::disable;
 protected:
-
-    MyRio& myrio_;  ///< reference to myRIO this connector is on
-
-private:
-
-    MyRioConnector( const MyRioConnector& ) = delete; // non construction-copyable
-    MyRioConnector& operator=( const MyRioConnector& ) = delete; // non copyable
-
+    MyRio& m_myrio;  ///< reference to myRIO this connector is on
 };
 
+//==============================================================================
+// MXP CONNECTORS
+//==============================================================================
 
+/// myRIO MXP Connector (i.e. MXPA, MXPB)
+///
+/// Pinout:
+///
+/// [33][31][29][27][25][23][21][19][17][15][13][11][09][07][05][03][01]
+/// [34][32][30][28][26][24][22][20][18][16][14][12][10][08][06][04][02]
+///
+/// [01] = +5V
+/// [02] = AO[0] -> AGND
+/// [03] = AI[0] -> AGND
+/// [04] = AO[1] -> AGND
+/// [05] = AI[1] -> AGND
+/// [06] = AGND
+/// [07] = AI[2] -> AGND
+/// [08] = DGND
+/// [09] = AI[3] -> AGND
+/// [10] = UART.RX
+/// [11] = DI[0], DO[0]
+/// [12] = DGND
+/// [13] = DI[1], DO[1]
+/// [14] = UART.TX
+/// [15] = DI[2], DO[2]
+/// [16] = DGND
+/// [17] = DI[3] DO[3]
+/// [18] = DI[11], DO[11], ENC[0].A
+/// [19] = DI[4], DO[4]
+/// [20] = DGND
+/// [21] = DI[5], DO[5], SPI[0].CLK
+/// [22] = DI[12], DO[12], ENC[0].B
+/// [23] = DI[6], DO[6], SPI[0].MISO
+/// [24] = DGND
+/// [25] = DI[7], DO[7], SPI[0].MOSI
+/// [26] = DI[13], DO[13]
+/// [27] = DI[8], DO[8], PWM[0]
+/// [28] = DGBD
+/// [29] = DI[9], DO[9], PWM[1]
+/// [30] = DGND
+/// [31] = DI[10], DO[10], PWM[2]
+/// [32] = DI[14], DO[14], I2C[0].SCL
+/// [33] = +3.3V
+/// [34] = DI[15], DO[15], I2C[0].SDA
 class MyRioMxp : public MyRioConnector {
 public:
-    virtual void reset() override;
+    // virtual void reset() override;
 public:
-    MyRioI2C i2c;
+    MyRioAI AI;
+    MyRioAO AO;
+    MyRioDI DI;
+    MyRioDO DO;
+    MyRioEncoder encoder;
 protected:
     friend class MyRio;
     MyRioMxp(MyRio& myrio, Type type);
-    bool on_open() override;
+    bool on_daq_open() override;
 };
 
-typedef MyRioConnector MyRioMsp;
+//==============================================================================
+// MSP CONNECTOR
+//==============================================================================
+
+/// myRIO MSP Connector (i.e. MSPC)
+/// 
+/// Pinout:
+///
+/// [01][02][03][04][05][06][07][08][09][10][11][12][13][14][15][16][17][18][19][20]
+///
+/// [01] = +15V -> AGND
+/// [02] = -15V -> AGND
+/// [03] = AGND
+/// [04] = AO[0] -> AGND
+/// [05] = AI[1] -> AGND
+/// [06] = AGND
+/// [07] = AI[0]+
+/// [08] = AI[0]-
+/// [09] = AI[1]+
+/// [10] = AI[1]-
+/// [11] = DI[0], DO[0], ENC[0].A
+/// [12] = DI[1], DO[1]
+/// [13] = DI[2], DO[2], ENC[0].B
+/// [14] = DI[3], DO[3], PWM[0]
+/// [15] = DI[4], DO[4], ENC[1].A
+/// [16] = DI[5], DO[5]
+/// [17] = DI[6], DO[6], ENC[1].B
+/// [18] = DI[7], DO[7], PWM[1] 
+/// [19] = DGND
+/// [20] = 5V -> DGND
+class MyRioMsp : public MyRioConnector {
+public:
+    /// Resets the connector digital pin configurations
+    // virtual void reset();
+public:
+    MyRioAI AI;
+    MyRioAO AO;
+    MyRioDI DI;
+    MyRioDO DO;
+    MyRioEncoder encoder;
+protected:
+    friend class MyRio;
+    MyRioMsp(MyRio& myrio, Type type);
+    bool on_daq_open() override;
+};
 
 } // namespace daq
 } // namespace mahi
 
-// MXP Shared Pins
-// I2C[0] = DIO[14:15]
-// ENC[0] = DIO[11:12]
-// PWM[0] = DIO[8]
-// PWM[1] = DIO[9]
-// PWM[2] = DIO[10]
-// SPI[0] = DIO[5:7]
-
-// MSP Shared Pins
-// PWM[0] = DIO[3]
-// PWM[1] = DIO[7]
-// ENC[0] = DIO[0,2]
-// ENC[1] = DIO[4,6]

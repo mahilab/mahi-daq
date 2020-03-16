@@ -71,25 +71,54 @@ void read(Readable* readable) {
 //     DIO.set_channels({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15});
 // }
 
+
+inline ChanMap make_channel_map1(const ChanNums& channel_numbers) {
+    ChanMap channel_map;
+    for (std::size_t i = 0; i < channel_numbers.size(); ++i)
+        channel_map[channel_numbers[i]] = i;
+    return channel_map;
+}
+
+typedef std::vector<ChanNum> ChanMap2;
+
+inline ChanMap2 make_channel_map2(const ChanNums& chs) {
+    auto highest_ch = max_element(chs);
+    std::vector<ChanNum> map(highest_ch + 1,0);
+    for (int i = 0; i < chs.size(); ++i) {
+        map[chs[i]] = i;
+    }
+    return map;
+}
+
+inline void sort_and_reduce(ChanNums& chs) {
+    std::sort(chs.begin(), chs.end());
+    chs.erase(std::unique(chs.begin(), chs.end()), chs.end());
+}
+
+
+
 int main(int argc, char const *argv[])
 {
     MahiLogger->set_max_severity(Verbose);
 
-    Q2Usb q2;
-    q2.DO.set_channels({4,5,6,7,8});
-    q2.enable();
-    q2.encoder.zero();
-    for (int i = 0; i < 1000; ++i) {
-        q2.read_all();
-        print("ENC: {}",q2.encoder.converted[0]);
-        q2.AO[0] = 10 * std::sin(TWOPI*i*0.01);
-        q2.write_all();
-        sleep(10_ms);
+    ChanNums chs = {0,1,2,3,4,5,6,7};
+    sort_and_reduce(chs);
+
+
+    auto map1 = make_channel_map1(chs);
+    auto map2 = make_channel_map2(chs);
+
+    Clock clk;
+    std::size_t sum = 0;
+    for (int i = 0; i < 100000000; ++i) {
+        sum += map1[chs[i%chs.size()]];
     }
-    q2.read_all();
-    q2.write_all();
-    q2.disable();
-    q2.AI;
+    print("{}",clk.get_elapsed_time());
+
+    print("Sum: {}", sum);
+
+    print("{}",map1);
+    print("{}",map2);
 
     return 0;
 }

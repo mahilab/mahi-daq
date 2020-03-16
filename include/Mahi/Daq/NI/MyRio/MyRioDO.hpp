@@ -15,35 +15,23 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-
-#include <Mahi/Daq/InputOutput.hpp>
+#include <Mahi/Daq/Io.hpp>
 
 namespace mahi {
 namespace daq {
 
-class S826;
+class MyRioMsp;
+class MyRioMxp;
+class MyRioConnector;
 
-class S826DIO : public DigitalInputOutput {
-public:
-
-    bool update() override;
-    bool update_channel(ChanNum channel_number) override;
-    bool set_direction(ChanNum channel_number, Direction direction) override;
-
+/// myRIO Analog Output Module
+class MyRioDO : public DOModule {
 private:
-    friend class S826;
-
-    /// Private constructor used by S826
-    S826DIO(S826& s826);
-
-    /// Called by S826 when it opens
-    bool on_open();
-
+    friend MyRioMsp;
+    friend MyRioMxp;
+    MyRioDO(MyRioConnector& connector, const ChanNums& allowed);
 private:
-    S826& s826_;
-
-    S826DIO( const S826DIO& ) = delete; // non construction-copyable
-    S826DIO& operator=( const S826DIO& ) = delete; // non copyable
+    const MyRioConnector& m_conn; 
 };
 
 } // namespace daq

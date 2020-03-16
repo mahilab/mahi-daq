@@ -10,11 +10,11 @@ namespace mahi {
 namespace daq {
 
 QuanserPwm::QuanserPwm(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed)  : 
-    Fused<OutputModule<double>,QuanserDaq>(d,allowed),
+    Fused<PwmModuleBasic,QuanserDaq>(d,allowed),
     modes(*this, Mode::DutyCycle), expire_values(*this, 0), frequencies(*this, 10000), duty_cycles(*this, 0.5), m_h(h)
 {
     set_name(d.name() + ".PWM");
-    /// Write Channels
+    // Write Channels
     auto on_write_impl = [this](const ChanNum *chs, const double *vals, std::size_t n) {
         t_error result = hil_write_pwm(m_h, chs, static_cast<t_uint32>(n), vals);
         if (result != 0) {

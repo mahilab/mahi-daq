@@ -1,14 +1,15 @@
 target_sources(daq
     PRIVATE
     MyRio.cpp
+    MyRioConnector.cpp
     MyRioAI.cpp
     MyRioAO.cpp
-    MyRioConnector.cpp
-    MyRioDIO.cpp
+    MyRioDI.cpp
+    MyRioDO.cpp
     MyRioEncoder.cpp
-    MyRioI2C.cpp
-    Detail/MyRioUtil.cpp
-    Detail/MyRioUtil.hpp
+    # MyRioI2C.cpp
+    MyRioUtils.cpp
+    MyRioUtils.hpp
     Detail/MyRioFpga60/IRQConfigure.c
     Detail/MyRioFpga60/IRQConfigure.h
     Detail/MyRioFpga60/libvisa.so

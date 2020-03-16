@@ -9,7 +9,7 @@
 #include <Mahi/Daq/Quanser/QuanserAO.hpp>
 #include <Mahi/Daq/Quanser/QuanserDI.hpp>
 #include <Mahi/Daq/Quanser/QuanserDO.hpp>
-#include <Mahi/Daq/Quanser/QuanserPWM.hpp>
+#include <Mahi/Daq/Quanser/QuanserPwm.hpp>
 #include <Mahi/Daq/Quanser/QuanserEncoder.hpp>
 #include <Mahi/Daq/Quanser/QuanserOther.hpp>
 

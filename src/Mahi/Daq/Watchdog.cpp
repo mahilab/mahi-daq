@@ -3,9 +3,9 @@
 namespace mahi {
 namespace daq {
 
-//==============================================================================
+//===============================================================================
 // CLASS DEFINTIONS
-//==============================================================================
+//===============================================================================
 
 Watchdog::Watchdog(Daq& daq) :
     Module(daq),
@@ -18,6 +18,11 @@ Watchdog::~Watchdog() { }
 void Watchdog::set_timeout(util::Time timeout) {
     m_timout = timeout;
 }
+
+util::Time Watchdog::timeout() const {
+    return m_timout;
+}
+
 
 } // namespace daq
 } // namespace mahi

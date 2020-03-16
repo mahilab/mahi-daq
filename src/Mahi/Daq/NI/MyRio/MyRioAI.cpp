@@ -1,9 +1,9 @@
-#include <Mahi/Daq/NI/MyRio/MyRio.hpp>
-#include <Mahi/Daq/NI/MyRio/MyRioAI.hpp>
-#include <Mahi/Daq/NI/MyRio/MyRioConnector.hpp>
 #include "Detail/MyRioFpga60/MyRio.h"
-
+#include <Mahi/Daq/NI/MyRio/MyRioConnector.hpp>
+#include <Mahi/Daq/NI/MyRio/MyRioAI.hpp>
 #include <Mahi/Util/Logging/Log.hpp>
+#include "MyRioUtils.hpp"
+
 using namespace mahi::util;
 
 extern NiFpga_Session myrio_session;
@@ -11,57 +11,33 @@ extern NiFpga_Session myrio_session;
 namespace mahi {
 namespace daq {
 
-namespace {
-
-// AI registers
-static const std::vector<std::vector<uint32_t>> REGISTERS({
-    {AIA_0VAL, AIA_1VAL, AIA_2VAL, AIA_3VAL},
-    {AIB_0VAL, AIB_1VAL, AIB_2VAL, AIB_3VAL},
-    {AIC_0VAL, AIC_1VAL}
-});
-
-// AI weights
-static const std::vector<std::vector<double>> WEIGHTS({
-    {AIA_0WGHT / 1000000000.0, AIA_1WGHT / 1000000000.0, AIA_2WGHT / 1000000000.0, AIA_3WGHT / 1000000000.0},
-    {AIB_0WGHT / 1000000000.0, AIB_1WGHT / 1000000000.0, AIB_2WGHT / 1000000000.0, AIB_3WGHT / 1000000000.0},
-    {AIC_0WGHT / 1000000000.0, AIC_1WGHT / 1000000000.0}
-});
-
-// AI offsets
-static const std::vector<std::vector<double>> OFFSETS({
-    {AIA_0OFST / 1000000000.0, AIA_1OFST / 1000000000.0, AIA_2OFST / 1000000000.0, AIA_3OFST / 1000000000.0},
-    {AIB_0OFST / 1000000000.0, AIB_1OFST / 1000000000.0, AIB_2OFST / 1000000000.0, AIB_3OFST / 1000000000.0},
-    {AIC_0OFST / 1000000000.0, AIC_1OFST / 1000000000.0}
-});
-
-} // namespace
-
-MyRioAI::MyRioAI(MyRioConnector& connector, const ChanNums& channel_numbers) :
-    AnalogInput(channel_numbers),
-    connector_(connector)
+MyRioAI::MyRioAI(MyRioConnector& connector, const ChanNums& allowed) :
+    AIModule(connector, allowed),
+    m_conn(connector)
 {
-    set_name(connector_.get_name() + "_AI");
+    set_name(m_conn.name() + ".AI");
+    auto read_impl = [this](const ChanNum* chs, Voltage* vals, std::size_t n) {
+        bool success = true;
+        for (std::size_t i = 0; i < n; ++i) {
+            uint16_t value = 0;
+            NiFpga_Status status = NiFpga_ReadU16(myrio_session, AI_REGISTERS[m_conn.type][chs[i]], &value);
+            if (status < 0) {
+                LOG(Error) << "Failed to read " << name() << " channel number "  << chs[i];
+                success = false;
+            }
+            else {
+                if (m_conn.type == MyRioConnector::Type::MspC)
+                    vals[i] = (int16_t)value * AI_WEIGHTS[m_conn.type][chs[i]] + AI_OFFSETS[m_conn.type][chs[i]];
+                else
+                    vals[i] = value * AI_WEIGHTS[m_conn.type][chs[i]] + AI_OFFSETS[m_conn.type][chs[i]];
+                success = true;
+            }
+        }
+        return success;
+    };
+    on_read.connect(read_impl);
 }
 
-bool MyRioAI::update_channel(ChanNum channel_number) {
-    if (!connector_.is_open()) {
-        LOG(Error) << "Failed to update channel because" << connector_.get_name() << " is not open";
-        return false;
-    }
-    uint16_t value = 0;
-    NiFpga_Status status = NiFpga_ReadU16(myrio_session, REGISTERS[connector_.type][channel_number], &value);
-    if (status < 0) {
-        LOG(Error) << "Failed to update " << get_name() << " channel number "  << channel_number;
-        return false;
-    }
-    else {
-        if (connector_.type == MyRioConnector::Type::MspC)
-            m_values[channel_number] = (int16_t)value * WEIGHTS[connector_.type][channel_number] + OFFSETS[connector_.type][channel_number];
-        else
-            m_values[channel_number] = value * WEIGHTS[connector_.type][channel_number] + OFFSETS[connector_.type][channel_number];
-        return true;
-    }
-}
 
 } // namespace daq
 } // namespace mahi

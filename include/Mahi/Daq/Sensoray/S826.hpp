@@ -17,12 +17,10 @@
 #pragma once
 
 #include <Mahi/Daq/Daq.hpp>
-// #include <Mahi/Daq/Sensoray/S826AI.hpp>
-// #include <Mahi/Daq/Sensoray/S826AO.hpp>
-// #include <Mahi/Daq/Sensoray/S826DIO.hpp>
-// #include <Mahi/Daq/Sensoray/S826Encoder.hpp>
-// #include <Mahi/Daq/Sensoray/S826Watchdog.hpp>
-#include <Mahi/Util/Timing/Time.hpp>
+#include <Mahi/Daq/Sensoray/S826AI.hpp>
+#include <Mahi/Daq/Sensoray/S826AO.hpp>
+#include <Mahi/Daq/Sensoray/S826Encoder.hpp>
+#include <Mahi/Daq/Sensoray/S826Watchdog.hpp>
 
 namespace mahi {
 namespace daq {
@@ -36,15 +34,16 @@ public:
     /// Returns the current board time
     util::Time time() const;
 public:
-    // ...
+    S826AI AI;
+    S826AO AO;
+    S826Encoder encoder;
+    S826Watchdog watchdog;
 private:    
     virtual bool on_daq_open() override;
     virtual bool on_daq_close() override;
-    virtual bool on_daq_enable() override;
-    virtual bool on_daq_disable() override;
 private:
     /// S826 board identification number
-    unsigned int m_board; 
+    const unsigned int m_board; 
 };
 
 } // namespace daq

@@ -3,7 +3,8 @@ target_sources(daq
     Daq.cpp
     # Encoder.cpp
     Module.cpp
-    ModuleInterface.cpp
+    Buffer.cpp
     # VirtualDaq.cpp
     Watchdog.cpp
+    Utils.cpp
 )

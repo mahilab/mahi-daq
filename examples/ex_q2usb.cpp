@@ -29,10 +29,11 @@ int main(int argc, char const *argv[])
     // For this example, connect AO0 to AI0 and DIO0 to DIO1, 
     // and connect an encoder to channel 0.
     Q2Usb q2;
+    if (!q2.is_open())
+        return 1;
 
-    /// Print the module names
-    for (auto& m : q2.modules())
-        print("{}", m->name());
+    /// Print the DAQ info
+    print_info(q2);
 
     // Q2-USB DI and DO share pins. All pins default to inputs, 
     /// so set the pins you wish to use as DO

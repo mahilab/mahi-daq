@@ -11,6 +11,10 @@ namespace mahi {
 namespace daq {
     
 S826::S826(int board) :
+    AI(*this, board),
+    AO(*this, board),
+    encoder(*this, board),
+    watchdog(*this, board, 10_ms),
     m_board(board)
 {
     // set name
@@ -40,14 +44,7 @@ bool S826::on_daq_open() {
     }
     std::bitset<32> m_boardbits(detected_boards);
     if (m_boardbits[m_board]) {
-        // call on_open for modules
-        // if (!AI.on_open())
-        //     success = false;
-        // if (!AO.on_open())
-        //     success = false;
-        // if (!encoder.on_open())
-        //     success = false;
-        return true;
+        success = true;
     }
     else {
         LOG(Error) << "The requested S826 board " << m_board << " was not detected.";
@@ -57,15 +54,11 @@ bool S826::on_daq_open() {
 }
 
 bool S826::on_daq_close() {
-    S826_SystemClose();
-    return true;
-}
-
-bool S826::on_daq_enable() {
-    return true;
-}
-
-bool S826::on_daq_disable() {
+    int result = S826_SystemClose();
+    if (result != S826_ERR_OK) {
+        LOG(Error) << "Failed to close " << name() << ". " << sensoray_msg(result);
+        return false;
+    }
     return true;
 }
 

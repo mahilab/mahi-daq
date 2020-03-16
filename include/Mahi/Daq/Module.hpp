@@ -24,7 +24,7 @@ namespace mahi {
 namespace daq {
 
 class Daq;
-class ModuleInterfaceBase;
+class BufferBase;
 class Readable;
 class Writeable;
 
@@ -83,7 +83,7 @@ protected:
     /// Transforms a public facing channel number to the internal representation.
     /// Passes through by default. Override if your DAQ API channel indexing is 
     /// different from the interface indexing you you want clients to use. 
-    virtual ChanNum transform_channel_number(ChanNum public_facing) const;
+    virtual ChanNum transform_channel(ChanNum public_facing) const;
     /// Use this to facilitate pin sharing between ChannelsModules e.g. DIOs 
     /// commonly share pins with w/ PWM, I2C, encoders, etc.
     /// ShareList({{{0},{0,1}},{{1,2},{2}}}) means this Module's channel 0
@@ -95,12 +95,12 @@ protected:
     /// Called when old channels have been freed
     util::Event<bool(const ChanNums&),util::CollectorBooleanAnd> on_free_channels;
 private:
-    friend ModuleInterfaceBase;
+    friend BufferBase;
     ChanNums m_chs_allowed;                     ///< The allowed public facing channel numbers
     ChanNums m_chs_public;                      ///< The current public facing channel numbers
     ChanNums m_chs_internal;                    ///< The current internal facing channel numbers
     ChanMap  m_ch_map;                          ///< Maps a public facing channel number to a buffer index position
-    std::vector<ModuleInterfaceBase*> m_ifaces; ///< Interfaces maintained  by this Module
+    std::vector<BufferBase*> m_ifaces; ///< Interfaces maintained  by this Module
 };
 
 } // namespace daq

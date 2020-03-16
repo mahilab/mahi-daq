@@ -16,46 +16,26 @@
 
 #pragma once
 #include <Mahi/Daq/Watchdog.hpp>
+#include <Mahi/Util/Timing/Time.hpp>
 
 namespace mahi {
 namespace daq {
 
-//==============================================================================
-// FORWARD DECLARATIONS
-//==============================================================================
-
 class S826;
-
-//==============================================================================
-// CLASS DECLARATION
-//==============================================================================
 
 /// Encapsulates a hardware watchdog timer
 class S826Watchdog : public Watchdog {
 public:
-
-    /// Destructor. Stops the watchdog if watching.
-    ~S826Watchdog();
-
     bool start() override;
-
     bool kick() override;
-
     bool stop() override;
-
     bool is_expired() override;
-
     bool clear() override;
-
 private:
-
     friend class S826;
-
-    /// Private constructor used by S826
-    S826Watchdog(S826& daq, util::Time timeout);
-
+    S826Watchdog(S826& daq, unsigned int board, util::Time timeout);
 private:
-    S826& s826_;  ///< Reference to parent QuanserDaq
+    const unsigned int m_board;  ///< Reference to parent QuanserDaq
 };
 
 } // namespace daq

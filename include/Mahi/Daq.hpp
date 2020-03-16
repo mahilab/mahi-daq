@@ -18,9 +18,10 @@
 
 #include <Mahi/Daq/Daq.hpp>
 #include <Mahi/Daq/Module.hpp>
-#include <Mahi/Daq/ModuleInterface.hpp>
+#include <Mahi/Daq/Buffer.hpp>
 #include <Mahi/Daq/Io.hpp>
 #include <Mahi/Daq/Watchdog.hpp>
+#include <Mahi/Daq/Utils.hpp>
 
 #ifdef MAHI_QUANSER
     #include <Mahi/Daq/Quanser/Q2Usb.hpp>
@@ -29,20 +30,9 @@
 #endif
 
 #ifdef MAHI_SENSORAY
-    // #include <Mahi/Daq/Sensoray/S826.hpp>
-    // #include <Mahi/Daq/Sensoray/S826AI.hpp>
-    // #include <Mahi/Daq/Sensoray/S826AO.hpp>
-    // #include <Mahi/Daq/Sensoray/S826DIO.hpp>
-    // #include <Mahi/Daq/Sensoray/S826Encoder.hpp>
-    // #include <Mahi/Daq/Sensoray/S826Watchdog.hpp>
+    #include <Mahi/Daq/Sensoray/S826.hpp>
 #endif
 
 #ifdef MAHI_MYRIO
     #include <Mahi/Daq/NI/MyRio/MyRio.hpp>
-    #include <Mahi/Daq/NI/MyRio/MyRioAI.hpp>
-    #include <Mahi/Daq/NI/MyRio/MyRioAO.hpp>
-    #include <Mahi/Daq/NI/MyRio/MyRioConnector.hpp>
-    #include <Mahi/Daq/NI/MyRio/MyRioDIO.hpp>
-    #include <Mahi/Daq/NI/MyRio/MyRioEncoder.hpp>
-    #include <Mahi/Daq/NI/MyRio/MyRioI2C.hpp>
 #endif

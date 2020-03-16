@@ -83,6 +83,7 @@
         "set": "cpp",
         "unordered_set": "cpp",
         "xlocbuf": "cpp",
-        "resumable": "cpp"
+        "resumable": "cpp",
+        "string_view": "cpp"
     }
 }

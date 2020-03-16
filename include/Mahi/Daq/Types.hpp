@@ -3,7 +3,9 @@
 #include <typeinfo>
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <set>
+#include <ostream>
 
 namespace mahi {
 namespace daq {

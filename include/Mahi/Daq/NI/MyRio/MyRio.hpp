@@ -15,6 +15,8 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
+#include <Mahi/Daq/Daq.hpp>
+#include <Mahi/Daq/Io.hpp>
 #include <Mahi/Daq/NI/MyRio/MyRioConnector.hpp>
 
 namespace mahi {
@@ -22,47 +24,31 @@ namespace daq {
 
 /// National Instruments myRIO embedded system
 class MyRio : public Daq {
-
 public:
-
     /// Constructor
     MyRio();
-
     /// Default Destructor
     ~MyRio();
-
     /// Resets the myRIO FPGA to default configuration
-    bool reset();
-
+    // bool reset();
     /// Updates all connector inputs simultaneously.
-    bool update_input() override;
-
+    bool read_all() override;
     /// Updates all connector outputs simultaneously.
-    bool update_output() override;
-
+    bool write_all() override;
     /// Returns true if the myRIO button is currently pressed
     bool is_button_pressed() const;
-
     /// Set myRIO led in range 0 to 3 on/off
     void set_led(int led, bool on);
-
-private:
-
-    bool on_open() override;
-    bool on_close() override;
-    bool on_enable() override;
-    bool on_disable() override;
-
-    MyRio( const MyRio& ) = delete; // non construction-copyable
-    MyRio& operator=( const MyRio& ) = delete; // non copyable
-
 public:
-
-     MyRioMxp mxpA;  ///< MXP connector A
-     MyRioMxp mxpB;  ///< MXP connector B
-     MyRioMsp mspC;  ///< MSP connector C
-
+    MyRioMxp mxpA;  ///< MXP connector A
+    MyRioMxp mxpB;  ///< MXP connector B
+    MyRioMsp mspC;  ///< MSP connector C
+private:
+    bool on_daq_open() override;
+    bool on_daq_close() override;
+    bool on_daq_enable() override;
+    bool on_daq_disable() override;
 };
 
-} // namespace daq
-} // namespace mahi
+}  // namespace daq
+}  // namespace mahi

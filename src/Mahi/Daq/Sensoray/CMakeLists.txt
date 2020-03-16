@@ -2,11 +2,10 @@ target_sources(daq
     PRIVATE
     SensorayUtils.cpp
     S826.cpp
-    # S826AI.cpp
-    # S826AO.cpp
-    # S826DIO.cpp
-    # S826Encoder.cpp
-    # S826Watchdog.cpp
+    S826AI.cpp
+    S826AO.cpp
+    S826Encoder.cpp
+    S826Watchdog.cpp
 )
 
 target_link_libraries(daq PUBLIC Sensoray::Sensoray826)

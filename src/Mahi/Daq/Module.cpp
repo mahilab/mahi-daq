@@ -1,10 +1,9 @@
 #include <Mahi/Daq/Module.hpp>
-#include <Mahi/Daq/ModuleInterface.hpp>
+#include <Mahi/Daq/Buffer.hpp>
 #include <Mahi/Daq/Daq.hpp>
 #include <Mahi/Util/Logging/Log.hpp>
 #include <algorithm>
 #include <map>
-#include <Mahi/Util/Print.hpp>
 
 using namespace mahi::util;
 
@@ -52,7 +51,7 @@ void create_shared_pins_entry(ChanneledModule* a, ChanneledModule* b, ChanneledM
 
 } // namespace private
 
-Module::Module(Daq& daq) : m_daq(daq) {
+Module::Module(Daq& daq) : m_daq(daq), m_name("UNAMED_MODULE") {
     m_daq.m_modules.push_back(this);
 }
 
@@ -74,6 +73,11 @@ ChanneledModule::ChanneledModule(Daq& daq, const ChanNums& allowed) :
 { }
 
 bool ChanneledModule::set_channels(const ChanNums& chs) {
+    // most DAQs need to be open to reconfigure channels
+    // if (!daq().is_open()) {
+    //     LOG(Error) << "Failed to set channels on " << name() << " because DAQ " << daq().name() << " is not open";
+    //     return false;
+    // }
     // sort and reduce the requested channels
     auto requested = chs;
     sort_and_reduce(requested);
@@ -85,7 +89,7 @@ bool ChanneledModule::set_channels(const ChanNums& chs) {
             bool proceed = true;
         for (auto& req : chs) {
             if (!contains(m_chs_allowed, req)) {
-                LOG(Error) << "Channel " << req << " now allowed on Module " << name() << ". Allowed channels are [" << m_chs_allowed << "].";
+                LOG(Error) << "Channel " << req << " now allowed on Module " << name() << ". Allowed channels are " << m_chs_allowed << ".";
                 proceed = false;
             }
         }
@@ -111,13 +115,13 @@ bool ChanneledModule::set_channels(const ChanNums& chs) {
     m_chs_public = requested;
     // update internal representation
     m_chs_internal.resize(m_chs_public.size());
-    for (int i = 0; i < m_chs_internal.size(); ++i)
-        m_chs_internal[i] = transform_channel_number(m_chs_public[i]);
+    for (std::size_t i = 0; i < m_chs_internal.size(); ++i)
+        m_chs_internal[i] = transform_channel(m_chs_public[i]);
     // remap channels
     ChanMap old_map = m_ch_map;
     m_ch_map = make_channel_map(m_chs_public);
     for (std::size_t i = 0; i < m_ifaces.size(); i++)
-        m_ifaces[i]->remap_channels(old_map, m_ch_map); 
+        m_ifaces[i]->remap(old_map, m_ch_map); 
     // relinquish shared pins
     if (shares_pins()) {
         for (auto relation : g_share_list_map[this]) {
@@ -146,11 +150,11 @@ bool ChanneledModule::set_channels(const ChanNums& chs) {
     // LOG(Verbose) << "Set Module " << name() << " channel numbers to [" << m_chs_public << "].";
     if (gained.size() > 0) {
         on_gain_channels.emit(gained);
-        LOG(Verbose) << "Module " << name() << " gained channel numbers [" << gained << "].";
+        LOG(Verbose) << "Module " << name() << " gained channel numbers " << gained << ".";
     }
     if (freed.size() > 0) {
         on_free_channels.emit(freed);
-        LOG(Verbose) << "Module " << name() << " freed channel numbers [" << freed << "].";
+        LOG(Verbose) << "Module " << name() << " freed channel numbers " << freed << ".";
     }
     return true;
 }
@@ -159,11 +163,15 @@ const ChanNums& ChanneledModule::channels() const {
     return m_chs_public;
 }
 
+const ChanNums& ChanneledModule::channels_allowed() const {
+    return m_chs_allowed;
+}
+
 const ChanNums& ChanneledModule::channels_internal() const {
     return m_chs_internal;
 }
 
-ChanNum ChanneledModule::transform_channel_number(ChanNum public_facing) const {
+ChanNum ChanneledModule::transform_channel(ChanNum public_facing) const {
     return public_facing;
 }
 

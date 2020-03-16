@@ -16,32 +16,23 @@
 
 #pragma once
 
-#include <Mahi/Daq/Output.hpp>
+#include <Mahi/Daq/Io.hpp>
+#include <Mahi/Util/Timing/Time.hpp>
 
 namespace mahi {
 namespace daq {
 
 class S826;
 
-class S826AO : public AnalogOutput {
+class S826AO : public AOModule {
 public:
-
-    bool update_channel(ChanNum channel_number) override;
-
+    Fused<Register<Range<Voltage>>,S826AO> ranges;
 private:
     friend class S826;
-
-    /// Private constructor used by S826
-    S826AO(S826& s826);
-
-    /// Caled by S826 when it opens
-    bool on_open();
-
+    S826AO(S826& s826, unsigned int board);
 private:
-    S826& s826_;
-
-    S826AO( const S826AO& ) = delete; // non construction-copyable
-    S826AO& operator=( const S826AO& ) = delete; // non copyable
+    const unsigned int m_board;
+    unsigned int m_ranges[8];
 };
 
 } // namespace daq

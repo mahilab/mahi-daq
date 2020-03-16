@@ -56,9 +56,9 @@ typedef ViUInt64             ViBusAddress;
 typedef ViUInt64             ViBusSize;
 typedef ViUInt64             ViAttrState;
 #else
-typedef ViChanNum             ViBusAddress;
-typedef ViChanNum             ViBusSize;
-typedef ViChanNum             ViAttrState;
+typedef ViUInt32             ViBusAddress;
+typedef ViUInt32             ViBusSize;
+typedef ViUInt32             ViAttrState;
 #endif
 
 #if defined(_VI_INT64_UINT64_DEFINED)
@@ -66,7 +66,7 @@ typedef ViUInt64             ViBusAddress64;
 typedef ViBusAddress64 _VI_PTR ViPBusAddress64;
 #endif
 
-typedef ViChanNum             ViEventType;
+typedef ViUInt32             ViEventType;
 typedef ViEventType  _VI_PTR ViPEventType;
 typedef ViEventType  _VI_PTR ViAEventType;
 typedef void         _VI_PTR ViPAttrState;
@@ -76,12 +76,12 @@ typedef ViAttr       _VI_PTR ViAAttr;
 typedef ViString             ViKeyId;
 typedef ViConstString        ViConstKeyId;
 typedef ViPString            ViPKeyId;
-typedef ViChanNum             ViJobId;
+typedef ViUInt32             ViJobId;
 typedef ViJobId      _VI_PTR ViPJobId;
-typedef ViChanNum             ViAccessMode;
+typedef ViUInt32             ViAccessMode;
 typedef ViAccessMode _VI_PTR ViPAccessMode;
 typedef ViBusAddress _VI_PTR ViPBusAddress;
-typedef ViChanNum             ViEventFilter;
+typedef ViUInt32             ViEventFilter;
 
 typedef va_list              ViVAList;
 
@@ -92,7 +92,7 @@ typedef ViStatus (_VI_FUNCH _VI_PTR ViHndlr)
 
 ViStatus _VI_FUNC  viOpenDefaultRM (ViPSession vi);
 ViStatus _VI_FUNC  viFindRsrc      (ViSession sesn, ViConstString expr, ViPFindList vi,
-                                    ViPChanNum retCnt, ViChar _VI_FAR desc[]);
+                                    ViPUInt32 retCnt, ViChar _VI_FAR desc[]);
 ViStatus _VI_FUNC  viFindNext      (ViFindList vi, ViChar _VI_FAR desc[]);
 ViStatus _VI_FUNC  viParseRsrc     (ViSession rmSesn, ViConstRsrc rsrcName,
                                     ViPUInt16 intfType, ViPUInt16 intfNum);
@@ -101,7 +101,7 @@ ViStatus _VI_FUNC  viParseRsrcEx   (ViSession rmSesn, ViConstRsrc rsrcName, ViPU
                                     ViChar _VI_FAR expandedUnaliasedName[],
                                     ViChar _VI_FAR aliasIfExists[]);
 ViStatus _VI_FUNC  viOpen          (ViSession sesn, ViConstRsrc name, ViAccessMode mode,
-                                    ViChanNum timeout, ViPSession vi);
+                                    ViUInt32 timeout, ViPSession vi);
 
 /*- Resource Template Operations --------------------------------------------*/
 
@@ -111,14 +111,14 @@ ViStatus _VI_FUNC  viGetAttribute  (ViObject vi, ViAttr attrName, void _VI_PTR a
 ViStatus _VI_FUNC  viStatusDesc    (ViObject vi, ViStatus status, ViChar _VI_FAR desc[]);
 ViStatus _VI_FUNC  viTerminate     (ViObject vi, ViUInt16 degree, ViJobId jobId);
 
-ViStatus _VI_FUNC  viLock          (ViSession vi, ViAccessMode lockType, ViChanNum timeout,
+ViStatus _VI_FUNC  viLock          (ViSession vi, ViAccessMode lockType, ViUInt32 timeout,
                                     ViConstKeyId requestedKey, ViChar _VI_FAR accessKey[]);
 ViStatus _VI_FUNC  viUnlock        (ViSession vi);
 ViStatus _VI_FUNC  viEnableEvent   (ViSession vi, ViEventType eventType, ViUInt16 mechanism,
                                     ViEventFilter context);
 ViStatus _VI_FUNC  viDisableEvent  (ViSession vi, ViEventType eventType, ViUInt16 mechanism);
 ViStatus _VI_FUNC  viDiscardEvents (ViSession vi, ViEventType eventType, ViUInt16 mechanism);
-ViStatus _VI_FUNC  viWaitOnEvent   (ViSession vi, ViEventType inEventType, ViChanNum timeout,
+ViStatus _VI_FUNC  viWaitOnEvent   (ViSession vi, ViEventType inEventType, ViUInt32 timeout,
                                     ViPEventType outEventType, ViPEvent outContext);
 ViStatus _VI_FUNC  viInstallHandler(ViSession vi, ViEventType eventType, ViHndlr handler,
                                     ViAddr userHandle);
@@ -127,25 +127,25 @@ ViStatus _VI_FUNC  viUninstallHandler(ViSession vi, ViEventType eventType, ViHnd
 
 /*- Basic I/O Operations ----------------------------------------------------*/
 
-ViStatus _VI_FUNC  viRead          (ViSession vi, ViPBuf buf, ViChanNum cnt, ViPChanNum retCnt);
-ViStatus _VI_FUNC  viReadAsync     (ViSession vi, ViPBuf buf, ViChanNum cnt, ViPJobId  jobId);
-ViStatus _VI_FUNC  viReadToFile    (ViSession vi, ViConstString filename, ViChanNum cnt,
-                                    ViPChanNum retCnt);
-ViStatus _VI_FUNC  viWrite         (ViSession vi, ViConstBuf  buf, ViChanNum cnt, ViPChanNum retCnt);
-ViStatus _VI_FUNC  viWriteAsync    (ViSession vi, ViConstBuf  buf, ViChanNum cnt, ViPJobId  jobId);
-ViStatus _VI_FUNC  viWriteFromFile (ViSession vi, ViConstString filename, ViChanNum cnt,
-                                    ViPChanNum retCnt);
+ViStatus _VI_FUNC  viRead          (ViSession vi, ViPBuf buf, ViUInt32 cnt, ViPUInt32 retCnt);
+ViStatus _VI_FUNC  viReadAsync     (ViSession vi, ViPBuf buf, ViUInt32 cnt, ViPJobId  jobId);
+ViStatus _VI_FUNC  viReadToFile    (ViSession vi, ViConstString filename, ViUInt32 cnt,
+                                    ViPUInt32 retCnt);
+ViStatus _VI_FUNC  viWrite         (ViSession vi, ViConstBuf  buf, ViUInt32 cnt, ViPUInt32 retCnt);
+ViStatus _VI_FUNC  viWriteAsync    (ViSession vi, ViConstBuf  buf, ViUInt32 cnt, ViPJobId  jobId);
+ViStatus _VI_FUNC  viWriteFromFile (ViSession vi, ViConstString filename, ViUInt32 cnt,
+                                    ViPUInt32 retCnt);
 ViStatus _VI_FUNC  viAssertTrigger (ViSession vi, ViUInt16 protocol);
 ViStatus _VI_FUNC  viReadSTB       (ViSession vi, ViPUInt16 status);
 ViStatus _VI_FUNC  viClear         (ViSession vi);
 
 /*- Formatted and Buffered I/O Operations -----------------------------------*/
 
-ViStatus _VI_FUNC  viSetBuf        (ViSession vi, ViUInt16 mask, ViChanNum size);
+ViStatus _VI_FUNC  viSetBuf        (ViSession vi, ViUInt16 mask, ViUInt32 size);
 ViStatus _VI_FUNC  viFlush         (ViSession vi, ViUInt16 mask);
 
-ViStatus _VI_FUNC  viBufWrite      (ViSession vi, ViConstBuf  buf, ViChanNum cnt, ViPChanNum retCnt);
-ViStatus _VI_FUNC  viBufRead       (ViSession vi, ViPBuf buf, ViChanNum cnt, ViPChanNum retCnt);
+ViStatus _VI_FUNC  viBufWrite      (ViSession vi, ViConstBuf  buf, ViUInt32 cnt, ViPUInt32 retCnt);
+ViStatus _VI_FUNC  viBufRead       (ViSession vi, ViPBuf buf, ViUInt32 cnt, ViPUInt32 retCnt);
 
 ViStatus _VI_FUNCC viPrintf        (ViSession vi, ViConstString writeFmt, ...);
 ViStatus _VI_FUNC  viVPrintf       (ViSession vi, ViConstString writeFmt, ViVAList params);
@@ -174,9 +174,9 @@ ViStatus _VI_FUNC  viIn16          (ViSession vi, ViUInt16 space,
 ViStatus _VI_FUNC  viOut16         (ViSession vi, ViUInt16 space,
                                     ViBusAddress offset, ViUInt16  val16);
 ViStatus _VI_FUNC  viIn32          (ViSession vi, ViUInt16 space,
-                                    ViBusAddress offset, ViPChanNum val32);
+                                    ViBusAddress offset, ViPUInt32 val32);
 ViStatus _VI_FUNC  viOut32         (ViSession vi, ViUInt16 space,
-                                    ViBusAddress offset, ViChanNum  val32);
+                                    ViBusAddress offset, ViUInt32  val32);
 
 #if defined(_VI_INT64_UINT64_DEFINED)
 ViStatus _VI_FUNC  viIn64          (ViSession vi, ViUInt16 space,
@@ -193,9 +193,9 @@ ViStatus _VI_FUNC  viIn16Ex        (ViSession vi, ViUInt16 space,
 ViStatus _VI_FUNC  viOut16Ex       (ViSession vi, ViUInt16 space,
                                     ViBusAddress64 offset, ViUInt16  val16);
 ViStatus _VI_FUNC  viIn32Ex        (ViSession vi, ViUInt16 space,
-                                    ViBusAddress64 offset, ViPChanNum val32);
+                                    ViBusAddress64 offset, ViPUInt32 val32);
 ViStatus _VI_FUNC  viOut32Ex       (ViSession vi, ViUInt16 space,
-                                    ViBusAddress64 offset, ViChanNum  val32);
+                                    ViBusAddress64 offset, ViUInt32  val32);
 ViStatus _VI_FUNC  viIn64Ex        (ViSession vi, ViUInt16 space,
                                     ViBusAddress64 offset, ViPUInt64 val64);
 ViStatus _VI_FUNC  viOut64Ex       (ViSession vi, ViUInt16 space,
@@ -211,9 +211,9 @@ ViStatus _VI_FUNC  viMoveIn16      (ViSession vi, ViUInt16 space, ViBusAddress o
 ViStatus _VI_FUNC  viMoveOut16     (ViSession vi, ViUInt16 space, ViBusAddress offset,
                                     ViBusSize length, ViAUInt16 buf16);
 ViStatus _VI_FUNC  viMoveIn32      (ViSession vi, ViUInt16 space, ViBusAddress offset,
-                                    ViBusSize length, ViAChanNum buf32);
+                                    ViBusSize length, ViAUInt32 buf32);
 ViStatus _VI_FUNC  viMoveOut32     (ViSession vi, ViUInt16 space, ViBusAddress offset,
-                                    ViBusSize length, ViAChanNum buf32);
+                                    ViBusSize length, ViAUInt32 buf32);
 
 #if defined(_VI_INT64_UINT64_DEFINED)
 ViStatus _VI_FUNC  viMoveIn64      (ViSession vi, ViUInt16 space, ViBusAddress offset,
@@ -230,9 +230,9 @@ ViStatus _VI_FUNC  viMoveIn16Ex    (ViSession vi, ViUInt16 space, ViBusAddress64
 ViStatus _VI_FUNC  viMoveOut16Ex   (ViSession vi, ViUInt16 space, ViBusAddress64 offset,
                                     ViBusSize length, ViAUInt16 buf16);
 ViStatus _VI_FUNC  viMoveIn32Ex    (ViSession vi, ViUInt16 space, ViBusAddress64 offset,
-                                    ViBusSize length, ViAChanNum buf32);
+                                    ViBusSize length, ViAUInt32 buf32);
 ViStatus _VI_FUNC  viMoveOut32Ex   (ViSession vi, ViUInt16 space, ViBusAddress64 offset,
-                                    ViBusSize length, ViAChanNum buf32);
+                                    ViBusSize length, ViAUInt32 buf32);
 ViStatus _VI_FUNC  viMoveIn64Ex    (ViSession vi, ViUInt16 space, ViBusAddress64 offset,
                                     ViBusSize length, ViAUInt64 buf64);
 ViStatus _VI_FUNC  viMoveOut64Ex   (ViSession vi, ViUInt16 space, ViBusAddress64 offset,
@@ -274,8 +274,8 @@ void     _VI_FUNC  viPeek8         (ViSession vi, ViAddr address, ViPUInt8  val8
 void     _VI_FUNC  viPoke8         (ViSession vi, ViAddr address, ViUInt8   val8);
 void     _VI_FUNC  viPeek16        (ViSession vi, ViAddr address, ViPUInt16 val16);
 void     _VI_FUNC  viPoke16        (ViSession vi, ViAddr address, ViUInt16  val16);
-void     _VI_FUNC  viPeek32        (ViSession vi, ViAddr address, ViPChanNum val32);
-void     _VI_FUNC  viPoke32        (ViSession vi, ViAddr address, ViChanNum  val32);
+void     _VI_FUNC  viPeek32        (ViSession vi, ViAddr address, ViPUInt32 val32);
+void     _VI_FUNC  viPoke32        (ViSession vi, ViAddr address, ViUInt32  val32);
 
 #if defined(_VI_INT64_UINT64_DEFINED)
 void     _VI_FUNC  viPeek64        (ViSession vi, ViAddr address, ViPUInt64 val64);
@@ -297,13 +297,13 @@ ViStatus _VI_FUNC  viMemFreeEx     (ViSession vi, ViBusAddress64 offset);
 ViStatus _VI_FUNC  viGpibControlREN(ViSession vi, ViUInt16 mode);
 ViStatus _VI_FUNC  viGpibControlATN(ViSession vi, ViUInt16 mode);
 ViStatus _VI_FUNC  viGpibSendIFC   (ViSession vi);
-ViStatus _VI_FUNC  viGpibCommand   (ViSession vi, ViConstBuf cmd, ViChanNum cnt, ViPChanNum retCnt);
+ViStatus _VI_FUNC  viGpibCommand   (ViSession vi, ViConstBuf cmd, ViUInt32 cnt, ViPUInt32 retCnt);
 ViStatus _VI_FUNC  viGpibPassControl(ViSession vi, ViUInt16 primAddr, ViUInt16 secAddr);
 
-ViStatus _VI_FUNC  viVxiCommandQuery(ViSession vi, ViUInt16 mode, ViChanNum cmd,
-                                     ViPChanNum response);
+ViStatus _VI_FUNC  viVxiCommandQuery(ViSession vi, ViUInt16 mode, ViUInt32 cmd,
+                                     ViPUInt32 response);
 ViStatus _VI_FUNC  viAssertUtilSignal(ViSession vi, ViUInt16 line);
-ViStatus _VI_FUNC  viAssertIntrSignal(ViSession vi, ViInt16 mode, ViChanNum statusID);
+ViStatus _VI_FUNC  viAssertIntrSignal(ViSession vi, ViInt16 mode, ViUInt32 statusID);
 ViStatus _VI_FUNC  viMapTrigger    (ViSession vi, ViInt16 trigSrc, ViInt16 trigDest,
                                     ViUInt16 mode);
 ViStatus _VI_FUNC  viUnmapTrigger  (ViSession vi, ViInt16 trigSrc, ViInt16 trigDest);
@@ -939,12 +939,12 @@ ViStatus _VI_FUNC  viPxiReserveTriggers(ViSession vi, ViInt16 cnt, ViAInt16 trig
 
 #define VI_EVENT_VXI_DEV_CMD        (0xBFFF200FUL)
 #define VI_ATTR_VXI_DEV_CMD_TYPE    (0x3FFF4037UL) /* ViInt16, read-only */
-#define VI_ATTR_VXI_DEV_CMD_VALUE   (0x3FFF4038UL) /* ViChanNum, read-only */
+#define VI_ATTR_VXI_DEV_CMD_VALUE   (0x3FFF4038UL) /* ViUInt32, read-only */
 
 #define VI_VXI_DEV_CMD_TYPE_16      (16)
 #define VI_VXI_DEV_CMD_TYPE_32      (32)
 
-ViStatus _VI_FUNC viVxiServantResponse(ViSession vi, ViInt16 mode, ViChanNum resp);
+ViStatus _VI_FUNC viVxiServantResponse(ViSession vi, ViInt16 mode, ViUInt32 resp);
 /* mode values include VI_VXI_RESP16, VI_VXI_RESP32, and the next 2 values */
 #define VI_VXI_RESP_NONE            (0)
 #define VI_VXI_RESP_PROT_ERROR      (-1)
@@ -1008,7 +1008,7 @@ ViStatus _VI_FUNC NI_viOpenDefaultRM (ViPSession vi);
 
 #define viPeek8(vi,addr,val)                                                \
    {                                                                        \
-      if ((NI_viImplVISA1) && (*((ViPChanNum)(vi))))                         \
+      if ((NI_viImplVISA1) && (*((ViPUInt32)(vi))))                         \
       {                                                                     \
          do (*((ViPUInt8)(val)) = *((volatile ViUInt8 _VI_PTR)(addr)));     \
          while (**((volatile ViUInt8 _VI_PTR _VI_PTR)(vi)) & 0x10);         \
@@ -1021,7 +1021,7 @@ ViStatus _VI_FUNC NI_viOpenDefaultRM (ViPSession vi);
 
 #define viPoke8(vi,addr,val)                                                \
    {                                                                        \
-      if ((NI_viImplVISA1) && (*((ViPChanNum)(vi))))                         \
+      if ((NI_viImplVISA1) && (*((ViPUInt32)(vi))))                         \
       {                                                                     \
          do (*((volatile ViUInt8 _VI_PTR)(addr)) = ((ViUInt8)(val)));       \
          while (**((volatile ViUInt8 _VI_PTR _VI_PTR)(vi)) & 0x10);         \
@@ -1034,7 +1034,7 @@ ViStatus _VI_FUNC NI_viOpenDefaultRM (ViPSession vi);
 
 #define viPeek16(vi,addr,val)                                               \
    {                                                                        \
-      if ((NI_viImplVISA1) && (*((ViPChanNum)(vi))))                         \
+      if ((NI_viImplVISA1) && (*((ViPUInt32)(vi))))                         \
       {                                                                     \
          do (*((ViPUInt16)(val)) = *((volatile ViUInt16 _VI_PTR)(addr)));   \
          while (**((volatile ViUInt8 _VI_PTR _VI_PTR)(vi)) & 0x10);         \
@@ -1047,7 +1047,7 @@ ViStatus _VI_FUNC NI_viOpenDefaultRM (ViPSession vi);
 
 #define viPoke16(vi,addr,val)                                               \
    {                                                                        \
-      if ((NI_viImplVISA1) && (*((ViPChanNum)(vi))))                         \
+      if ((NI_viImplVISA1) && (*((ViPUInt32)(vi))))                         \
       {                                                                     \
          do (*((volatile ViUInt16 _VI_PTR)(addr)) = ((ViUInt16)(val)));     \
          while (**((volatile ViUInt8 _VI_PTR _VI_PTR)(vi)) & 0x10);         \
@@ -1060,9 +1060,9 @@ ViStatus _VI_FUNC NI_viOpenDefaultRM (ViPSession vi);
 
 #define viPeek32(vi,addr,val)                                               \
    {                                                                        \
-      if ((NI_viImplVISA1) && (*((ViPChanNum)(vi))))                         \
+      if ((NI_viImplVISA1) && (*((ViPUInt32)(vi))))                         \
       {                                                                     \
-         do (*((ViPChanNum)(val)) = *((volatile ViChanNum _VI_PTR)(addr)));   \
+         do (*((ViPUInt32)(val)) = *((volatile ViUInt32 _VI_PTR)(addr)));   \
          while (**((volatile ViUInt8 _VI_PTR _VI_PTR)(vi)) & 0x10);         \
       }                                                                     \
       else                                                                  \
@@ -1073,9 +1073,9 @@ ViStatus _VI_FUNC NI_viOpenDefaultRM (ViPSession vi);
 
 #define viPoke32(vi,addr,val)                                               \
    {                                                                        \
-      if ((NI_viImplVISA1) && (*((ViPChanNum)(vi))))                         \
+      if ((NI_viImplVISA1) && (*((ViPUInt32)(vi))))                         \
       {                                                                     \
-         do (*((volatile ViChanNum _VI_PTR)(addr)) = ((ViChanNum)(val)));     \
+         do (*((volatile ViUInt32 _VI_PTR)(addr)) = ((ViUInt32)(val)));     \
          while (**((volatile ViUInt8 _VI_PTR _VI_PTR)(vi)) & 0x10);         \
       }                                                                     \
       else                                                                  \

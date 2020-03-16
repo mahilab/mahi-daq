@@ -51,11 +51,11 @@ QuanserDO::QuanserDO(QuanserDaq& d, QuanserHandle& h, bool bidirectional, const 
         if (m_bidirectional) {
             auto result = hil_set_digital_directions(m_h, nullptr, 0, &gain[0], static_cast<t_uint32>(gain.size()));
             if (result != 0) {
-                LOG(Error) << "Failed to set " << name() << " channels [" << gain << "] directions to outputs.";
+                LOG(Error) << "Failed to set " << name() << " channels " << gain << " directions to outputs.";
                 return false;
             }
         }
-        LOG(Verbose) << "Set " << name() << " channels [" << gain << "] directions to outputs.";
+        LOG(Verbose) << "Set " << name() << " channels " << gain << " directions to outputs.";
         return expire_values.write(std::vector<Logic>(channels().size(), LOW));
     };
     on_gain_channels.connect(on_gain_impl);

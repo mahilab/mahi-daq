@@ -2,7 +2,7 @@
 
 #include <Mahi/Daq/NI/MyRio/MyRioConnector.hpp>
 #include "Detail/MyRioFpga60/MyRio.h"
-#include "Detail/MyRioUtil.hpp"
+#include "MyRioUtil.hpp"
 
 extern NiFpga_Session myrio_session;
 

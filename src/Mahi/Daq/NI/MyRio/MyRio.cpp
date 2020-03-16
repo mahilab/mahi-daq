@@ -1,10 +1,10 @@
+
 #include <Mahi/Daq/NI/MyRio/MyRio.hpp>
 #include "Detail/MyRioFpga60/MyRio.h"
 #include "Detail/MyRioFpga60/MyRio.h"
-#include "Detail/MyRioUtil.hpp"
+#include "MyRioUtils.hpp"
 #include <thread>
 #include <chrono>
-
 #include <Mahi/Util/Logging/Log.hpp>
 using namespace mahi::util;
 
@@ -109,6 +109,20 @@ MyRio::MyRio() :
     mxpB(*this, MyRioConnector::Type::MxpB),
     mspC(*this, MyRioConnector::Type::MspC)
 {
+    // open
+    open();
+
+    mxpA.AI.set_channels({0,1,2,3});
+    mxpA.AO.set_channels({0,1});
+    mxpA.DI.set_channels({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15});
+
+    mxpB.AI.set_channels({0,1,2,3});
+    mxpB.AO.set_channels({0,1});
+    mxpB.DI.set_channels({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15});
+
+    mspC.AI.set_channels({0,1});
+    mspC.AO.set_channels({0,1});
+    mspC.DI.set_channels({{0,1,2,3,4,5,6,7}});
 }
 
 MyRio::~MyRio() {
@@ -118,38 +132,34 @@ MyRio::~MyRio() {
         close();
 }
 
-bool MyRio::reset() {
-    if (is_open()) {       
-        if (close_myrio(true) && open_myrio(true)) {
-            mxpA.reset();
-            mxpB.reset();
-            mspC.reset();
-            LOG(Info) << "Reset myRIO FPGA to default state";
-        }
-        else {
-            LOG(Info) << "Failed to reset myRIO FPGA to default state";
-        }
-        return true;
-    }
-    else {
-        LOG(Error) << "Could not reset myRIO FPGA because the myRIO is not open";
-        return false;
-    }    
-}
+// bool MyRio::reset() {
+//     if (is_open()) {       
+//         if (close_myrio(true) && open_myrio(true)) {
+//             mxpA.reset();
+//             mxpB.reset();
+//             mspC.reset();
+//             LOG(Info) << "Reset myRIO FPGA to default state";
+//         }
+//         else {
+//             LOG(Info) << "Failed to reset myRIO FPGA to default state";
+//         }
+//         return true;
+//     }
+//     else {
+//         LOG(Error) << "Could not reset myRIO FPGA because the myRIO is not open";
+//         return false;
+//     }    
+// }
 
-bool MyRio::on_open() {   
+bool MyRio::on_daq_open() {   
     return (open_myrio(false) &&  mxpA.open() &&  mxpB.open() && mspC.open());
 }
 
-bool MyRio::on_close() {
+bool MyRio::on_daq_close() {
     return (close_myrio(false) && mxpA.close() && mxpB.close() && mspC.close());
 }
 
-bool MyRio::on_enable() {
-    if (!is_open()) {
-        LOG(Error) << "Unable to enable myRIO " << get_name() << " because it is not open";
-        return false;
-    }
+bool MyRio::on_daq_enable() {
     // enable each connector
     if (mxpA.enable() && mxpB.enable() && mspC.enable()) {
         util::sleep(milliseconds(10));
@@ -159,11 +169,7 @@ bool MyRio::on_enable() {
         return false;
 }
 
-bool MyRio::on_disable() {
-    if (!is_open()) {
-        LOG(Error) << "Unable to disable myRIO " << get_name() << " because it is not open";
-        return false;
-    }
+bool MyRio::on_daq_disable() {
     // disable each connect
     if (mxpA.disable() && mxpB.disable() && mspC.disable()) {
         util::sleep(milliseconds(10));
@@ -173,12 +179,18 @@ bool MyRio::on_disable() {
         return false;
 }
 
-bool MyRio::update_input() {
-    return (mxpA.update_input() && mxpB.update_input() && mspC.update_input());
+bool MyRio::read_all() {
+    bool readA = mxpA.read_all();
+    bool readB = mxpB.read_all();
+    bool readC = mspC.read_all();
+    return readA && readB && readC;
 }
 
-bool MyRio::update_output() {
-    return (mxpA.update_output() && mxpB.update_output() && mspC.update_output());
+bool MyRio::write_all() {
+    bool writeA = mxpA.write_all();
+    bool writeB = mxpB.write_all();
+    bool writeC = mspC.write_all();
+    return writeA && writeB && writeC;
 }
 
 bool MyRio::is_button_pressed() const {
@@ -191,6 +203,7 @@ void MyRio::set_led(int led, bool on) {
     else
         clr_register_bit(DOLED30, led);
 }
+
 
 } // namespace daq
 } // namespace mahi

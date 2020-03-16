@@ -31,7 +31,7 @@ class Module;
 class Daq : public util::Device {
 public:
     /// Constructor
-    Daq();
+    Daq(const std::string& name = "UNAMED_DAQ");
     /// Destructor.
     virtual ~Daq();
     /// Reads all readable ModuleInterfaces known to this DAQ if they allow it

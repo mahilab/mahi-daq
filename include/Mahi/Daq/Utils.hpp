@@ -16,35 +16,12 @@
 
 #pragma once
 
-#include <Mahi/Daq/InputOutput.hpp>
+#include <Mahi/Daq/Daq.hpp>
 
 namespace mahi {
 namespace daq {
 
-class S826;
-
-class S826DIO : public DigitalInputOutput {
-public:
-
-    bool update() override;
-    bool update_channel(ChanNum channel_number) override;
-    bool set_direction(ChanNum channel_number, Direction direction) override;
-
-private:
-    friend class S826;
-
-    /// Private constructor used by S826
-    S826DIO(S826& s826);
-
-    /// Called by S826 when it opens
-    bool on_open();
-
-private:
-    S826& s826_;
-
-    S826DIO( const S826DIO& ) = delete; // non construction-copyable
-    S826DIO& operator=( const S826DIO& ) = delete; // non copyable
-};
+void print_info(const Daq& daq);
 
 } // namespace daq
 } // namespace mahi

@@ -15,32 +15,23 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <Mahi/Daq/Input.hpp>
+#include <Mahi/Daq/Io.hpp>
 
 namespace mahi {
 namespace daq {
 
+class MyRioMsp;
+class MyRioMxp;
 class MyRioConnector;
 
-/// myRIO Analog Input Module
-class MyRioAI : public AnalogInput {
-public:
-
-    /// Updates a single channel
-    bool update_channel(ChanNum channel_number) override;
-
+/// myRIO Analog Output Module
+class MyRioAI : public AIModule {
 private:
-
-    friend class MyRioConnector;
-
-    MyRioAI(MyRioConnector& connector, const ChanNums& channel_numbers);
-
-    MyRioAI( const MyRioAI& ) = delete; // non construction-copyable
-    MyRioAI& operator=( const MyRioAI& ) = delete; // non copyable
-
+    friend MyRioMsp;
+    friend MyRioMxp;
+    MyRioAI(MyRioConnector& connector, const ChanNums& allowed);
 private:
-
-    const MyRioConnector& connector_; ///< connector this module is on
+    const MyRioConnector& m_conn; 
 };
 
 } // namespace daq

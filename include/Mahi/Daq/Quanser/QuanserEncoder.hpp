@@ -46,7 +46,7 @@ public:
 private:
     /// Quanser encoder velocity channels awkwardly start at 14000 instead of 0, 
     /// therefore we apply a transformation so that they can be accessed starting at 0.
-    virtual ChanNum transform_channel_number(ChanNum public_facing) const override;
+    virtual ChanNum transform_channel(ChanNum public_facing) const override;
     QuanserEncoder& m_e;
 };
 

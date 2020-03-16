@@ -55,6 +55,9 @@ public:
     /// Sets the timeout period this Watchdog should operate on
     virtual void set_timeout(util::Time timeout);
 
+    /// Gets the timeout period this Watchdog operatres on
+    util::Time timeout() const;
+
 protected:
     util::Time m_timout; ///< The timeout period for this Watchdog
     bool m_watching;     ///< True if watchdog has been started, false if stopped

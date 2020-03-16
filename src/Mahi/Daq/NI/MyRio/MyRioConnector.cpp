@@ -1,8 +1,21 @@
 #include <Mahi/Daq/NI/MyRio/MyRioConnector.hpp>
 #include <Mahi/Daq/NI/MyRio/MyRio.hpp>
-#include "Detail/MyRioUtil.hpp"
+#include "MyRioUtils.hpp"
 #include "Detail/MyRioFpga60/MyRio.h"
 
+// MXP Shared Pins
+// I2C[0] = DIO[14:15]
+// ENC[0] = DIO[11:12]
+// PWM[0] = DIO[8]
+// PWM[1] = DIO[9]
+// PWM[2] = DIO[10]
+// SPI[0] = DIO[5:7]
+
+// MSP Shared Pins
+// PWM[0] = DIO[3]
+// PWM[1] = DIO[7]
+// ENC[0] = DIO[0,2]
+// ENC[1] = DIO[4,6]
 
 namespace mahi {
 namespace daq {
@@ -18,46 +31,59 @@ std::string connectorName(MyRioConnector::Type type) {
     else
         return "Unkown";
 }
-
-static const std::vector<ChanNums> AI_CHANNELS({
-    {0,1,2,3},
-    {0,1,2,3},
-    {0,1}
-});
-
-static const std::vector<ChanNums> AO_CHANNELS({
-    {0,1},
-    {0,1},
-    {0,1}
-});
-
-static const std::vector<ChanNums> DIO_CHANNELS({
-    {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15},
-    {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15},
-    {0,1,2,3,4,5,6,7}
-});
-
 } // namespace
     
-MyRioConnector::MyRioConnector(MyRio& myrio,Type _type) :
-    Daq(myrio.get_name() + "_" + connectorName(_type)),
-    type(_type),
-    AI(*this, AI_CHANNELS[type]),
-    AO(*this, AO_CHANNELS[type]),
-    DIO(*this, DIO_CHANNELS[type]),
-    encoder(*this, {}),
-    myrio_(myrio)
-{   
+MyRioConnector::MyRioConnector(MyRio& myrio, Type _type) :
+    Daq(myrio.name() + "." + connectorName(_type)),
+    type(_type), m_myrio(myrio)
+{ }
 
+MyRioMxp::MyRioMxp(MyRio& myrio, Type type) :
+    MyRioConnector(myrio, type),
+    AI(*this, {0,1,2,3}),
+    AO(*this, {0,1}),
+    DI(*this, {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}),
+    DO(*this, {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}),
+    encoder(*this, {0})
+{
+    // pin sharing
+    ChanneledModule::ShareList list(16);
+    for (ChanNum i = 0; i < 16; ++i)
+        list[i] = {{i},{i}};
+    DI.share_pins_with(&DO,list);
+    encoder.share_pins_with(&DO, {{{0},{11,12}}});
+    encoder.share_pins_with(&DI, {{{0},{11,12}}});
 }
 
-bool MyRioConnector::update_input() {
-    return AI.update() && DIO.update_input() && encoder.update();
+bool MyRioMxp::on_daq_open() {
+    AI.set_channels({0,1,2,3});
+    AO.set_channels({0,1});
+    DI.set_channels({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15});
+    return true;
 }
 
-bool MyRioConnector::update_output() {
-    return AO.update() && DIO.update_output();
+MyRioMsp::MyRioMsp(MyRio& myrio, Type type) :
+    MyRioConnector(myrio, type),
+    AI(*this, {0,1}),
+    AO(*this, {0,1}),
+    DI(*this, {0,1,2,3,4,5,6,7}),
+    DO(*this, {0,1,2,3,4,5,6,7}),
+    encoder(*this, {0,1})
+{
+    // pin sharing
+    ChanneledModule::ShareList list(8);
+    for (ChanNum i = 0; i < 8; ++i)
+        list[i] = {{i},{i}};
+    DI.share_pins_with(&DO,list);
+    encoder.share_pins_with(&DO, {{{0},{0,2}},{{1},{4,6}}});
+    encoder.share_pins_with(&DI, {{{0},{0,2}},{{1},{4,6}}});
 }
+
+bool MyRioMsp::on_daq_open() {
+    return true;
+}
+
+/*
 
 void MyRioConnector::reset() {
     for (auto& ch : encoder.channels_internal())
@@ -73,20 +99,6 @@ bool MyRioConnector::on_open() {
 
 bool MyRioConnector::on_close() {
     return true;
-}
-
-bool MyRioConnector::on_enable() {
-    if (AI.enable() && AO.enable() && DIO.enable() && encoder.enable())
-        return true;
-    else
-        return false;
-}
-
-bool MyRioConnector::on_disable() {
-    if (AI.disable() && AO.disable() && DIO.disable() && encoder.disable())
-        return true;
-    else
-        return false;
 }
 
 MyRioMxp::MyRioMxp(MyRio& myrio, Type type) :
@@ -106,6 +118,7 @@ bool MyRioMxp::on_open() {
     return MyRioConnector::on_open();
 }
 
+*/
 
 } // namespace daq
 } // namespace mahi

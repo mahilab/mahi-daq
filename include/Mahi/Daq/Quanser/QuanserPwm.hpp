@@ -25,7 +25,7 @@ namespace daq {
 class QuanserDaq;
 
 /// Quanser PWM output Module
-class QuanserPwm : public Fused<OutputModule<double>,QuanserDaq> {
+class QuanserPwm : public Fused<PwmModuleBasic,QuanserDaq> {
 public:
     /// The output mode to be use when write is called
     enum class Mode {

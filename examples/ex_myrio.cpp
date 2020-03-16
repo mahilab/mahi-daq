@@ -14,152 +14,53 @@
 //
 // Author(s): Evan Pezent (epezent@rice.edu)
 
-#include <MEL/Core.hpp>
-#include <MEL/Utility/Options.hpp>
-#include <MEL/Daq/NI/MyRio/MyRio.hpp>
-#include <MEL/Logging/Log.hpp>
-#include <MEL/Math/Waveform.hpp>
-#include <MEL/Core/Console.hpp>
-#include <MEL/Communications/MelNet.hpp>
-#include <MEL/Logging/Log.hpp>
-#include <MEL/Math/Constants.hpp>
-#include <string>
+#include <Mahi/Daq.hpp>
+#include <Mahi/Util.hpp>
 
-using namespace mel;
-using namespace std;
-
-// global stop variable 
-ctrl_bool stop_flag(false);
-// CTRL-C handler function
-bool handler(CtrlEvent event) {
-    if (event == CtrlEvent::CtrlC || event == CtrlEvent::Close) {
-        stop_flag = true;
-        print("Application Terminated");
-    }
-    return true;
-}
+using namespace mahi::daq;
+using namespace mahi::util;
 
 /// prints the current myRIO channel configuration
-void print_channel_info(const MyRio& myrio) {
-    print("----------------------------------------");
-    print("Connector MXP A");
-    print("    AO: ", myrio.mxpA.AO.channels_internal());
-    print("    AI: ", myrio.mxpA.AI.channels_internal());
-    print("    DI: ", myrio.mxpA.DIO.input_channel_numbers());
-    print("    DO: ", myrio.mxpA.DIO.output_channel_numbers());
-    print("    ENC:", myrio.mxpA.encoder.channels_internal());
-    print("Connector MXP B");
-    print("    AO: ", myrio.mxpB.AO.channels_internal());
-    print("    AI: ", myrio.mxpB.AI.channels_internal());
-    print("    DI: ", myrio.mxpB.DIO.input_channel_numbers());
-    print("    DO: ", myrio.mxpB.DIO.output_channel_numbers());
-    print("    ENC:", myrio.mxpB.encoder.channels_internal());
-    print("Connector MSP C");
-    print("    AO: ", myrio.mspC.AO.channels_internal());
-    print("    AI: ", myrio.mspC.AI.channels_internal());
-    print("    DI: ", myrio.mspC.DIO.input_channel_numbers());
-    print("    DO: ", myrio.mspC.DIO.output_channel_numbers());  
-    print("    ENC:", myrio.mspC.encoder.channels_internal());
-    print("----------------------------------------");
-}
+// void print_channel_info(const MyRio& myrio) {
+//     print("----------------------------------------");
+//     print("Connector MXP A");
+//     print("    AO: ", myrio.mxpA.AO.channels_internal());
+//     print("    AI: ", myrio.mxpA.AI.channels_internal());
+//     print("    DI: ", myrio.mxpA.DIO.input_channel_numbers());
+//     print("    DO: ", myrio.mxpA.DIO.output_channel_numbers());
+//     print("    ENC:", myrio.mxpA.encoder.channels_internal());
+//     print("Connector MXP B");
+//     print("    AO: ", myrio.mxpB.AO.channels_internal());
+//     print("    AI: ", myrio.mxpB.AI.channels_internal());
+//     print("    DI: ", myrio.mxpB.DIO.input_channel_numbers());
+//     print("    DO: ", myrio.mxpB.DIO.output_channel_numbers());
+//     print("    ENC:", myrio.mxpB.encoder.channels_internal());
+//     print("Connector MSP C");
+//     print("    AO: ", myrio.mspC.AO.channels_internal());
+//     print("    AI: ", myrio.mspC.AI.channels_internal());
+//     print("    DI: ", myrio.mspC.DIO.input_channel_numbers());
+//     print("    DO: ", myrio.mspC.DIO.output_channel_numbers());  
+//     print("    ENC:", myrio.mspC.encoder.channels_internal());
+//     print("----------------------------------------");
+// }
 
 // main
 int main(int argc, char** argv) {
+    MahiLogger->set_max_severity(Verbose);
 
-    // register our handler so that the program gracefully exits
-    // when CTRL-C is pressed in the terminal
-    register_ctrl_handler(handler);
-
-    // set up user options to pass in through command line
-    Options options("myrio", "myRIO Example");
-    options.add_options()
-        ("l,local",  "Local Port for MelNet",        value<unsigned short>())
-        ("r,remote", "Remote Port for MelNet",       value<unsigned short>())
-        ("i,ip",     "Remote IP Address for MelNet", value<string>())
-        ("x,reset",  "Resets myRIO on open")
-        ("h,help",   "Help");
-    // parse options user passes in
-    auto user = options.parse(argc, argv);
-    // print help info if user requests it
-    if (user.count("help") > 0) {
-        print(options.help());
-        return 0;
-    }
-    
-    // create MyRio object
     MyRio myrio;
-    if (!myrio.open())
-        return 1;
 
-    if (user.count("x"))
-        myrio.reset();
+    myrio.mspC.DO.set_channels({0,1,2,3});
 
-    myrio.mspC.encoder.enable_channel(0);
-
-    myrio.mspC.DIO[1].set_direction(Out);
-    myrio.mspC.DIO[5].set_direction(In);
-
-    print_channel_info(myrio);
-
-    // set units per count on encoder
-    myrio.mspC.encoder[0].set_units_per_count(2 * PI / 500.0f);
-
-    // enable myrio
     myrio.enable();
 
-    // create MelNet to stream data to a remote PC
-    unsigned short local_port  = user.count("l") ? user["l"].as<unsigned short>() : 55002;
-    unsigned short remote_port = user.count("r") ? user["r"].as<unsigned short>() : 55001;
-    string remote_ip_address   = user.count("i") ? user["ip"].as<string>() : "172.22.11.1";
-    string local_ip_address    = IpAddress::get_local_address().to_string();
-
-    MelNet mn(local_port, remote_port, remote_ip_address);
-
-    print("MelNet Settings:");
-    print("Local Port: ", local_port);
-    print("Local IP:   ", local_ip_address);
-    print("Remote Port:", remote_port);
-    print("Remote IP:  ", remote_ip_address);
-
-    // create sinwave for analog loopback
-    Waveform sinwave(Waveform::Sin, seconds(1), 10);
-
-    // create 1000Hz loop Timer and Time t
-    Timer timer(1000_Hz, Timer::Sleep);
-    Time t;
-
-    // control loop
-    while (!stop_flag) {
-        // update myrio inputs
-        myrio.update_input();
-        // perform analog loopback
-        double voltage_write = sinwave(t);
-        myrio.mspC.AO[0].set(voltage_write);
-        double voltage_read  = myrio.mspC.AI[0].get(); 
-        // button -> DO[1] -> DI[5] -> led[3] loop
-        if (myrio.is_button_pressed())
-            myrio.mspC.DIO[1].set(High);
-        else
-            myrio.mspC.DIO[1].set(Low);
-        if (myrio.mspC.DIO[5] == High)
-            myrio.set_led(3, true);
-        else
-            myrio.set_led(3, false);
-        // read an encoder
-        int    counts   = myrio.mspC.encoder[0].get();
-        double position = myrio.mspC.encoder[0].get_position(); // counts scale by 2*PI/500.0f
-        if (myrio.is_button_pressed()) 
-            myrio.mspC.encoder[0].zero();
-        // send myRIO voltages and encoder position over MelNet
-        mn.send_data({voltage_write, voltage_read, (double)counts, position});
-        // update myrio outputs
-        myrio.update_output();
-        // wait timer
-        t = timer.wait();
-    }
-
-    // shutdown myrio
-    myrio.disable();
-    myrio.close();
-    return 0;
+    // for (int i = 0; i < 500; ++i) {
+    //     myrio.read_all();
+    //     print("{}",myrio.mxpA.AI[0]);
+    //     double out = 2.5 + 2.5 * std::sin(TWOPI * i * 0.01);
+    //     myrio.mxpB.AO[0] = out;        
+    //     myrio.write_all();
+    //     sleep(10_ms);
+    // }
+ 
 }

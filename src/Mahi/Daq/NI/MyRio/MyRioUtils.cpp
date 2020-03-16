@@ -1,9 +1,9 @@
-#include "MyRioUtil.hpp"
-#include "MyRioFpga60/MyRio.h"
+#include "MyRioUtils.hpp"
+#include <Mahi/Util/Logging/Log.hpp>
+#include "Detail/MyRioFpga60/MyRio.h"
 #include <cassert>
 
-#include <Mahi/Util/Logging/Log.hpp>
-using namespace mahi::util;
+
 
 extern NiFpga_Session myrio_session;
 
@@ -61,6 +61,8 @@ extern NiFpga_Session myrio_session;
 −63198	NiFpga_Status_OutOfHandles	The maximum number of open FPGA sessions has been reached. Close some open sessions.
 
 */
+
+using namespace mahi::util;
 
 namespace mahi {
 namespace daq {
@@ -135,7 +137,109 @@ std::string get_nifpga_error_message(int error) {
         return "";
 }
 
+std::vector<uint32_t> SYSSELECT = { SYSSELECTA, SYSSELECTB, SYSSELECTC };
 
+std::vector<std::vector<uint32_t>> DIRS = {
+    {DIOA_70DIR, DIOA_158DIR},
+    {DIOB_70DIR, DIOB_158DIR},
+    {DIOC_70DIR}
+};
+
+std::vector<std::vector<uint32_t>> INS = {
+    {DIOA_70IN,  DIOA_158IN},
+    {DIOB_70IN,  DIOB_158IN},
+    {DIOC_70IN}
+};
+
+std::vector<std::vector<uint32_t>> OUTS {
+    {DIOA_70OUT, DIOA_158OUT},
+    {DIOB_70OUT, DIOB_158OUT},
+    {DIOC_70OUT}
+};
+
+std::vector<std::vector<int>> DIO_BITS {
+    {}
+};
+
+std::vector<std::vector<int>>      ENC_BITS = {
+    {5},
+    {5},
+    {0,2}
+};
+
+std::vector<std::vector<uint32_t>> ENC_STAT = {
+    {ENCASTAT},
+    {ENCBSTAT},
+    {ENCC_0STAT, ENCC_1STAT}
+};
+
+std::vector<std::vector<uint32_t>> ENC_CNTR = {
+    {ENCACNTR},
+    {ENCBCNTR},
+    {ENCC_0CNTR, ENCC_1CNTR}
+};
+
+std::vector<std::vector<uint32_t>> ENC_CNFG = {
+    {ENCACNFG},
+    {ENCBCNFG},
+    {ENCC_0CNFG, ENCC_1CNFG}
+};
+
+// AO registers
+std::vector<std::vector<uint32_t>> AO_REGISTERS({
+    {AOA_0VAL, AOA_1VAL},
+    {AOB_0VAL, AOB_1VAL},
+    {AOC_0VAL, AOC_1VAL}
+});
+
+// AO weights
+std::vector<std::vector<double>> AO_WEIGHTS({
+    {AOA_0WGHT / 1000000000.0, AOA_1WGHT / 1000000000.0},
+    {AOB_0WGHT / 1000000000.0, AOB_1WGHT / 1000000000.0},
+    {AOC_0WGHT / 1000000000.0, AOC_1WGHT / 1000000000.0}
+});
+
+// AO offsets
+std::vector<std::vector<double>> AO_OFFSETS({
+    {AOA_0OFST / 1000000000.0, AOA_1OFST / 1000000000.0},
+    {AOB_0OFST / 1000000000.0, AOB_1OFST / 1000000000.0},
+    {AOC_0OFST / 1000000000.0, AOC_1OFST / 1000000000.0}
+});
+
+// AI registers
+std::vector<std::vector<uint32_t>> AI_REGISTERS({
+    {AIA_0VAL, AIA_1VAL, AIA_2VAL, AIA_3VAL},
+    {AIB_0VAL, AIB_1VAL, AIB_2VAL, AIB_3VAL},
+    {AIC_0VAL, AIC_1VAL}
+});
+
+// AI weights
+std::vector<std::vector<double>> AI_WEIGHTS({
+    {AIA_0WGHT / 1000000000.0, AIA_1WGHT / 1000000000.0, AIA_2WGHT / 1000000000.0, AIA_3WGHT / 1000000000.0},
+    {AIB_0WGHT / 1000000000.0, AIB_1WGHT / 1000000000.0, AIB_2WGHT / 1000000000.0, AIB_3WGHT / 1000000000.0},
+    {AIC_0WGHT / 1000000000.0, AIC_1WGHT / 1000000000.0}
+});
+
+// AI offsets
+std::vector<std::vector<double>> AI_OFFSETS({
+    {AIA_0OFST / 1000000000.0, AIA_1OFST / 1000000000.0, AIA_2OFST / 1000000000.0, AIA_3OFST / 1000000000.0},
+    {AIB_0OFST / 1000000000.0, AIB_1OFST / 1000000000.0, AIB_2OFST / 1000000000.0, AIB_3OFST / 1000000000.0},
+    {AIC_0OFST / 1000000000.0, AIC_1OFST / 1000000000.0}
+});
+
+
+void enable_dio(unsigned int conn, unsigned int ch) {
+    auto ss = SYSSELECT[conn];
+    if (ss == SYSSELECTA) {
+
+    }
+    else if (ss = SYSSELECTB) {
+
+    }
+    else if (ss == SYSSELECTC) {
+
+    }
+}
 
 } // namespace daq
 } // namespace mahi

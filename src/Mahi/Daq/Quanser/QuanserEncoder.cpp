@@ -98,7 +98,7 @@ QuanserEncoderVelocity::QuanserEncoderVelocity(QuanserDaq& d, QuanserHandle& h, 
     post_read.connect(convert);
 }
 
-ChanNum QuanserEncoderVelocity::transform_channel_number(ChanNum public_facing) const {
+ChanNum QuanserEncoderVelocity::transform_channel(ChanNum public_facing) const {
     return public_facing + g_v_off;
 }
 

@@ -15,52 +15,24 @@
 // Author(s): Evan Pezent (epezent@rice.edu)
 
 #pragma once
-#include <Mahi/Daq/Encoder.hpp>
+#include <Mahi/Daq/Io.hpp>
 #include <utility>
 
 namespace mahi {
 namespace daq {
 
+class MyRioMsp;
+class MyRioMxp;
 class MyRioConnector;
 
 /// myRIO Encoder Module
-class MyRioEncoder : public Encoder {
-public:
-
-    /// Updates a single channel
-    bool update_channel(ChanNum channel_number) override;
-
-    /// Resets Encoder counts to a specifc value
-    bool reset_count(ChanNum channel_number, int count) override;
-
-    /// Enable a myRIO encoder channel
-    void enable_channel(ChanNum channel_number);
-
-    /// Disable a myRIO encoder channel
-    void disable_channel(ChanNum channel_number_);
-
+class MyRioEncoder : public EncoderModule<MyRioEncoder> {
 private:
-
-    friend class MyRioConnector;
-
-    void sync();
-
-    MyRioEncoder(MyRioConnector& connector, const ChanNums& channel_numbers);
-    MyRioEncoder( const MyRioEncoder& ) = delete; // non construction-copyable
-    MyRioEncoder& operator=( const MyRioEncoder& ) = delete; // non copyable
-
+    friend MyRioMsp;
+    friend MyRioMxp;
+    MyRioEncoder(MyRioConnector& connector, const ChanNums& allowed);
 private:
-
-    MyRioConnector& connector_;
-
-    // NI FPGA Registers
-    uint32_t              sysselect_;
-    std::vector<int>      bits_;
-    std::vector<uint32_t> stat_;
-    std::vector<uint32_t> cntr_;
-    std::vector<uint32_t> cnfg_;
-
-    ChanNums              allowed_;  ///< allowed channels
+    const MyRioConnector& m_conn; 
 };
 
 } // namespace daq

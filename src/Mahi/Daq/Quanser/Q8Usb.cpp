@@ -37,6 +37,7 @@ Q8Usb::Q8Usb() :
             opts.pwmX_en[g] = false;        
         return set_options(opts);
     };
+    PWM.on_free_channels.connect(on_pwm_free);
     // set the initial channels
     AI.set_channels({0,1,2,3,4,5,6,7}); 
     AO.set_channels({0,1,2,3,4,5,6,7});
