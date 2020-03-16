@@ -67,7 +67,7 @@ using namespace mahi::util;
 namespace mahi {
 namespace daq {
 
-void set_register_bit(unsigned int reg, int i) {
+void set_bit(unsigned int reg, int i) {
     uint8_t bits;
     NiFpga_Status status = NiFpga_ReadU8(myrio_session, reg, &bits);
     if (status < 0) {
@@ -81,7 +81,7 @@ void set_register_bit(unsigned int reg, int i) {
     }
 }
 
-void clr_register_bit(unsigned int reg, int i) {
+void clr_bit(unsigned int reg, int i) {
     uint8_t bits;
     NiFpga_Status status = NiFpga_ReadU8(myrio_session, reg, &bits);
     if (status < 0) {
@@ -95,7 +95,7 @@ void clr_register_bit(unsigned int reg, int i) {
     }
 }
 
-bool get_register_bit(unsigned int reg, int i) {
+bool get_bit(unsigned int reg, int i) {
     uint8_t bits;
     NiFpga_Status status = NiFpga_ReadU8(myrio_session, reg, &bits);
     if (status < 0) {
@@ -227,19 +227,6 @@ std::vector<std::vector<double>> AI_OFFSETS({
     {AIC_0OFST / 1000000000.0, AIC_1OFST / 1000000000.0}
 });
 
-
-void enable_dio(unsigned int conn, unsigned int ch) {
-    auto ss = SYSSELECT[conn];
-    if (ss == SYSSELECTA) {
-
-    }
-    else if (ss = SYSSELECTB) {
-
-    }
-    else if (ss == SYSSELECTC) {
-
-    }
-}
 
 } // namespace daq
 } // namespace mahi

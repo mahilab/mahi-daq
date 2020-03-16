@@ -7,13 +7,13 @@ namespace mahi {
 namespace daq {
 
 /// Set a myRIO register bit to 1
-void set_register_bit(unsigned int reg, int i);
+void set_bit(unsigned int reg, int i);
 
 /// Clear a myRIO register bit to 0
-void clr_register_bit(unsigned int reg, int i);
+void clr_bit(unsigned int reg, int i);
 
 /// Get a myRIO reigster bit
-bool get_register_bit(unsigned int reg, int i);
+bool get_bit(unsigned int reg, int i);
 
 /// Write a whole register from a bitset
 void write_register(unsigned int reg, std::bitset<8> bits);
@@ -40,7 +40,6 @@ extern std::vector<std::vector<uint32_t>> OUTS;
 
 // Encoder
 
-extern std::vector<std::vector<int>>      ENC_BITS; 
 extern std::vector<std::vector<uint32_t>> ENC_STAT;
 extern std::vector<std::vector<uint32_t>> ENC_CNTR;
 extern std::vector<std::vector<uint32_t>> ENC_CNFG;

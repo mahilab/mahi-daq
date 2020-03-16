@@ -49,10 +49,11 @@ int main(int argc, char** argv) {
     MahiLogger->set_max_severity(Verbose);
 
     MyRio myrio;
+    myrio.mspC.encoder.set_channels({0,1});
+    myrio.mxpA.encoder.set_channels({0});
+    myrio.mxpB.encoder.set_channels({0});
 
-    myrio.mspC.DO.set_channels({0,1,2,3});
-
-    myrio.enable();
+    myrio.mspC.DO.set_channels({0,1,2,3,4,5,6,7});
 
     // for (int i = 0; i < 500; ++i) {
     //     myrio.read_all();

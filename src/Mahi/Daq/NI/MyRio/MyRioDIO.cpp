@@ -39,13 +39,13 @@ bool MyRioDIO::update_channel(ChanNum channel_number) {
     if (!valid_channel(channel_number))
         return false;
     if (directions_[channel_number] == In) {
-        m_values[channel_number] = get_register_bit(ins_[channel_number / 8], channel_number % 8) ? High : Low;
+        m_values[channel_number] = get_bit(ins_[channel_number / 8], channel_number % 8) ? High : Low;
     }
     else {
         if (m_values[channel_number] == High)
-            set_register_bit(outs_[channel_number / 8], channel_number % 8);
+            set_bit(outs_[channel_number / 8], channel_number % 8);
         else
-            clr_register_bit(outs_[channel_number / 8], channel_number % 8);
+            clr_bit(outs_[channel_number / 8], channel_number % 8);
     }
     return true;
 }
@@ -54,9 +54,9 @@ bool MyRioDIO::set_direction(ChanNum channel_number, Direction direction) {
     if (!InputOutput::set_direction(channel_number, direction))
         return false;
     if (direction == Out)
-        set_register_bit(dirs_[channel_number / 8], channel_number % 8);
+        set_bit(dirs_[channel_number / 8], channel_number % 8);
     else
-        clr_register_bit(dirs_[channel_number / 8], channel_number % 8);
+        clr_bit(dirs_[channel_number / 8], channel_number % 8);
     return true;
 }
 
@@ -112,7 +112,7 @@ void MyRioDIO::sync() {
     // update directions
     chs = channels_internal();
     for (auto& ch : chs) {
-        Direction dir = get_register_bit(dirs_[ch / 8], ch % 8) ? Out : In;
+        Direction dir = get_bit(dirs_[ch / 8], ch % 8) ? Out : In;
         set_direction(ch, dir);
     }
 }

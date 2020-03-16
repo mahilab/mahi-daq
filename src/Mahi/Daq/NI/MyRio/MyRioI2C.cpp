@@ -58,7 +58,7 @@ void MyRioI2C::set_slave(std::bitset<7> address) {
 
 void MyRioI2C::send(const void* data, std::size_t size) {
     // set the first address bit to zero to indicate next operatin will be "send"
-    clr_register_bit(addr_, 0);
+    clr_bit(addr_, 0);
     const unsigned char* bytes = static_cast<const unsigned char*>(data);
     for (std::size_t b = 0; b < size; ++b) {
         write_register(dato_, bytes[b]);
@@ -80,19 +80,19 @@ void MyRioI2C::execute() {
 }
 
 bool MyRioI2C::on_enable() {
-    set_register_bit(sysselect_, 7);
+    set_bit(sysselect_, 7);
     connector_.DIO.sync();
     return true;
 }
 
 bool MyRioI2C::on_disable() {
-    clr_register_bit(sysselect_, 7);
+    clr_bit(sysselect_, 7);
     connector_.DIO.sync();
     return true;
 }
 
 void MyRioI2C::sync() {
-    if (get_register_bit(sysselect_, 7))
+    if (get_bit(sysselect_, 7))
         enabled_  = true;
     else
         enabled_  = false;
