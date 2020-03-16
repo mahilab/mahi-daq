@@ -13,7 +13,7 @@ endmacro(mahi_daq_example)
 
     # mahi_daq_example(control)
     # mahi_daq_example(testing)
-    # mahi_daq_example(custom)
+    mahi_daq_example(custom)
     mahi_daq_example(perf)
 
 if (MAHI_QUANSER)

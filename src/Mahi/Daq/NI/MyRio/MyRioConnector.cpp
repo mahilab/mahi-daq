@@ -56,39 +56,39 @@ MyRioMxp::MyRioMxp(MyRio& myrio, Type type) :
 }
 
 bool MyRioMxp::on_daq_open() {
-    auto ss = SYSSELECT[type];
+    auto bits = read_register(SYSSELECT[type]);
     ChanNums dio_chs, di_chs, do_chs, enc_chs, pwm_chs, i2c_chs, spi_chs;
 
-    if (get_bit(ss, 7)) 
+    if (bits[7]) 
         i2c_chs.push_back(0);
     else 
         dio_chs.insert(dio_chs.end(), {14,15});
 
-    if (get_bit(ss, 5))
+    if (bits[5])
         enc_chs.push_back(0);
     else
         dio_chs.insert(dio_chs.end(), {11,12});
     
-    if (get_bit(ss, 4))
+    if (bits[4])
         pwm_chs.push_back(2);
     else
         dio_chs.push_back(10);
 
-    if (get_bit(ss,3))
+    if (bits[3])
         pwm_chs.push_back(1);
     else
         dio_chs.push_back(9);
 
-    if (get_bit(ss,2))
+    if (bits[2])
         pwm_chs.push_back(0);
     else
         dio_chs.push_back(8);
 
-    if (get_bit(ss,1) || get_bit(ss,0))
+    if (bits[1] || bits[0])
         spi_chs.push_back(0);
-    if (get_bit(ss,1) && !get_bit(ss,0)) 
+    if (bits[1] && !bits[0]) 
         dio_chs.push_back(6);    
-    else if (!get_bit(ss,1) && get_bit(ss,0)) 
+    else if (!bits[1] && bits[0]) 
         dio_chs.push_back(5);
     else 
         dio_chs.insert(dio_chs.end(), {5,6,7});
@@ -130,25 +130,25 @@ MyRioMsp::MyRioMsp(MyRio& myrio, Type type) :
 }
 
 bool MyRioMsp::on_daq_open() {
-    auto ss = SYSSELECT[type];
+    auto bits = read_register(SYSSELECT[type]);
     ChanNums dio_chs, di_chs, do_chs, enc_chs, pwm_chs;
 
-    if (get_bit(ss, 3))
+    if (bits[3])
         pwm_chs.push_back(1);
     else
         dio_chs.push_back(7);
     
-    if (get_bit(ss,1))
+    if (bits[1])
         pwm_chs.push_back(0);
     else
         dio_chs.push_back(3);
 
-    if (get_bit(ss,2))
+    if (bits[2])
         enc_chs.push_back(1);
     else
         dio_chs.insert(dio_chs.end(), {4,6});
 
-    if (get_bit(ss,0))
+    if (bits[0])
         enc_chs.push_back(0);
     else
         dio_chs.insert(dio_chs.end(), {2,0});

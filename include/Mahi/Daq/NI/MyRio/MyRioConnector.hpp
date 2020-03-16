@@ -137,9 +137,6 @@ protected:
 /// [20] = 5V -> DGND
 class MyRioMsp : public MyRioConnector {
 public:
-    /// Resets the connector digital pin configurations
-    // virtual void reset();
-public:
     MyRioAI AI;
     MyRioAO AO;
     MyRioDI DI;
