@@ -32,6 +32,7 @@ private:
     friend MyRioMxp;
     MyRioEncoder(MyRioConnector& connector, const ChanNums& allowed);
 private:
+    using EncoderModule<MyRioEncoder>::write;
     const MyRioConnector& m_conn; 
 };
 

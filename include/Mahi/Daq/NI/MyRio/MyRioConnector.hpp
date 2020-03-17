@@ -32,7 +32,6 @@ class MyRio;
 class MyRioConnector : public Daq {
 public:
     enum Type { MxpA = 0, MxpB = 1, MspC = 2 };
-public:
     const Type type;      ///< connector Type
 protected:
     friend class MyRio;
@@ -91,8 +90,6 @@ protected:
 /// [33] = +3.3V
 /// [34] = DI[15], DO[15], I2C[0].SDA
 class MyRioMxp : public MyRioConnector {
-public:
-    // virtual void reset() override;
 public:
     MyRioAI AI;
     MyRioAO AO;

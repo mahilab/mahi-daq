@@ -66,6 +66,10 @@ MyRioEncoder::MyRioEncoder(MyRioConnector& connector, const ChanNums& allowed) :
                     default: break;
                 }
             }
+            set_bit(ENC_CNFG[m_conn.type][ch], 4); // clear overflow
+            set_bit(ENC_CNFG[m_conn.type][ch], 3); // clear error
+            clr_bit(ENC_CNFG[m_conn.type][ch], 4); // reset to 0
+            clr_bit(ENC_CNFG[m_conn.type][ch], 3); // reset to 0
             clr_bit(ENC_CNFG[m_conn.type][ch], 2); // set to quadrature mode
             set_bit(ENC_CNFG[m_conn.type][ch], 0); // enable encoder
         }

@@ -7,6 +7,7 @@ target_sources(daq
     MyRioDI.cpp
     MyRioDO.cpp
     MyRioEncoder.cpp
+    MyRioLed.cpp
     # MyRioI2C.cpp
     MyRioUtils.cpp
     MyRioUtils.hpp

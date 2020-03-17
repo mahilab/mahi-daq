@@ -35,18 +35,19 @@ public:
     double sense() {
         return m_gain * m_sense_voltage;
     }
+private:
     double& m_command_voltage;
     const double& m_sense_voltage;
     double m_gain; // A/V
 };
 
 /// A simple structured environment for doing controls
-template <class TDaq>
 class ControlLoop {
 public:
+    ControlLoop(Daq& daq) : daq(daq) { }
     void start() {
         running = true;
-        Timer timer(10000_Hz);
+        Timer timer(100_Hz);
         Time t;
         while (running) {
             daq.read_all();
@@ -56,26 +57,30 @@ public:
         }
         print("Wait Ratio: {}",timer.get_wait_ratio());
         print("Misses:     {}",timer.get_misses());
-
     }
 protected:
     void stop() { running = false; }
     virtual void update(Time t) { };
-    TDaq daq;
+    Daq& daq;
 private:
     bool running;
 };
 
 /// Our custom implementation of ControLoop
-template <typename TDaq>
-class MyControlLoop : public ControlLoop<TDaq> {
+class MyControlLoop : public ControlLoop {
 public:
-    MyControlLoop() : amp(this->daq.AO[0], this->daq.AI[0], 0.5) { }
+    template <typename TDaq>
+    MyControlLoop(TDaq& daq) : 
+        ControlLoop(daq), 
+        amp(daq.AO[0], daq.AI[0], 0.5) 
+    { }
 private:
     void update(Time t) override {
         double amps_sense  = amp.sense();
-        double amps_command = std::sin(TWOPI * 10 * t.as_seconds());
+        double amps_command = std::sin(TWOPI * 0.25 * t.as_seconds());
         amp.command(amps_command);
+        cls();
+        print("Command: {:+.2f} , Sense: {:+.2f}", amps_command, amps_sense);
         if (t > 5_s)
             this->stop();
     }
@@ -84,8 +89,16 @@ private:
 
 int main(int argc, char const *argv[])
 {
-    /// Template this on whatever DAQ you want
-    MyControlLoop<Q2Usb> loop;
+#ifdef MAHI_QUANSER
+    MyControlLoop loop;
     loop.start();
+#elif MAHI_SENSORAY
+    MyControlLoop loop;
+    loop.start();
+#elif MAHI_MYRIO
+    MyRio myrio;
+    MyControlLoop loop(myrio.mspC);
+    loop.start();
+#endif
     return 0;
 }

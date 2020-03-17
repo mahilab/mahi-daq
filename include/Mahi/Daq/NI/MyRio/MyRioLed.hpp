@@ -20,18 +20,13 @@
 namespace mahi {
 namespace daq {
 
-class MyRioMsp;
-class MyRioMxp;
-class MyRioConnector;
+class MyRio;
 
-/// myRIO Digital Input Module
-class MyRioDI : public DIModule {
+/// myRIO LED Module
+class MyRioLed : public DOModule {
 private:
-    friend MyRioMsp;
-    friend MyRioMxp;
-    MyRioDI(MyRioConnector& connector, const ChanNums& allowed);
-private:
-    const MyRioConnector& m_conn; 
+    friend MyRio;
+    MyRioLed(MyRio& myrio, const ChanNums& allowed);
 };
 
 } // namespace daq

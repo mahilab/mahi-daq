@@ -20,8 +20,6 @@
 using namespace mahi::daq;
 using namespace mahi::util;
 
-ctrl_bool stop(false);
-
 int main(int argc, char const *argv[])
 {
     MahiLogger->set_max_severity(Verbose);

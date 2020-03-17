@@ -180,32 +180,6 @@ void MyRioConnector::reset() {
     DIO.sync();
 }
 
-bool MyRioConnector::on_open() {
-    encoder.sync();
-    DIO.sync();
-    return true;
-}
-
-bool MyRioConnector::on_close() {
-    return true;
-}
-
-MyRioMxp::MyRioMxp(MyRio& myrio, Type type) :
-    MyRioConnector(myrio, type),
-    i2c(*this)
-{
-
-}
-
-void MyRioMxp::reset() {
-    i2c.disable();
-    MyRioConnector::reset();
-}
-
-bool MyRioMxp::on_open() {
-    i2c.sync();
-    return MyRioConnector::on_open();
-}
 
 */
 

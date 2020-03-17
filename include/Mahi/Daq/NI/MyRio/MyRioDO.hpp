@@ -24,7 +24,7 @@ class MyRioMsp;
 class MyRioMxp;
 class MyRioConnector;
 
-/// myRIO Analog Output Module
+/// myRIO Digital Output Module
 class MyRioDO : public DOModule {
 private:
     friend MyRioMsp;

@@ -24,7 +24,7 @@ class MyRioMsp;
 class MyRioMxp;
 class MyRioConnector;
 
-/// myRIO Analog Output Module
+/// myRIO Analog Input Module
 class MyRioAI : public AIModule {
 private:
     friend MyRioMsp;

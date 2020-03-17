@@ -27,6 +27,9 @@ std::bitset<8> read_register(unsigned int reg);
 /// Formats NI Error
 std::string get_nifpga_error_message(int error);
 
+/// Prints register settings
+void print_registers();
+
 //=============================================================================
 // REGISTERS
 //=============================================================================

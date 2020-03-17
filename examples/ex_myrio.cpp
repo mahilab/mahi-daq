@@ -20,48 +20,87 @@
 using namespace mahi::daq;
 using namespace mahi::util;
 
-/// prints the current myRIO channel configuration
-// void print_channel_info(const MyRio& myrio) {
-//     print("----------------------------------------");
-//     print("Connector MXP A");
-//     print("    AO: ", myrio.mxpA.AO.channels_internal());
-//     print("    AI: ", myrio.mxpA.AI.channels_internal());
-//     print("    DI: ", myrio.mxpA.DIO.input_channel_numbers());
-//     print("    DO: ", myrio.mxpA.DIO.output_channel_numbers());
-//     print("    ENC:", myrio.mxpA.encoder.channels_internal());
-//     print("Connector MXP B");
-//     print("    AO: ", myrio.mxpB.AO.channels_internal());
-//     print("    AI: ", myrio.mxpB.AI.channels_internal());
-//     print("    DI: ", myrio.mxpB.DIO.input_channel_numbers());
-//     print("    DO: ", myrio.mxpB.DIO.output_channel_numbers());
-//     print("    ENC:", myrio.mxpB.encoder.channels_internal());
-//     print("Connector MSP C");
-//     print("    AO: ", myrio.mspC.AO.channels_internal());
-//     print("    AI: ", myrio.mspC.AI.channels_internal());
-//     print("    DI: ", myrio.mspC.DIO.input_channel_numbers());
-//     print("    DO: ", myrio.mspC.DIO.output_channel_numbers());  
-//     print("    ENC:", myrio.mspC.encoder.channels_internal());
-//     print("----------------------------------------");
-// }
-
-// main
 int main(int argc, char** argv) {
+
     MahiLogger->set_max_severity(Verbose);
 
+    /// For this example, connect MSPC AO[0] to AI[0]
+    /// DIO[1] to DIO[3]
+    /// Encoder to MSPC DIO[0,2]
     MyRio myrio;
+    if (!myrio.is_open())
+        return 1;
+
+    /// MyRio is structured as 1 main DAQ and 3 nested DAQs
+    /// for each connector interface. This example will only 
+    /// focus on MSPC, but the other connectors are the same.
+    print_info(myrio);
+    print_info(myrio.mxpA);
+    print_info(myrio.mxpB);
+    print_info(myrio.mspC);
+
+    /// By default, all DIO pins configured as DI channels,
+    /// so we must enable DO channels. This will free DI[1].
+    myrio.mspC.DO.set_channels({1});
+
+    // Set enable values
+    myrio.mspC.AO.enable_values[0] = 3.14;
+    myrio.mspC.DO.enable_values[1] = HIGH;
+
+    /// On myRIO, DIO pins are shared with encoders. We must
+    /// enable the encoder channels we wish to use. This will
+    /// free DI[0,2,4,6].
     myrio.mspC.encoder.set_channels({0,1});
-    myrio.mxpA.encoder.set_channels({0});
-    myrio.mxpB.encoder.set_channels({0});
+    // Set the units on one of our encoders
+    myrio.mspC.encoder.units[0] = 360.0 / 512;
+    // Zero the encoder
+    myrio.mspC.encoder.zero(0);
 
-    myrio.mspC.DO.set_channels({0,1,2,3,4,5,6,7});
+    /// Enable, this will set enable values on AO and DO, which we can read on AI[0] and DI[0]
+    myrio.enable();
+    sleep(1_ms);
+    /// Can read the whole Module
+    myrio.mspC.AI.read();
+    /// Or just a single channel
+    myrio.mspC.DI.read(3);
+    print("AI[0]: {:+.2f} V", myrio.mspC.AI[0]);
+    print("DI[0]: {}",(int)myrio.mspC.DI[3]);
 
-    // for (int i = 0; i < 500; ++i) {
-    //     myrio.read_all();
-    //     print("{}",myrio.mxpA.AI[0]);
-    //     double out = 2.5 + 2.5 * std::sin(TWOPI * i * 0.01);
-    //     myrio.mxpB.AO[0] = out;        
-    //     myrio.write_all();
-    //     sleep(10_ms);
-    // }
+    prompt("Press ENTER to start I/O loop.");
+
+    /// General I/O loop
+    Clock clk;
+    while (!myrio.is_button_pressed()) {
+        /// Synced read, reads all DAQ inputs
+        myrio.read_all();
+        print("AI[0]: {:+.2f} V | DI[3]: {} | encoder[0]: {} = {:+.2f} deg.", myrio.mspC.AI[0], (int)myrio.mspC.DI[3], myrio.mspC.encoder[0], myrio.mspC.encoder.converted[0]);
+        double out = 5 * std::sin(TWOPI * clk.get_elapsed_time().as_seconds());
+        myrio.mspC.AO[0] = out;
+        myrio.mspC.DO[1] = out > 0 ? HIGH : LOW;
+        /// Synced write, writes all DAQ outputs
+        myrio.write_all();
+        sleep(10_ms);
+    }
+
+    /// LED sin wave. The LED module is simply a DO module.
+    for (int i = 0; i < 500; ++i) {
+        double s = std::sin(TWOPI * i * 0.01);
+        myrio.LED[0] = s < -0.5 ? HIGH : LOW;
+        myrio.LED[1] = s > -0.5 && s < 0 ? HIGH : LOW;
+        myrio.LED[2] = s > 0 && s < 0.5 ? HIGH : LOW;
+        myrio.LED[3] = s > 0.5 ? HIGH : LOW;
+        myrio.write_all();
+        sleep(10_ms);
+    }
+    // turn off all LEDs
+    myrio.LED.write({0,1,2,3},{LOW,LOW,LOW,LOW});
+
+    /// Restore default channels. myRIO channels are persistant, meaning they will
+    /// carry over to the next session. Here, we will manually reset all our DIs.
+    myrio.mspC.DI.set_channels(myrio.mspC.DI.channels_allowed());
+
+    /// myRIO will auto disable/close on destruction, but explicit calls are good practice
+    myrio.disable();
+    myrio.close();
  
 }

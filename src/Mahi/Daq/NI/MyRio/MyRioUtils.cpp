@@ -1,6 +1,7 @@
 #include "MyRioUtils.hpp"
 #include <Mahi/Util/Logging/Log.hpp>
 #include "Detail/MyRioFpga60/MyRio.h"
+#include <Mahi/Util/Print.hpp>
 #include <cassert>
 
 
@@ -71,13 +72,13 @@ void set_bit(unsigned int reg, int i) {
     uint8_t bits;
     NiFpga_Status status = NiFpga_ReadU8(myrio_session, reg, &bits);
     if (status < 0) {
-        LOG(Error) << "Could not read from regiser " << reg;
+        LOG(Error) << "Could not read from register " << reg;
         return;
     }
     bits |= (1UL << i);
     status = NiFpga_WriteU8(myrio_session, reg, bits);
     if (status < 0) {
-        LOG(Error) << "Could not write to regiser " << reg;
+        LOG(Error) << "Could not write to register " << reg;
     }
 }
 
@@ -85,13 +86,13 @@ void clr_bit(unsigned int reg, int i) {
     uint8_t bits;
     NiFpga_Status status = NiFpga_ReadU8(myrio_session, reg, &bits);
     if (status < 0) {
-        LOG(Error) << "Could not read from regiser " << reg;
+        LOG(Error) << "Could not read from register " << reg;
         return;
     }
     bits &= ~(1UL << i);
     status = NiFpga_WriteU8(myrio_session, reg, bits);
     if (status < 0) {
-        LOG(Error) << "Could not write to regiser " << reg;
+        LOG(Error) << "Could not write to register " << reg;
     }
 }
 
@@ -99,7 +100,7 @@ bool get_bit(unsigned int reg, int i) {
     uint8_t bits;
     NiFpga_Status status = NiFpga_ReadU8(myrio_session, reg, &bits);
     if (status < 0) {
-        LOG(Error) << "Could not read from regiser " << reg;
+        LOG(Error) << "Could not read from register " << reg;
     }
     return ((bits >> i) & 1) != 0;
 }
@@ -107,14 +108,14 @@ bool get_bit(unsigned int reg, int i) {
 void write_register(unsigned int reg, std::bitset<8> bits) {
     NiFpga_Status status = NiFpga_WriteU8(myrio_session, reg, static_cast<uint8_t>(bits.to_ulong()));
     if (status < 0) {
-        LOG(Error) << "Could not write to regiser " << reg;
+        LOG(Error) << "Could not write to register " << reg;
     }
 }
 
 void write_register(unsigned int reg, unsigned char bits) {
     NiFpga_Status status = NiFpga_WriteU8(myrio_session, reg, bits);
     if (status < 0) {
-        LOG(Error) << "Could not write to regiser " << reg;
+        LOG(Error) << "Could not write to register " << reg;
     }   
 }
 
@@ -122,7 +123,7 @@ std::bitset<8> read_register(unsigned int reg) {
     uint8_t bits;
     NiFpga_Status status = NiFpga_ReadU8(myrio_session, reg, &bits);
     if (status < 0) {
-        LOG(Error) << "Could not read from regiser " << reg;
+        LOG(Error) << "Could not read from register " << reg;
     }
     std::bitset<8> out(bits);
     return out;    
@@ -135,6 +136,26 @@ std::string get_nifpga_error_message(int error) {
         return "(NI FPGA Warning #" + std::to_string(error) + ")";
     else
         return "";
+}
+
+void print_registers() {
+    print("----------------------");
+    print("              76543210");
+    print("----------------------");
+    print("SYS.SELECTA:  {}", read_register(SYSSELECTA).to_string());
+    print("SYS.SELECTB:  {}", read_register(SYSSELECTB).to_string());
+    print("SYS.SELECTC:  {}", read_register(SYSSELECTC).to_string());
+    print("----------------------");
+    print("ENC.A.CNFG:   {}", read_register(ENCACNFG).to_string());
+    print("ENC.B.CNFG:   {}", read_register(ENCBCNFG).to_string());
+    print("ENC.C_0.CNFG: {}", read_register(ENCC_0CNFG).to_string());
+    print("ENC.C_1.CNFG: {}", read_register(ENCC_1CNFG).to_string());
+    print("----------------------");
+    print("ENC.A.STAT:   {}", read_register(ENCASTAT).to_string());
+    print("ENC.B.STAT:   {}", read_register(ENCBSTAT).to_string());
+    print("ENC.C_0.STAT: {}", read_register(ENCC_0STAT).to_string());
+    print("ENC.C_1.STAT: {}", read_register(ENCC_1STAT).to_string());
+    print("----------------------");
 }
 
 std::vector<uint32_t> SYSSELECT = { SYSSELECTA, SYSSELECTB, SYSSELECTC };

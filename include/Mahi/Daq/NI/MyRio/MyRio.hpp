@@ -18,6 +18,7 @@
 #include <Mahi/Daq/Daq.hpp>
 #include <Mahi/Daq/Io.hpp>
 #include <Mahi/Daq/NI/MyRio/MyRioConnector.hpp>
+#include <Mahi/Daq/NI/MyRio/MyRioLed.hpp>
 
 namespace mahi {
 namespace daq {
@@ -39,10 +40,13 @@ public:
     bool is_button_pressed() const;
     /// Set myRIO led in range 0 to 3 on/off
     void set_led(int led, bool on);
+    /// Prints configuration and status registers
+    void print_registers() const;
 public:
     MyRioMxp mxpA;  ///< MXP connector A
     MyRioMxp mxpB;  ///< MXP connector B
     MyRioMsp mspC;  ///< MSP connector C
+    MyRioLed LED;   ///< LEDs
 private:
     bool on_daq_open() override;
     bool on_daq_close() override;

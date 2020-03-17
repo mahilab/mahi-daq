@@ -107,10 +107,13 @@ MyRio::MyRio() :
     Daq("myRIO"),
     mxpA(*this, MyRioConnector::Type::MxpA),
     mxpB(*this, MyRioConnector::Type::MxpB),
-    mspC(*this, MyRioConnector::Type::MspC)
+    mspC(*this, MyRioConnector::Type::MspC),
+    LED(*this, {0,1,2,3})
 {
     // open
     open();
+    // LED chs
+    LED.set_channels({0,1,2,3});
 }
 
 MyRio::~MyRio() {
@@ -119,6 +122,11 @@ MyRio::~MyRio() {
     if (is_open())
         close();
 }
+
+void MyRio::print_registers() const {
+    ::mahi::daq::print_registers();
+}
+
 
 // bool MyRio::reset() {
 //     if (is_open()) {       
@@ -168,30 +176,24 @@ bool MyRio::on_daq_disable() {
 }
 
 bool MyRio::read_all() {
+    bool readSelf = Daq::read_all();
     bool readA = mxpA.read_all();
     bool readB = mxpB.read_all();
     bool readC = mspC.read_all();
-    return readA && readB && readC;
+    return readSelf && readA && readB && readC;
 }
 
 bool MyRio::write_all() {
+    bool writeSelf = Daq::write_all();
     bool writeA = mxpA.write_all();
     bool writeB = mxpB.write_all();
     bool writeC = mspC.write_all();
-    return writeA && writeB && writeC;
+    return writeSelf && writeA && writeB && writeC;
 }
 
 bool MyRio::is_button_pressed() const {
     return get_bit(DIBTN, 0);
 }
-
-void MyRio::set_led(int led, bool on) {
-    if (on)
-        set_bit(DOLED30, led);
-    else
-        clr_bit(DOLED30, led);
-}
-
 
 } // namespace daq
 } // namespace mahi
