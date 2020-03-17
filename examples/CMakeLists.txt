@@ -11,20 +11,24 @@ macro(mahi_daq_example target)
     set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
 endmacro(mahi_daq_example)
 
-    mahi_daq_example(control)
-    mahi_daq_example(custom)
-    mahi_daq_example(perf)
+# generic examples
+mahi_daq_example(control)
+mahi_daq_example(custom)
+mahi_daq_example(perf)
 
+# quanser examples
 if (MAHI_QUANSER)
     mahi_daq_example(q2usb)
     mahi_daq_example(q8usb)
-    # mahi_daq_example(qpid)
+    mahi_daq_example(qpid)
 endif()
 
+# sensoray examples
 if (MAHI_SENSORAY826)
     mahi_daq_example(s826)
 endif()
 
+# myrio examples
 if (MAHI_MYRIO)
     mahi_daq_example(myrio)
 endif()

@@ -20,89 +20,71 @@
 using namespace mahi::daq;
 using namespace mahi::util;
 
-// create global stop variable CTRL-C handler function
-ctrl_bool stop(false);
+int main(int argc, char const *argv[])
+{
+    MahiLogger->set_max_severity(Verbose);
 
-bool handler(CtrlEvent event) {
-    if (event == CtrlEvent::CtrlC)
-        stop = true;
-    return true;
-}
-
-int main() {
-
-    // register CTRL-C handler
-    register_ctrl_handler(handler);
-
-    //===============================================================================
-    // CONSTUCT/OPEN/CONFIGURE
-    //===============================================================================
-
-    // create default Q8 USB object
-    // (all channels enabled, auto open on, sanity check on)
+    // For this example, connect AO0 to AI0 and DO0 to DI0, 
+    // and connect an encoder to channel 0.
     QPid qpid;
-    if (!qpid.open())
+    if (!qpid.is_open())
         return 1;
 
+    /// Print the DAQ info
+    print_info(qpid);
 
-    //===============================================================================
-    // ENABLE
-    //===============================================================================
-
-    // enable qpid USB
-    if (!qpid.enable())
-        return 1;
-
-    // qpid.AO[0].set(5.0);
-    // qpid.update_output();
-    // qpid.update_input();
-    // double in = qpid.AI[0].get();
-    // print(in);
-
+    // Set enable values
+    qpid.AO.enable_values[0] = 3.14;
+    qpid.DO.enable_values[0] = HIGH;
     
+    // Set the units on one of our encoders
+    qpid.encoder.units[0] = 360.0 / 512;
+    // Zero the encoder
+    qpid.encoder.zero(0);
 
-    qpid.DIO.channel(0).set_direction(Direction::Out);
-    qpid.DIO.channel(1).set_direction(Direction::Out);
-    qpid.DIO.channel(8).set_direction(Direction::In);
-    qpid.DIO.channel(9).set_direction(Direction::In);
+    /// Enable, this will set enable values on AO and DO, which we can read on AI[0] and DI[0]
+    qpid.enable();
+    sleep(1_ms);
+    /// Can read the whole Module
+    qpid.AI.read();
+    /// Or just a single channel
+    qpid.DI.read(0);
+    print("AI[0]: {:+.2f} V", qpid.AI[0]);
+    print("DI[0]: {}",(int)qpid.DI[0]);
 
-    print_var(qpid.DIO.output_channel_numbers());
-    print_var(qpid.DIO.input_channel_numbers());
+    prompt("Press ENTER to start I/O loop.");
 
-    qpid.DIO[0] = Logic::High;
-    qpid.DIO[1] = Logic::Low;
+    /// General I/O loop
+    for (int i = 0; i < 500; ++i) {
+        /// Synced read, reads all DAQ inputs
+        qpid.read_all();
+        print("AI[0]: {:+.2f} V | DI[0]: {} | encoder[0]: {} = {:+.2f} deg.", qpid.AI[0], (int)qpid.DI[0], qpid.encoder[0], qpid.encoder.converted[0]);
+        double out = 5 * std::sin(TWOPI * i * 0.01);
+        qpid.AO[0] = out;
+        qpid.DO[0] = out > 0 ? HIGH : LOW;
+        /// Synced write, writes all DAQ outputs
+        qpid.write_all();
+        sleep(10_ms);
+    }
 
-    print_var(qpid.DIO.get(0));
-    print_var(qpid.DIO.get(1));
+    /// Set PWM output mode
+    qpid.PWM.modes.write(0, QuanserPwm::Mode::DutyCycle);
+    /// Set PWM frequency
+    qpid.PWM.frequencies.write(0, 20000); // 20 MHz
 
-    qpid.update_output();
+    prompt("Press ENTER to start PWM output.");
 
-    prompt("Press ENTER to Measure");
+    /// Read PWM out in to DO[0] (this loop is too slow to actually keep up, but we can see that it is changing)
+    for (int i = 0; i < 500; ++i) {
+        qpid.read_all();
+        print("DI[0]: {}", (int)qpid.DI[0]);
+        double duty_cycle = 0.5f + 0.5f * std::sin(TWOPI * i * 0.01);
+        qpid.PWM.write(0,duty_cycle);
+        sleep(10_ms);
+    }
 
-    sleep(seconds(1));
-
-    qpid.update_input();
-    double input = qpid.DIO[8];
-    print_var(input);
-    input = qpid.DIO[9];
-    print_var(input);
-
-    // qpid.watchdog.start();
-
-    // for (int i = 0; i < 1000; ++i) {
-    //     qpid.update_input();
-    //     print(qpid.encoder[0].get());
-    //     sleep(milliseconds(1));
-    // }
-
-    sleep(seconds(1));
-
-    // qpid.watchdog.stop();
-    
-
-    // disable qpid USB
+    /// Q8Usb will auto disable/close on destruction, but explicit calls are good practice
     qpid.disable();
-    // close qpid USB
     qpid.close();
 
     return 0;

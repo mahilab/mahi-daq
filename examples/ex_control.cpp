@@ -14,7 +14,6 @@
 //
 // Author(s): Evan Pezent (epezent@rice.edu)
 
-
 #include <Mahi/Daq.hpp>
 #include <Mahi/Util.hpp>
 
@@ -22,6 +21,7 @@ using namespace mahi::daq;
 using namespace mahi::util;
 
 /// A simple little Current Amplifier class that can command and sense amps.
+/// See mahi-robo for more classes like this!
 class CurrentAmplifier {
 public:
     CurrentAmplifier(double& command_voltage, const double& sense_voltage, double gain) : 
@@ -46,6 +46,7 @@ class ControlLoop {
 public:
     ControlLoop(Daq& daq) : daq(daq) { }
     void start() {
+        daq.enable();
         running = true;
         Timer timer(100_Hz);
         Time t;
@@ -55,8 +56,8 @@ public:
             daq.write_all();
             t = timer.wait();
         }
-        print("Wait Ratio: {}",timer.get_wait_ratio());
-        print("Misses:     {}",timer.get_misses());
+        daq.disable();
+        daq.close();
     }
 protected:
     void stop() { running = false; }
@@ -90,10 +91,12 @@ private:
 int main(int argc, char const *argv[])
 {
 #ifdef MAHI_QUANSER
-    MyControlLoop loop;
+    Q8Usb q8;
+    MyControlLoop loop(q8);
     loop.start();
 #elif MAHI_SENSORAY
-    MyControlLoop loop;
+    S826 s826;
+    MyControlLoop loop(s826);
     loop.start();
 #elif MAHI_MYRIO
     MyRio myrio;
