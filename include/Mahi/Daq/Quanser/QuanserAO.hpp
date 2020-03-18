@@ -23,12 +23,13 @@ namespace daq {
 
 class QuanserDaq;
 
-class QuanserAO : public Fused<AOModule,QuanserDaq> {
+class QuanserAO : public AOModule {
 public:
     QuanserAO(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
-    Fused<Register<Voltage>,QuanserAO> expire_values;
-    Fused<Register<Range<Voltage>>,QuanserAO> ranges;
+    Register<Voltage> expire_values;
+    Register<Range<Voltage>> ranges;
 private:
+    friend QuanserDaq;
     QuanserHandle& m_h;
 };
 

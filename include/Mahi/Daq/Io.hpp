@@ -27,75 +27,27 @@ namespace daq {
 // with the provided template mechanisms.
 
 //==============================================================================
-// FUSION
-//==============================================================================
-
-/// Exposes the protected members of Protected to Beneficiary
-template <class Protected, class Beneficiary>
-class Fused : public Protected {
-    using Protected::Protected;
-    friend Beneficiary;
-};
-
-// The types below can be inherited from or used as public member variables
-// to create a desired DAQ interface. To keep the public interface clean and
-// prevent misuse, these types by default protect their internal buffers and
-// callback Events. Your DAQ interface will obviously need to accesss these
-// to implement functionality. This is what the Fused class is for. For
-// instances, if you need a public output buffer interface in you class,
-// fuse it with the class itself:
-//
-// class MyModule : public Module {
-//   public:
-//     Fused<OutputBuffer<int>,MyModule> buffer;
-// };
-//
-// The internal buffers and callbacks of buffer will remain hidden to clients,
-// but MyModule will gain access to them so that it can implement it.
-//
-// If more than one class will need access, chain the fusions:
-//
-// Fused<Fused<WriteBuffer<double>,MyModule>,MyDaq>
-//
-// If you need to extend one of the classes below, it is not necessary to fuse
-// because your class will automatically inherit the procted members. However,
-// if another class will need access to your extended version, you may chose to
-// fuse it:
-//
-// class MyAoModule : public Fused<AOModule,MyDaq> {
-//   ...
-// }
-//
-// class MyDaq {
-//   public
-//     MyAoModule ao;
-// }
-//
-// Here, MyAoModule will be able to access AOModule's buffers through inheritance,
-// and MyDaq will be able to access them through fusion. Note, it would have also
-// been possible to perform the fusion inside of MyDaq as well, as in example 1.
-
-//==============================================================================
 // BUILT IN MODULE INTERFACES
 //==============================================================================
 
-/// A buffer that can be publicly written with operator[]
+/// A buffer that can be publicly set with operator[]
 template <typename T>
-using OutputBuffer = ISet<Buffer<T>>;
+using SettableBuffer = ISet<Buffer<T>>;
 
-/// A buffer that can be publicly read with operator[]
-template <typename T>
-using InputBuffer = IGet<Buffer<T>>;
+/// A buffer that can be publicly get with operator[]. 
+/// M is the owning Module that is responsible for updating the buffer contents.
+template <typename T, typename M>
+using GettableBuffer = Friend<IGet<Buffer<T>>,M>;
 
-/// A buffer that can be publicly written with operator[] and an immediate write interface
+/// A buffer that can be publicly set with operator[] and an immediate write interface
 template <typename T>
 using WriteBuffer = IWrite<ISet<Buffer<T>>>;
 
-/// A buffer that can be publicly read with operator[] and an immediate read interface
+/// A buffer that can be publicly get with operator[] and an immediate read interface
 template <typename T>
 using ReadBuffer = IRead<IGet<Buffer<T>>>;
 
-/// A buffer than can be publicaly read and written with operator[] and an immediate read/write
+/// A buffer than can be publicaly set and get with operator[] and an immediate read/write
 /// interface
 template <typename T>
 using ReadWriteBuffer = IRead<IWrite<ISet<Buffer<T>>>>;
@@ -154,13 +106,13 @@ public:
     /// Destructor
     virtual ~OutputModule() {}
     /// A buffer of values to be set when the Module's DAQ is enabled
-    Fused<OutputBuffer<T>, This> enable_values;
+    SettableBuffer<T> enable_values;
     /// A buffer of values to be set when the Module's DAQ is disabled
-    Fused<OutputBuffer<T>, This> disable_values;
+    SettableBuffer<T> disable_values;
 
 protected:
-    bool on_daq_enable() override { return this->write(this->enable_values.buffer()); }
-    bool on_daq_disable() override { return this->write(this->disable_values.buffer()); }
+    bool on_daq_enable() override { return this->write(this->enable_values.get()); }
+    bool on_daq_disable() override { return this->write(this->disable_values.get()); }
 };
 
 /// Convenience type for analog output DAQ Module interfaces
@@ -232,12 +184,8 @@ public:
 /// 1) encoder.units[0] = 360.0 / 1024; // user sets 360 degrees per 1024 counts
 /// 2) auto cnt = encoder.read(0);      // user reads ch 0, gets 256
 /// 3) auto pos = encoder.converted[0]  // will be 22.5 degrees (assuming 4x quadrature)
-template <class Crtp = void>
 class EncoderModule : public EncoderModuleBasic {
 public:
-    friend Crtp;
-    /// Typedef this type for convenienve.
-    typedef EncoderModule<Crtp> This;
     /// Constructor.
     EncoderModule(Daq& daq, const ChanNums& allowed) :
         EncoderModuleBasic(daq, allowed),
@@ -250,17 +198,17 @@ public:
                 converted.buffer(chs[i]) = static_cast<double>(counts[i]) * units[chs[i]] /
                                            static_cast<double>(quadratures[chs[i]]);
         };
-        this->post_read.connect(convert);
-        this->post_write.connect(convert);
+        connect_post_read(*this, convert);
+        connect_post_write(*this, convert);
     }
     /// The quadrature factor settings for each channel.
-    Fused<Register<QuadMode>, Crtp> quadratures;
+    Register<QuadMode> quadratures;
     /// The user defined units per count for each channel (e.g. 360 degrees / 1024 counts)
-    Fused<OutputBuffer<double>, This> units;
+    SettableBuffer<double> units;
     /// The converted positions in the units defined by the user, i.e.
     /// {count * unit_per_count / quadratue factor} (see above)
     /// It is automatically update when the encoder is read or written
-    Fused<InputBuffer<double>, This> converted;
+    GettableBuffer<double,EncoderModule> converted;
 };
 
 }  // namespace daq

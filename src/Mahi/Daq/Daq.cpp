@@ -83,5 +83,10 @@ const std::vector<Module*>& Daq::modules() const {
     return m_modules;
 }
 
+void Daq::create_shared_pins(ChanneledModule* a, ChanneledModule* b, SharedPins shares_pins) {
+    ChanneledModule::create_shared_pins(a,b,shares_pins);
+}
+
+
 } // namespace daq
 } // namespace mahi

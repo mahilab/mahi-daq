@@ -35,7 +35,7 @@ MyRioAI::MyRioAI(MyRioConnector& connector, const ChanNums& allowed) :
         }
         return success;
     };
-    on_read.connect(read_impl);
+    connect_read(*this, read_impl);
 }
 
 

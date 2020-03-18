@@ -23,10 +23,11 @@ namespace daq {
 
 class QuanserDaq;
 
-class QuanserDI : public Fused<DIModule,QuanserDaq> {
+class QuanserDI : public DIModule {
 public:
     QuanserDI(QuanserDaq& d, QuanserHandle& h, bool bidirectional, const ChanNums& allowed);
 private:
+    friend QuanserDaq;
     QuanserHandle& m_h;
     bool m_bidirectional;
 };

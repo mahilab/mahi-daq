@@ -51,7 +51,7 @@ public:
             return true;
         };
         // Connect the lambda
-        on_write.connect(write_impl);
+        connect_write(*this, write_impl);
 
         // Implement other Buffers, Registers, etc:
         auto range_write_impl = [this](const ChanNum* chs, const Range<Voltage>* ranges,
@@ -60,7 +60,7 @@ public:
                 print("Set {}}[{}] Range: ({} V, {} V)", name(), chs[i], ranges[i].min_val, ranges[i].max_val);
             return true;
         };
-        ranges.on_write.connect(range_write_impl);
+        connect_write(ranges, range_write_impl);
 
         // You have two options for making initalization calls on a Module. The first is on a
         // channel by channel basis, as they are added using #on_gain_channels:
@@ -77,7 +77,7 @@ public:
                 print("Finalizing {}[{}]",name(),ch);
             return true;
         };
-        on_free_channels.connect(gain_impl);
+        on_free_channels.connect(free_impl);
     }
     /// The other option for intialization/finalization are on a whole Module basis, 
     /// either when the DAQ opens, closes, enables, or disables. Override these functions:
@@ -95,10 +95,8 @@ public:
 
     // Often, I/O channels will have associative registers and other buffers. You can implement
     // these by adding attional Buffer types from Io.hpp . For example, here we expose a Register
-    /// interface for setting the Analog Output ranges. Fused is a mixin that gives MyAOModule
-    // friend access to #range's internal buffers and on_write callback, which we implement in
-    /// our constructor.
-    Fused<Register<Range<Voltage>>, MyAOModule> ranges;
+    /// interface for setting the Analog Output ranges.
+    Register<Range<Voltage>> ranges;
 };
 
 /// Now, we will make a digital input Module
@@ -138,7 +136,7 @@ public:
         /// shared pins will be freed from the other, and gained on the
         /// recipient. You implement this functinality in #on_gain_channels
         /// and #on_free_channels (see above).
-        DI.share_pins_with(&encoder, {{{0,1,2},{0}},{{3,4,5},{1}}});
+        create_shared_pins(&DI, &encoder, {{{0,1,2},{0}},{{3,4,5},{1}}});
 
         // set the intial channels for each Module
         AO.set_channels({0,1,2,3,4,5});
@@ -170,9 +168,9 @@ public:
 
 public:
     /// Expose your DAQ's Modules as public members
-    Fused<MyAOModule,MyDaq>      AO;
-    Fused<MyDIModule,MyDaq>      DI;
-    Fused<MyEncoderModule,MyDaq> encoder;
+    MyAOModule      AO;
+    MyDIModule      DI;
+    MyEncoderModule encoder;
 };
 
 int main(int argc, char const* argv[]) {

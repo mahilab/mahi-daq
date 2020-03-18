@@ -23,11 +23,12 @@ namespace daq {
 
 class QuanserDaq;
 
-class QuanserDO : public Fused<DOModule,QuanserDaq> {
+class QuanserDO : public DOModule {
 public:
     QuanserDO(QuanserDaq& d, QuanserHandle& h, bool bidirectional, const ChanNums& allowed);
-    Fused<Register<Logic>,QuanserDO> expire_values;
+    Register<Logic> expire_values;
 private:
+    friend QuanserDaq;
     QuanserHandle& m_h;
     bool m_bidirectional;
 };

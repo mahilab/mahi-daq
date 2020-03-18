@@ -25,11 +25,12 @@ namespace daq {
 class QuanserDaq;
 
 /// Quanser incremental encoder module
-class QuanserEncoder : public Fused<EncoderModule<QuanserEncoder>,QuanserDaq> {
+class QuanserEncoder : public EncoderModule {
 public:
     /// Constructor
     QuanserEncoder(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
 private:
+    friend QuanserDaq;
     QuanserHandle& m_h;
 };
 
@@ -42,7 +43,7 @@ public:
     /// i.e. [counts_per_sec * unit_per_count / quadratue factor]
     /// It is automatically update when the the velocity is read. 
     /// The units and quadrature factors are pulled from the accompanying QuanserEncoder.
-    Fused<InputBuffer<double>,QuanserEncoderVelocity> converted;
+    GettableBuffer<double,QuanserEncoderVelocity> converted;
 private:
     /// Quanser encoder velocity channels awkwardly start at 14000 instead of 0, 
     /// therefore we apply a transformation so that they can be accessed starting at 0.

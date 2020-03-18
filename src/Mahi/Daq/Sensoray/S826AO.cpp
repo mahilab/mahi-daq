@@ -39,8 +39,7 @@ S826AO::S826AO(S826& s826, unsigned int board) :
         }
         return success;
     };
-    on_write.connect(write_impl);
-
+    connect_write(*this, write_impl);
     // range write impl
     auto range_write_impl = [this](const ChanNum* chs, const Range<Voltage>* vals, std::size_t n) {
         bool success = true;
@@ -68,7 +67,7 @@ S826AO::S826AO(S826& s826, unsigned int board) :
         }
         return success;
     };
-    ranges.on_write.connect(range_write_impl);
+    connect_write(ranges, range_write_impl);
     // on gain impl
     auto on_gain_impl = [this](const ChanNums& chs) {
         return ranges.write(chs, std::vector<Range<Voltage>>(chs.size(),{-10,10}));

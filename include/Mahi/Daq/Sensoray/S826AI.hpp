@@ -26,7 +26,7 @@ class S826;
 
 class S826AI : public AIModule {
 public:
-    Fused<Register<util::Time>,S826AI> settling_times;
+    Register<util::Time> settling_times;
 private:
     friend class S826;
     S826AI(S826& s826, unsigned int board);

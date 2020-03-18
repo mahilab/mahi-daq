@@ -23,7 +23,7 @@ MyRioDI::MyRioDI(MyRioConnector& connector, const ChanNums& allowed) :
             vals[i] = get_bit(INS[m_conn.type][chs[i] / 8], chs[i] % 8) ? HIGH : LOW;
         return true;
     };
-    on_read.connect(read_impl); 
+    connect_read(*this, read_impl);
     // on channels gained impl   
     auto gain_impl = [this](const ChanNums& chs) {
         auto ss = SYSSELECT[m_conn.type];

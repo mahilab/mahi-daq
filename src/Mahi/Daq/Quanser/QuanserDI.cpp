@@ -11,7 +11,7 @@ namespace mahi {
 namespace daq {
 
 QuanserDI::QuanserDI(QuanserDaq& d,QuanserHandle& h, bool bidirectional, const ChanNums& allowed) : 
-    Fused<DIModule,QuanserDaq>(d,allowed), m_h(h), m_bidirectional(bidirectional)
+    DIModule(d,allowed), m_h(h), m_bidirectional(bidirectional)
 {
     // Quanser uses char type as their buffer
     set_name(d.name() + ".DI");
@@ -25,7 +25,7 @@ QuanserDI::QuanserDI(QuanserDaq& d,QuanserHandle& h, bool bidirectional, const C
         }
         return true;
     };
-    on_read.connect(on_read_impl);
+    connect_read(*this, on_read_impl);
     // on channels gain
     if (m_bidirectional) {
         auto on_gain_impl = [this](const ChanNums& gain) {

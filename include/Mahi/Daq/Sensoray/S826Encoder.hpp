@@ -24,9 +24,9 @@ namespace daq {
 
 class S826;
 
-class S826Encoder : public EncoderModule<S826Encoder> {
+class S826Encoder : public EncoderModule {
 public:
-    Fused<InputBuffer<util::Time>,S826Encoder> timestamps;
+    GettableBuffer<util::Time,S826Encoder> timestamps;
 private:
     friend class S826;
     S826Encoder(S826& s826, unsigned int board);

@@ -33,10 +33,10 @@ QPid::QPid() :
     // open
     open();
     // establish shared pins relationships
-    ChanneledModule::ShareList list(56);
+    SharedPins list(56);
     for (ChanNum i = 0; i < 56; ++i)
         list[i] = {{i},{i}};
-    DI.share_pins_with(&DO,list);
+    create_shared_pins(&DI, &DO, list);
     // set the initial channels
     AI.set_channels({0,1,2,3,4,5,6,7}); 
     AO.set_channels({0,1,2,3,4,5,6,7});

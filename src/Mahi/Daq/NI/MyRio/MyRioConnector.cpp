@@ -47,12 +47,12 @@ MyRioMxp::MyRioMxp(MyRio& myrio, Type type) :
     encoder(*this, {0})
 {
     // pin sharing
-    ChanneledModule::ShareList list(16);
+    SharedPins list(16);
     for (ChanNum i = 0; i < 16; ++i)
         list[i] = {{i},{i}};
-    DI.share_pins_with(&DO,list);
-    encoder.share_pins_with(&DO, {{{0},{11,12}}});
-    encoder.share_pins_with(&DI, {{{0},{11,12}}});
+    create_shared_pins(&DI, &DO,list);
+    create_shared_pins(&encoder, &DO, {{{0},{11,12}}});
+    create_shared_pins(&encoder, &DI, {{{0},{11,12}}});
 }
 
 bool MyRioMxp::on_daq_open() {
@@ -121,12 +121,12 @@ MyRioMsp::MyRioMsp(MyRio& myrio, Type type) :
     encoder(*this, {0,1})
 {
     // pin sharing
-    ChanneledModule::ShareList list(8);
+    SharedPins list(8);
     for (ChanNum i = 0; i < 8; ++i)
         list[i] = {{i},{i}};
-    DI.share_pins_with(&DO,list);
-    encoder.share_pins_with(&DO, {{{0},{0,2}},{{1},{4,6}}});
-    encoder.share_pins_with(&DI, {{{0},{0,2}},{{1},{4,6}}});
+    create_shared_pins(&DI, &DO,list);
+    create_shared_pins(&encoder, &DO, {{{0},{0,2}},{{1},{4,6}}});
+    create_shared_pins(&encoder, &DI, {{{0},{0,2}},{{1},{4,6}}});
 }
 
 bool MyRioMsp::on_daq_open() {

@@ -10,7 +10,7 @@ namespace mahi {
 namespace daq {
 
 QuanserAI::QuanserAI(QuanserDaq& d,QuanserHandle& h, const ChanNums& allowed) : 
-    Fused<AIModule,QuanserDaq>(d, allowed),
+    AIModule(d, allowed),
     ranges(*this, {-10,10}), m_h(h)
 {
     set_name(d.name() + ".AI");
@@ -25,7 +25,7 @@ QuanserAI::QuanserAI(QuanserDaq& d,QuanserHandle& h, const ChanNums& allowed) :
         }
         return true;
     };
-    on_read.connect(on_read_impl);
+    connect_read(*this, on_read_impl);
     // Write Ranges
     auto ranges_write_impl = [this](const ChanNum* chs, const Range<Voltage>* vals, std::size_t n) { 
         std::vector<Voltage> temp_mins(n);
@@ -44,7 +44,8 @@ QuanserAI::QuanserAI(QuanserDaq& d,QuanserHandle& h, const ChanNums& allowed) :
             return false;
         }
     };
-    ranges.on_write.connect(ranges_write_impl);
+    // ranges.on_write.connect(ranges_write_impl);
+    connect_write(ranges, ranges_write_impl);
 }
 
 } // namespace daq 

@@ -26,7 +26,7 @@ class S826;
 
 class S826AO : public AOModule {
 public:
-    Fused<Register<Range<Voltage>>,S826AO> ranges;
+    Register<Range<Voltage>> ranges;
 private:
     friend class S826;
     S826AO(S826& s826, unsigned int board);

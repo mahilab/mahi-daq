@@ -10,12 +10,12 @@ namespace mahi {
 namespace daq {
 
 QuanserDO::QuanserDO(QuanserDaq& d, QuanserHandle& h, bool bidirectional, const ChanNums& allowed)  : 
-    Fused<DOModule,QuanserDaq>(d,allowed),
+    DOModule(d,allowed),
     expire_values(*this, 0), m_h(h), m_bidirectional(bidirectional)
 {
     set_name(d.name() + ".DO");
     /// Write Channels
-    auto on_write_impl = [this](const ChanNum *chs, const Logic *vals, std::size_t n) {
+    auto write_impl = [this](const ChanNum *chs, const Logic *vals, std::size_t n) {
         t_error result = hil_write_digital(m_h, chs, static_cast<t_uint32>(n), vals);
         if (result != 0) {
             LOG(Error) << "Failed to write " << this->name() << " digital outputs " << quanser_msg(result);
@@ -23,7 +23,7 @@ QuanserDO::QuanserDO(QuanserDaq& d, QuanserHandle& h, bool bidirectional, const 
         }
         return true;
     };
-    on_write.connect(on_write_impl);
+    connect_write(*this, write_impl);
     // // Write Expire States
     auto expire_write_impl = [this](const ChanNum* chs, const Logic* vals, std::size_t n) { 
         // convert to Quanser t_digital_state
@@ -45,7 +45,7 @@ QuanserDO::QuanserDO(QuanserDaq& d, QuanserHandle& h, bool bidirectional, const 
             return false;
         }
     };
-    expire_values.on_write.connect(expire_write_impl);
+    connect_write(expire_values, expire_write_impl);
     // on channels gained
     auto on_gain_impl = [this](const ChanNums& gain) {
         if (m_bidirectional) {

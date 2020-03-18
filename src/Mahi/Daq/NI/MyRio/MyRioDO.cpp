@@ -27,7 +27,7 @@ MyRioDO::MyRioDO(MyRioConnector& connector, const ChanNums& allowed) :
         }
         return true;
     };
-    on_write.connect(write_impl); 
+    connect_write(*this, write_impl);
     // on channels gained impl   
     auto gain_impl = [this](const ChanNums& chs) {
         auto ss = SYSSELECT[m_conn.type];

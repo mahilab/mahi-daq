@@ -207,6 +207,7 @@ public:
     }
 
 protected:
+    friend ChanneledModule;
     /// Connect to this Event to read all requested channel numbers into the buffer.
     /// The channel numbers passed will be the internal representation (see
     /// Module::transform_channels).
@@ -279,6 +280,7 @@ public:
     }
 
 protected:
+    friend ChanneledModule;
     /// Connect to this Event to write all requested channel numbers from the buffer.
     /// The channel numbers passed will be the internal representation (see
     /// Module::transform_channels).
@@ -287,6 +289,13 @@ protected:
     /// The channel numbers passed will be the internal representation (see
     /// Module::transform_channels).
     Event<void(const ChanNum*, const typename Base::Type*, std::size_t)> post_write;
+};
+
+/// Exposes the protected members of Protected to Beneficiary
+template <class Protected, class Beneficiary>
+class Friend : public Protected {
+    using Protected::Protected;
+    friend Beneficiary;
 };
 
 }  // namespace daq

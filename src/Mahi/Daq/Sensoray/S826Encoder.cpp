@@ -38,7 +38,7 @@ S826Encoder::S826Encoder(S826& s826, unsigned int board) :
         }
         return success;
     };
-    on_read.connect(read_impl);
+    connect_read(*this, read_impl);
     // write impl
     auto write_impl = [this](const ChanNum* chs, const Counts* vals, std::size_t n) {
         bool success = true;
@@ -57,7 +57,7 @@ S826Encoder::S826Encoder(S826& s826, unsigned int board) :
         }
         return success;
     };
-    on_write.connect(write_impl);    
+    connect_write(*this, write_impl);
     // quadratures write impl
     auto quad_write_impl = [this](const ChanNum* chs, const QuadMode* vals, std::size_t n) {
         bool success = true;
@@ -82,7 +82,7 @@ S826Encoder::S826Encoder(S826& s826, unsigned int board) :
         }
         return success;
     };
-    quadratures.on_write.connect(quad_write_impl);
+    connect_write(quadratures, quad_write_impl);
     // on channels gained
     auto on_gain_impl = [this](const ChanNums& chs) {
         bool success = quadratures.write(chs, std::vector<QuadMode>(chs.size(), QuadMode::X4));

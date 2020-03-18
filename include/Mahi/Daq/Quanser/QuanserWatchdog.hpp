@@ -39,6 +39,7 @@ private:
     bool on_daq_open() override;
     bool on_daq_close() override;
 private:
+    friend QuanserDaq;
     QuanserHandle& m_h;  ///< Reference to parent QuanserHandle
 };
 

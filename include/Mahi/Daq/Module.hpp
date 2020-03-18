@@ -39,7 +39,7 @@ public:
     const std::string& name() const;
     /// Returns reference to this Module's parent DAQ
     Daq& daq() const;
-public:
+protected:
     /// Called when the DAQ opens.
     virtual bool on_daq_open() { return true; }
     /// Called when the DAQ closes.
@@ -55,6 +55,8 @@ private:
     Daq& m_daq;         ///< This Module's parent Daq
     std::string m_name; ///< This Module's string name
 };
+
+typedef std::vector<std::pair<ChanNums,ChanNums>> SharedPins;
 
 /// ChannelModules expose one type of array-like I/O functionality of the DAQ
 class ChanneledModule : public Module {
@@ -78,22 +80,31 @@ public:
     //// Returns true if this Module shares pins with another.
     bool shares_pins() const;
     /// Shared pins data structure
-    typedef std::vector<std::pair<ChanNums,ChanNums>> ShareList;
 protected:
     /// Transforms a public facing channel number to the internal representation.
     /// Passes through by default. Override if your DAQ API channel indexing is 
     /// different from the interface indexing you you want clients to use. 
     virtual ChanNum transform_channel(ChanNum public_facing) const;
-    /// Use this to facilitate pin sharing between ChannelsModules e.g. DIOs 
-    /// commonly share pins with w/ PWM, I2C, encoders, etc.
-    /// ShareList({{{0},{0,1}},{{1,2},{2}}}) means this Module's channel 0
-    /// shares with others's channels 0,1, and this Modules's channels 1,2 
-    /// shares with others's channel 2.
-    void share_pins_with(ChanneledModule* other, ShareList share_list);
     /// Called when new channels have been gained
     util::Event<bool(const ChanNums&),util::CollectorBooleanAnd> on_gain_channels;
     /// Called when old channels have been freed
     util::Event<bool(const ChanNums&),util::CollectorBooleanAnd> on_free_channels;
+protected:
+    /// Connect on_read(s)
+    template <typename B, typename F>
+    void connect_read(B& buffer, F func) { buffer.on_read.connect(func); }
+    /// Connect on_write(s)
+    template <typename B, typename F>
+    void connect_write(B& buffer, F func) { buffer.on_write.connect(func); }
+    /// Connect post_read(s)
+    template <typename B, typename F>
+    void connect_post_read(B& buffer, F func) { buffer.post_read.connect(func); }
+    /// Connect post_write(s)
+    template <typename B, typename F>
+    void connect_post_write(B& buffer, F func) { buffer.post_write.connect(func); }
+private:
+    friend Daq;
+    static void create_shared_pins(ChanneledModule* a, ChanneledModule* b, SharedPins shares_pins);
 private:
     friend BufferBase;
     ChanNums m_chs_allowed;                     ///< The allowed public facing channel numbers

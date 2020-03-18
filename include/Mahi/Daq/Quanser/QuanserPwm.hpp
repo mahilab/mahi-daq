@@ -25,7 +25,7 @@ namespace daq {
 class QuanserDaq;
 
 /// Quanser PWM output Module
-class QuanserPwm : public Fused<PwmModuleBasic,QuanserDaq> {
+class QuanserPwm : public PwmModuleBasic {
 public:
     /// The output mode to be use when write is called
     enum class Mode {
@@ -35,16 +35,19 @@ public:
         OneShot    /// PWM outputs vary in duty cycle, only a single pulse generated per write
     };
     /// Constructor
-    QuanserPwm(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
+    QuanserPwm(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed, 
+        std::function<bool(const ChanNums&)> on_gain_custom = nullptr, 
+        std::function<bool(const ChanNums&)> on_free_custom = nullptr);
         /// The writing output mode of each channel
-    Fused<Register<Mode>,QuanserPwm> modes;
+    Register<Mode> modes;
     /// The values to default to if the DAQ watchdog expires.
-    Fused<Register<double>,QuanserPwm> expire_values;
+    Register<double> expire_values;
     /// The frequencies to be used in Mode::DutyCycle in Hz
-    Fused<Register<double>,QuanserPwm> frequencies;
+    Register<double> frequencies;
     /// The duty cycles to be use in Mode::Frequency and Mode::Period in range 0 to 1
-    Fused<Register<double>,QuanserPwm> duty_cycles;
+    Register<double> duty_cycles;
 private:
+    friend QuanserDaq;
     QuanserHandle& m_h;
 };
 

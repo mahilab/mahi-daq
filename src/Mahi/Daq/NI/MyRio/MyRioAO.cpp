@@ -48,7 +48,7 @@ MyRioAO::MyRioAO(MyRioConnector& connector, const ChanNums& allowed) :
         }
         return success;
     };
-    on_write.connect(write_impl);
+    connect_write(*this, write_impl);
 }
 
 } // namespace daq

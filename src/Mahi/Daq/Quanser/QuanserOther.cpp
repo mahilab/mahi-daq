@@ -11,7 +11,7 @@ namespace daq {
 
 QuanserOtherInput::QuanserOtherInput(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed) : 
     ChanneledModule(d,allowed),
-    Fused<ReadBuffer<double>,QuanserDaq>(*this, 0), 
+    ReadBuffer<double>(*this, 0), 
     m_h(h)
 { 
     set_name(d.name() + ".OI");
@@ -25,14 +25,14 @@ QuanserOtherInput::QuanserOtherInput(QuanserDaq& d, QuanserHandle& h, const Chan
         }
         return true;
     };
-    on_read.connect(on_read_impl); 
+    connect_read(*this, on_read_impl);
     read_with_all = true;
 }
 
 
 QuanserOtherOutput::QuanserOtherOutput(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed) : 
     ChanneledModule(d,allowed),
-    Fused<WriteBuffer<double>,QuanserDaq>(*this, 0), 
+    WriteBuffer<double>(*this, 0), 
     m_h(h)
 { 
     set_name(d.name() + ".OO");
@@ -46,7 +46,7 @@ QuanserOtherOutput::QuanserOtherOutput(QuanserDaq& d, QuanserHandle& h, const Ch
         }
         return true;
     };
-    on_write.connect(on_read_impl); 
+    connect_write(*this, on_read_impl);
     write_with_all = true;
 }
 

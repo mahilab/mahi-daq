@@ -42,7 +42,7 @@ S826AI::S826AI(S826& s826, unsigned int board) :
         }
         return true;
     };
-    on_read.connect(read_impl);
+    connect_read(*this, read_impl);
     // settling times write impl
     auto settle_write_impl = [this](const ChanNum* chs, const util::Time* vals, std::size_t n) {
         bool success = true;
@@ -56,7 +56,7 @@ S826AI::S826AI(S826& s826, unsigned int board) :
         }
         return success;
     };
-    settling_times.on_write.connect(settle_write_impl);
+    connect_write(settling_times, settle_write_impl);
     // set channel numbers
     set_channels({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15});
 }

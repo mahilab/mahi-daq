@@ -26,13 +26,13 @@ class MyRioMxp;
 class MyRioConnector;
 
 /// myRIO Encoder Module
-class MyRioEncoder : public EncoderModule<MyRioEncoder> {
+class MyRioEncoder : public EncoderModule {
 private:
     friend MyRioMsp;
     friend MyRioMxp;
     MyRioEncoder(MyRioConnector& connector, const ChanNums& allowed);
 private:
-    using EncoderModule<MyRioEncoder>::write;
+    using EncoderModule::write;
     const MyRioConnector& m_conn; 
 };
 

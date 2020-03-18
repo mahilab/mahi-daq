@@ -12,7 +12,7 @@ namespace mahi {
 namespace daq {
 
 QuanserEncoder::QuanserEncoder(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed) : 
-    Fused<EncoderModule<QuanserEncoder>,QuanserDaq>(d,allowed),
+    EncoderModule(d,allowed),
     m_h(h)
 {
     set_name(d.name() + ".encoder");
@@ -26,7 +26,7 @@ QuanserEncoder::QuanserEncoder(QuanserDaq& d, QuanserHandle& h, const ChanNums& 
             return false;
         }
     };
-    on_read.connect(read_impl);
+    connect_read(*this, read_impl);
     // Write Encoders
     auto write_impl = [this](const ChanNum* chs, const int* counts, std::size_t n) {
         t_error result = hil_set_encoder_counts(m_h, chs, static_cast<t_uint32>(n), counts);
@@ -40,7 +40,7 @@ QuanserEncoder::QuanserEncoder(QuanserDaq& d, QuanserHandle& h, const ChanNums& 
             return false;
         }
     };
-    on_write.connect(write_impl);
+    connect_write(*this, write_impl);
     /// Write Quadratue Factors
     auto write_quad_impl = [this](const ChanNum* chs, const QuadMode* quads, std::size_t n) {
         std::vector<t_encoder_quadrature_mode> converted_factors(n);
@@ -69,7 +69,7 @@ QuanserEncoder::QuanserEncoder(QuanserDaq& d, QuanserHandle& h, const ChanNums& 
             return false;
         }
     };
-    quadratures.on_write.connect(write_quad_impl);
+    connect_write(quadratures, write_quad_impl);
     /// on channels gained
     auto on_gain = [this](const ChanNums& gained) {
         return quadratures.write(gained, std::vector<QuadMode>(gained.size(), QuadMode::X4));
@@ -95,7 +95,7 @@ QuanserEncoderVelocity::QuanserEncoderVelocity(QuanserDaq& d, QuanserHandle& h, 
             converted.buffer(pch) = static_cast<double>(cps[i]) * m_e.units[pch] / static_cast<double>(m_e.quadratures[pch]);
         }
     };
-    post_read.connect(convert);
+    connect_post_read(*this, convert);
 }
 
 ChanNum QuanserEncoderVelocity::transform_channel(ChanNum public_facing) const {

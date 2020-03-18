@@ -23,11 +23,12 @@ namespace daq {
 
 class QuanserDaq;
 
-class QuanserAI : public Fused<AIModule,QuanserDaq> {
+class QuanserAI : public AIModule {
 public:
     QuanserAI(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
-    Fused<Register<Range<Voltage>>, QuanserAI> ranges;
+    Register<Range<Voltage>> ranges;
 private:
+    friend QuanserDaq;
     QuanserHandle& m_h;
 };
 

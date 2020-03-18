@@ -12,7 +12,7 @@ namespace mahi {
 namespace daq {
 
 MyRioEncoder::MyRioEncoder(MyRioConnector& connector, const ChanNums& allowed) :
-    EncoderModule<MyRioEncoder>(connector, allowed),
+    EncoderModule(connector, allowed),
     m_conn(connector)
 {
     // set name
@@ -31,7 +31,7 @@ MyRioEncoder::MyRioEncoder(MyRioConnector& connector, const ChanNums& allowed) :
         }
         return success;
     };
-    on_read.connect(read_impl);
+    connect_read(*this, read_impl);
     // write impl
     auto write_impl = [this](const ChanNum* chs, const Counts* vals, std::size_t n) {
         bool success = true;
@@ -48,7 +48,7 @@ MyRioEncoder::MyRioEncoder(MyRioConnector& connector, const ChanNums& allowed) :
         };
         return success;
     };
-    on_write.connect(write_impl);
+    connect_write(*this, write_impl);
     // gain impl
     auto gain_impl = [this](const ChanNums& chs) {
         auto ss = SYSSELECT[m_conn.type];
@@ -84,7 +84,7 @@ MyRioEncoder::MyRioEncoder(MyRioConnector& connector, const ChanNums& allowed) :
     };
     on_free_channels.connect(free_impl);
     // quad write impl
-    auto quad_impl = [this](const ChanNum* chs, const QuadMode* vals, std::size_t n) {
+    auto quad_write_impl = [this](const ChanNum* chs, const QuadMode* vals, std::size_t n) {
         bool success = true;
         for (std::size_t i = 0; i < n; ++i) {
             if (vals[i] == QuadMode::X4) 
@@ -98,7 +98,7 @@ MyRioEncoder::MyRioEncoder(MyRioConnector& connector, const ChanNums& allowed) :
         }
         return success;           
     };
-    quadratures.on_write.connect(quad_impl);
+    connect_write(quadratures, quad_write_impl);
 }
 /*
 void MyRioEncoder::sync() {

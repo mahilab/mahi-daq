@@ -25,7 +25,6 @@ namespace daq {
 // Forward Declarations
 class Readable;
 class Writeable;
-class Module;
 
 /// A DAQ interface, the topmost level of the mahi::daq architecture
 class Daq : public util::Device {
@@ -49,6 +48,12 @@ protected:
     virtual bool on_daq_enable() { return true; }
     /// Called when the DAQ disables
     virtual bool on_daq_disable() { return true; }
+    /// Use this to facilitate pin sharing between ChannelsModules e.g. DIOs 
+    /// commonly share pins with w/ PWM, I2C, encoders, etc.
+    /// SharedPins({{{0},{0,1}},{{1,2},{2}}}) means Module a's channel 0
+    /// shares with b's channels 0,1, and Modules a's channels 1,2 
+    /// shares with b's channel 2.
+    void create_shared_pins(ChanneledModule* a, ChanneledModule* b, SharedPins shares_pins);
 private:
     /// Calls Daq::on_daq_open, then iteratively calls Module::on_daq_open 
     bool on_open() final;
