@@ -69,11 +69,11 @@ QuanserEncoder::QuanserEncoder(QuanserDaq& d, QuanserHandle& h, const ChanNums& 
             return false;
         }
     };
-    connect_write(quadratures, write_quad_impl);
+    connect_write(modes, write_quad_impl);
 }
 
 bool QuanserEncoder::on_gain_channels(const ChanNums& chs) {
-    return quadratures.write(chs, std::vector<QuadMode>(chs.size(), QuadMode::X4));
+    return modes.write(chs, std::vector<QuadMode>(chs.size(), QuadMode::X4));
 }
 
 namespace {
@@ -91,7 +91,7 @@ QuanserEncoderVelocity::QuanserEncoderVelocity(QuanserDaq& d, QuanserHandle& h, 
         for (int i = 0; i < n; ++i) {
             /// public facing channel
             ChanNum pch = chs[i] - g_v_off;
-            converted.buffer(pch) = static_cast<double>(cps[i]) * m_e.units[pch] / static_cast<double>(m_e.quadratures[pch]);
+            converted.buffer(pch) = static_cast<double>(cps[i]) * m_e.units[pch] / static_cast<double>(m_e.modes[pch]);
         }
     };
     connect_post_read(*this, convert);

@@ -173,7 +173,7 @@ public:
 /// the #units buffer. They can then retrieve the converted position from the
 /// #converted buffer after an encoder channel is read. The formula for the
 /// conversion is: {counts * unit per count / quadrature factor}. The quadrature
-/// factor is automatically obtained from the current value in the #quadratures
+/// factor is automatically obtained from the current value in the #modes
 /// WriteBuffer. Example usage is as follows:
 ///
 /// 1) encoder.units[0] = 360.0 / 1024; // user sets 360 degrees per 1024 counts
@@ -184,20 +184,20 @@ public:
     /// Constructor.
     EncoderModule(Daq& daq, const ChanNums& allowed) :
         EncoderModuleBasic(daq, allowed),
-        quadratures(*this, QuadMode::X4),
+        modes(*this, QuadMode::X4),
         units(*this, 1),
         converted(*this, 0) {
         // Updates positions after read and write
         auto convert = [this](const ChanNum* chs, const Counts* counts, std::size_t n) {
             for (std::size_t i = 0; i < n; ++i)
                 converted.buffer(chs[i]) = static_cast<double>(counts[i]) * units[chs[i]] /
-                                           static_cast<double>(quadratures[chs[i]]);
+                                           static_cast<double>(modes[chs[i]]);
         };
         connect_post_read(*this, convert);
         connect_post_write(*this, convert);
     }
     /// The quadrature factor settings for each channel.
-    Register<QuadMode> quadratures;
+    Register<QuadMode> modes;
     /// The user defined units per count for each channel (e.g. 360 degrees / 1024 counts)
     SettableBuffer<double> units;
     /// The converted positions in the units defined by the user, i.e.

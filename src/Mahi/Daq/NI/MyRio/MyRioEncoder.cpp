@@ -63,7 +63,7 @@ MyRioEncoder::MyRioEncoder(MyRioConnector& connector, const ChanNums& allowed) :
         }
         return success;
     };
-    connect_write(quadratures, quad_write_impl);
+    connect_write(modes, quad_write_impl);
 }
 
 bool MyRioEncoder::on_gain_channels(const ChanNums& chs) {
