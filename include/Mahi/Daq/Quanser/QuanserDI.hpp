@@ -28,8 +28,9 @@ public:
     QuanserDI(QuanserDaq& d, QuanserHandle& h, bool bidirectional, const ChanNums& allowed);
 private:
     friend QuanserDaq;
+    bool on_gain_channels(const ChanNums& chs) override;
     QuanserHandle& m_h;
-    bool m_bidirectional;
+    bool m_bidirectional;    
 };
 
 } // namespace daq

@@ -56,13 +56,12 @@ QuanserAO::QuanserAO(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed)  
         }
     };
     connect_write(ranges, ranges_write_impl);
-    // on channels gained
-    auto on_gain = [this](const ChanNums& gained) {
-        return expire_values.write(gained, std::vector<Voltage>(gained.size(), 0)) && 
-               ranges.write(gained, std::vector<Range<Voltage>>(gained.size(), {-10,10}));
-    };
-    on_gain_channels.connect(on_gain);
 }
+
+bool QuanserAO::on_gain_channels(const ChanNums& chs) {
+    return expire_values.write(chs, std::vector<Voltage>(chs.size(), 0)) &&  ranges.write(chs, std::vector<Range<Voltage>>(chs.size(), {-10,10}));
+}
+
 
 } // namespace daq 
 } // namespace mahi

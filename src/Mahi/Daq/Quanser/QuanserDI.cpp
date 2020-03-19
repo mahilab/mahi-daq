@@ -26,20 +26,20 @@ QuanserDI::QuanserDI(QuanserDaq& d,QuanserHandle& h, bool bidirectional, const C
         return true;
     };
     connect_read(*this, on_read_impl);
-    // on channels gain
-    if (m_bidirectional) {
-        auto on_gain_impl = [this](const ChanNums& gain) {
-            auto result = hil_set_digital_directions(m_h, &gain[0], static_cast<t_uint32>(gain.size()), nullptr, 0);
-            if (result != 0) {
-                LOG(Error) << "Failed to set " << name() << " channels " << gain << " directions to inputs.";
-                return false;
-            }
-            LOG(Verbose) << "Set " << name() << " channels " << gain << " directions to inputs.";
-            return true;
-        };
-        on_gain_channels.connect(on_gain_impl);
-    }
 }
+
+bool QuanserDI::on_gain_channels(const ChanNums& chs) {
+    if (!m_bidirectional)
+        return true;
+    auto result = hil_set_digital_directions(m_h, &chs[0], static_cast<t_uint32>(chs.size()), nullptr, 0);
+    if (result != 0) {
+        LOG(Error) << "Failed to set " << name() << " channels " << chs << " directions to inputs.";
+        return false;
+    }
+    LOG(Verbose) << "Set " << name() << " channels " << chs << " directions to inputs.";
+    return true;
+}
+
 
 } // namespace daq 
 } // namespace mahi

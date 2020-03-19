@@ -47,7 +47,7 @@ using WriteBuffer = IWrite<ISet<Buffer<T>>>;
 template <typename T>
 using ReadBuffer = IRead<IGet<Buffer<T>>>;
 
-/// A buffer than can be publicaly set and get with operator[] and an immediate read/write
+/// A buffer than can be publicly set and get with operator[] and an immediate read/write
 /// interface
 template <typename T>
 using ReadWriteBuffer = IRead<IWrite<ISet<Buffer<T>>>>;
@@ -62,12 +62,10 @@ using Register = IWrite<IGet<Buffer<T>>>;
 
 /// A DAQ Module that is also ReadBuffer. Used for generic inputs.
 /// It will automatically  read on calls to Daq::read_all unless
-/// the bool memeber read_with_all is manually set to false.
+/// the bool member read_with_all is manually set to false.
 template <typename T>
 class InputModule : public ChanneledModule, public ReadBuffer<T> {
 public:
-    /// Typedef this type for convenienve
-    typedef InputModule<T> This;
     /// Constructor
     InputModule(Daq& daq, const ChanNums& allowed) :
         ChanneledModule(daq, allowed), ReadBuffer<T>(*this, T()) {
@@ -89,12 +87,10 @@ typedef InputModule<Logic> DIModule;
 
 /// A DAQ Module that is also WriteBuffer. Used for generic outputs.
 /// It will automatically  write on calls to Daq::write_all unless
-/// the bool memeber write_with_all is manually set to false.
+/// the bool member write_with_all is manually set to false.
 template <typename T>
 class OutputModule : public ChanneledModule, public WriteBuffer<T> {
 public:
-    /// Typedef this type for convenienve
-    typedef OutputModule<T> This;
     /// Constructor
     OutputModule(Daq& daq, const ChanNums& allowed) :
         ChanneledModule(daq, allowed),
@@ -141,7 +137,7 @@ public:
 /// A incremental Encoder DAQ Module interface. It itself is a ReadWriteBuffer<Count>,
 /// and should be configured to read/write encoder counts. Reading should get the
 /// current value of the encoder channel, while writing should set the value. Most
-/// DAQs should allow setting the the counts, for zeoring purposes.
+/// DAQs should allow setting the the counts, for zeroing purposes.
 ///
 /// It automatically reads on calls to Daq::read_all unless the bool member
 /// read_with_all is manually set to false. It does NOT automatically write, since
@@ -161,23 +157,22 @@ public:
 /// A incremental Encoder DAQ Module interface. It itself is a ReadWriteBuffer<Count>,
 /// and should be configured to read/write encoder counts. Reading should get the
 /// current value of the encoder channel, while writing should set the value. Most
-/// DAQs should allow setting the the counts, for zeoring purposes.
+/// DAQs should allow setting the the counts, for zeroing purposes.
 ///
 /// It automatically reads on calls to Daq::read_all unless the bool member
 /// read_with_all is manually set to false. It does NOT automatically write, since
 /// that is not a realistic use case.
 ///
 /// The class has a built in WriteBuffer for setting the encoder quadrature
-/// mode (see QuadMode for possible values). CRTP inherit from this to gain access
-/// to the #quadratues Register, and implement its callbacks using your DAQ API if
+/// mode (see QuadMode for possible values). Implement its callbacks using your DAQ API if
 /// you DAQ supports different modes. Catch unsupported quadrature modes and Log
-/// an error when the are passed by the user.
+/// an error when they are passed by the user.
 ///
 /// For convenience, it also contains an interface for automatically converting
 /// counts to positional units. Users define a units/per count value by setting
 /// the #units buffer. They can then retrieve the converted position from the
 /// #converted buffer after an encoder channel is read. The formula for the
-/// conversion is: {counts * unit per count / quadratue factor}. The quadrature
+/// conversion is: {counts * unit per count / quadrature factor}. The quadrature
 /// factor is automatically obtained from the current value in the #quadratures
 /// WriteBuffer. Example usage is as follows:
 ///

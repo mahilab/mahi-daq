@@ -30,6 +30,7 @@ public:
     Register<Range<Voltage>> ranges;
 private:
     friend QuanserDaq;
+    bool on_gain_channels(const ChanNums& chs) override;
     QuanserHandle& m_h;
 };
 

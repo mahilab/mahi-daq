@@ -29,6 +29,7 @@ public:
     Register<Logic> expire_values;
 private:
     friend QuanserDaq;
+    bool on_gain_channels(const ChanNums& chs) override;
     QuanserHandle& m_h;
     bool m_bidirectional;
 };

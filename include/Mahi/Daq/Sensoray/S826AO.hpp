@@ -30,6 +30,7 @@ public:
 private:
     friend class S826;
     S826AO(S826& s826, unsigned int board);
+    bool on_gain_channels(const ChanNums& chs) override;
 private:
     const unsigned int m_board;
     unsigned int m_ranges[8];

@@ -34,11 +34,12 @@ public:
     /// Constructor.
     Module(Daq& daq);
     /// Destructor.
-    virtual ~Module() { }
+    virtual ~Module() {}
     /// Returns the Module's name.
     const std::string& name() const;
-    /// Returns reference to this Module's parent DAQ
+    /// Returns const reference to this Module's parent DAQ
     Daq& daq() const;
+
 protected:
     /// Called when the DAQ opens.
     virtual bool on_daq_open() { return true; }
@@ -50,26 +51,27 @@ protected:
     virtual bool on_daq_disable() { return true; }
     /// Set the Module's name
     void set_name(const std::string& name);
+
 private:
     friend Daq;
-    Daq& m_daq;         ///< This Module's parent Daq
-    std::string m_name; ///< This Module's string name
+    Daq&        m_daq;   ///< This Module's parent Daq
+    std::string m_name;  ///< This Module's string name
 };
 
-typedef std::vector<std::pair<ChanNums,ChanNums>> SharedPins;
+typedef std::vector<std::pair<ChanNums, ChanNums>> SharedPins;
 
 /// ChannelModules expose one type of array-like I/O functionality of the DAQ
 class ChanneledModule : public Module {
 public:
     /// Constructor. Sets the allowed channels, but does not set the current channels.
-    /// Make an explicit call to set_channels. 
     ChanneledModule(Daq& daq, const ChanNums& allowed);
     /// Sets the channel numbers this Module maintains. The channels requested
-    /// must be a subset of the Modue's allowed channels. If this Module shares
+    /// must be a subset of the Module's allowed channels. If this Module shares
     /// pins/channels with another, those Modules will have their pins reclaimed.
-    /// Understand that if you are holding references to any buffer values, this 
-    /// may, and likely will, invalidate those references, so use this only on 
-    // startup before pulling references. 
+    /// Understand that if you are holding references to any Buffer values, this
+    /// may, and likely will, invalidate those references, so use this only on
+    /// startup before pulling references. Channel Initialization and finalization 
+    /// functionality can be added by connecting to on_gain_ and on_free_channels.
     bool set_channels(const ChanNums& chs);
     /// Gets the channel numbers this Module is currently maintaining.
     const ChanNums& channels() const;
@@ -81,38 +83,49 @@ public:
     bool shares_pins() const;
     /// Shared pins data structure
 protected:
-    /// Transforms a public facing channel number to the internal representation.
-    /// Passes through by default. Override if your DAQ API channel indexing is 
-    /// different from the interface indexing you you want clients to use. 
-    virtual ChanNum transform_channel(ChanNum public_facing) const;
+    /// Converts a public facing channel number to the internal representation.
+    /// Passes through by default. Override if your DAQ API channel indexing is
+    /// different from the interface indexing you you want clients to use.
+    virtual ChanNum convert_channel(ChanNum public_facing) const;
     /// Called when new channels have been gained
-    util::Event<bool(const ChanNums&),util::CollectorBooleanAnd> on_gain_channels;
+    virtual bool on_gain_channels(const ChanNums& chs) { return true; }
     /// Called when old channels have been freed
-    util::Event<bool(const ChanNums&),util::CollectorBooleanAnd> on_free_channels;
+    virtual bool on_free_channels(const ChanNums& chs) { return true; }
+
 protected:
-    /// Connect on_read(s)
+    /// Connect Buffer on_read(s)
     template <typename B, typename F>
-    void connect_read(B& buffer, F func) { buffer.on_read.connect(func); }
-    /// Connect on_write(s)
+    inline void connect_read(B& buffer, F func) {
+        buffer.on_read.connect(func);
+    }
+    /// Connect Buffer on_write(s)
     template <typename B, typename F>
-    void connect_write(B& buffer, F func) { buffer.on_write.connect(func); }
-    /// Connect post_read(s)
+    inline void connect_write(B& buffer, F func) {
+        buffer.on_write.connect(func);
+    }
+    /// Connect Buffer post_read(s)
     template <typename B, typename F>
-    void connect_post_read(B& buffer, F func) { buffer.post_read.connect(func); }
-    /// Connect post_write(s)
+    inline void connect_post_read(B& buffer, F func) {
+        buffer.post_read.connect(func);
+    }
+    /// Connect Buffer post_write(s)
     template <typename B, typename F>
-    void connect_post_write(B& buffer, F func) { buffer.post_write.connect(func); }
+    inline void connect_post_write(B& buffer, F func) {
+        buffer.post_write.connect(func);
+    }
+
 private:
     friend Daq;
     static void create_shared_pins(ChanneledModule* a, ChanneledModule* b, SharedPins shares_pins);
+
 private:
     friend BufferBase;
-    ChanNums m_chs_allowed;                     ///< The allowed public facing channel numbers
-    ChanNums m_chs_public;                      ///< The current public facing channel numbers
-    ChanNums m_chs_internal;                    ///< The current internal facing channel numbers
-    ChanMap  m_ch_map;                          ///< Maps a public facing channel number to a buffer index position
-    std::vector<BufferBase*> m_ifaces; ///< Interfaces maintained  by this Module
+    ChanNums m_chs_allowed;   ///< The allowed public facing channel numbers
+    ChanNums m_chs_public;    ///< The current public facing channel numbers
+    ChanNums m_chs_internal;  ///< The current internal facing channel numbers
+    ChanMap  m_ch_map;        ///< Maps a public facing channel number to a buffer index position
+    std::vector<BufferBase*> m_buffs;  ///< Buffers maintained  by this Module
 };
 
-} // namespace daq
-} // namespace mahi
+}  // namespace daq
+}  // namespace mahi

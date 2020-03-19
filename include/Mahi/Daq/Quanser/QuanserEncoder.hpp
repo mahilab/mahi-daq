@@ -31,6 +31,7 @@ public:
     QuanserEncoder(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
 private:
     friend QuanserDaq;
+    bool on_gain_channels(const ChanNums& chs) override;
     QuanserHandle& m_h;
 };
 
@@ -47,7 +48,7 @@ public:
 private:
     /// Quanser encoder velocity channels awkwardly start at 14000 instead of 0, 
     /// therefore we apply a transformation so that they can be accessed starting at 0.
-    virtual ChanNum transform_channel(ChanNum public_facing) const override;
+    virtual ChanNum convert_channel(ChanNum public_facing) const override;
     QuanserEncoder& m_e;
 };
 

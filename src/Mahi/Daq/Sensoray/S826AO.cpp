@@ -68,13 +68,12 @@ S826AO::S826AO(S826& s826, unsigned int board) :
         return success;
     };
     connect_write(ranges, range_write_impl);
-    // on gain impl
-    auto on_gain_impl = [this](const ChanNums& chs) {
-        return ranges.write(chs, std::vector<Range<Voltage>>(chs.size(),{-10,10}));
-    };
-    on_gain_channels.connect(on_gain_impl);
     // set channel numbers
     set_channels({0,1,2,3,4,5,6,7});
+}
+
+bool S826AO::on_gain_channels(const ChanNums& chs) {
+    return ranges.write(chs, std::vector<Range<Voltage>>(chs.size(),{-10,10}));
 }
 
 } // namespace daq

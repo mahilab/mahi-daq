@@ -33,7 +33,7 @@ public:
     /// Constructor
     BufferBase(ChanneledModule& module);
     /// Returns const reference to this interfaces owning Module
-    inline const ChanneledModule& module() const { return m_module; }
+    inline ChanneledModule& module() const { return m_module; }
 
 protected:
     friend ChanneledModule;
@@ -41,7 +41,7 @@ protected:
     virtual void remap(const ChanMap& old_map, const ChanMap& new_map) = 0;
     /// Returns internal channel number
     inline ChanNum intern(ChanNum public_facing) {
-        return m_module.transform_channel(public_facing);
+        return m_module.convert_channel(public_facing);
     }
     /// Returns buffer index associated with channel number.
     inline std::size_t index(ChanNum channel_number) const {
@@ -59,7 +59,7 @@ private:
 template <typename T>
 class Buffer : public BufferBase {
 public:
-    /// Typedef  of the interfaces's value Type for external use
+    /// Typedef  of the interfaces's value Type for templating purposes
     typedef T Type;
     typedef std::vector<T> BufferType;
     /// Constructor
@@ -73,13 +73,13 @@ protected:
     const std::vector<T>& buffer() const { return m_buffer; }
     /// Returns a non-constant reference to the entire internal buffer
     std::vector<T>& buffer() { return m_buffer; }
-    /// Returns a constant reference to buffer elemented indexed by channel number (write access)
+    /// Returns a constant reference to buffer element indexed by channel number (write access)
     const T& buffer(ChanNum ch) const { return m_buffer[index(ch)]; }
-    /// Returns a non-const reference (read access)
+    /// Returns a non-const reference to buffer element index by channel number (read access)
     T& buffer(ChanNum ch) { return m_buffer[index(ch)]; }
 
 private:
-    /// Called by Buffer when channel numbers change
+    /// Called by parent Module when its channel numbers change
     void remap(const ChanMap& old_map, const ChanMap& new_map) override;
 
 private:
@@ -129,7 +129,7 @@ public:
     const typename Base::Type& operator[](ChanNum ch) const { return this->buffer(ch); }
     /// Get all buffer values at once
     const typename Base::BufferType& get() const { return this->buffer(); }
-    /// Get a copy to a single buffer value (channel number is validated,, and returns type default
+    /// Get a copy to a single buffer value (channel number is validated, and returns type default
     /// value if invalid)
     typename Base::Type get(ChanNum ch) const {
         if (this->valid_channel(ch))
@@ -139,7 +139,7 @@ public:
     }
 };
 
-/// Mixin this to inject buffer set/get access into a Buffer<T> (see Io.hpp)
+/// Mixin this to inject buffer set/get access into a Buffer<T> (see Io.hpp for examples)
 template <typename Base>
 class ISet : public IGet<Base> {
 public:
@@ -177,7 +177,7 @@ public:
     }
 };
 
-/// Mixin this to inject an immediate read interface into a Buffer<T> (see Io.hpp)
+/// Mixin this to inject an immediate read interface into a Buffer<T> (see Io.hpp for examples)
 template <typename Base>
 class IRead : public Base, public Readable {
 public:
@@ -218,7 +218,7 @@ protected:
     Event<void(const ChanNum*, const typename Base::Type*, std::size_t)> post_read;
 };
 
-/// Mixin this to inject an immediate write interface into a Buffer<T>
+/// Mixin this to inject an immediate write interface into a Buffer<T> (see Io.hpp for examples)
 template <typename Base>
 class IWrite : public Base, public Writeable {
 public:
@@ -283,11 +283,11 @@ protected:
     friend ChanneledModule;
     /// Connect to this Event to write all requested channel numbers from the buffer.
     /// The channel numbers passed will be the internal representation (see
-    /// Module::transform_channels).
+    /// Module::convert_channel).
     Event<bool(const ChanNum*, const typename Base::Type*, std::size_t), CollectorBooleanAnd>  on_write;
     /// Connect to this Event if you need to update other values after a successful read
     /// The channel numbers passed will be the internal representation (see
-    /// Module::transform_channels).
+    /// Module::convert_channel).
     Event<void(const ChanNum*, const typename Base::Type*, std::size_t)> post_write;
 };
 

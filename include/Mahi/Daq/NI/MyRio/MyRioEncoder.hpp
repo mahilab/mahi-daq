@@ -31,6 +31,8 @@ private:
     friend MyRioMsp;
     friend MyRioMxp;
     MyRioEncoder(MyRioConnector& connector, const ChanNums& allowed);
+    bool on_gain_channels(const ChanNums& chs) override;
+    bool on_free_channels(const ChanNums& chs) override;
 private:
     using EncoderModule::write;
     const MyRioConnector& m_conn; 

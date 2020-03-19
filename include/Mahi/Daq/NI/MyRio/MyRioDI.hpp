@@ -30,6 +30,7 @@ private:
     friend MyRioMsp;
     friend MyRioMxp;
     MyRioDI(MyRioConnector& connector, const ChanNums& allowed);
+    bool on_gain_channels(const ChanNums& chs) override;
 private:
     const MyRioConnector& m_conn; 
 };

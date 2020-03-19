@@ -97,12 +97,12 @@ bool ChanneledModule::set_channels(const ChanNums& chs) {
     // update internal representation
     m_chs_internal.resize(m_chs_public.size());
     for (std::size_t i = 0; i < m_chs_internal.size(); ++i)
-        m_chs_internal[i] = transform_channel(m_chs_public[i]);
+        m_chs_internal[i] = convert_channel(m_chs_public[i]);
     // remap channels
     ChanMap old_map = m_ch_map;
     m_ch_map = make_channel_map(m_chs_public);
-    for (std::size_t i = 0; i < m_ifaces.size(); i++)
-        m_ifaces[i]->remap(old_map, m_ch_map); 
+    for (std::size_t i = 0; i < m_buffs.size(); i++)
+        m_buffs[i]->remap(old_map, m_ch_map); 
     // relinquish shared pins
     if (shares_pins()) {
         for (auto relation : g_share_list_map[this]) {
@@ -130,12 +130,20 @@ bool ChanneledModule::set_channels(const ChanNums& chs) {
 
     // LOG(Verbose) << "Set Module " << name() << " channel numbers to [" << m_chs_public << "].";
     if (gained.size() > 0) {
-        on_gain_channels.emit(gained);
-        LOG(Verbose) << "Module " << name() << " gained channel numbers " << gained << ".";
+        if (on_gain_channels(gained)) {
+            LOG(Verbose) << "Module " << name() << " gained channel numbers " << gained << ".";
+        }
+        else {
+            LOG(Error) << "Module " << name() << " attempted to gain channel numbers " << gained << " but failed.";
+        }
     }
     if (freed.size() > 0) {
-        on_free_channels.emit(freed);
-        LOG(Verbose) << "Module " << name() << " freed channel numbers " << freed << ".";
+        if (on_free_channels(freed)) {
+            LOG(Verbose) << "Module " << name() << " freed channel numbers " << freed << ".";
+        }
+        else {
+            LOG(Error) << "Module " << name() << " attempted to free channel numbers " << freed << " but failed.";
+        }
     }
     return true;
 }
@@ -152,7 +160,7 @@ const ChanNums& ChanneledModule::channels_internal() const {
     return m_chs_internal;
 }
 
-ChanNum ChanneledModule::transform_channel(ChanNum public_facing) const {
+ChanNum ChanneledModule::convert_channel(ChanNum public_facing) const {
     return public_facing;
 }
 

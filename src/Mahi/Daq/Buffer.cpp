@@ -11,7 +11,7 @@ namespace daq {
 BufferBase::BufferBase(ChanneledModule& module) :
     m_module(module) 
 {
-    module.m_ifaces.push_back(this);    
+    module.m_buffs.push_back(this);    
 }
 
 bool BufferBase::valid_channel(ChanNum channel_number, bool quiet) const {

@@ -70,11 +70,10 @@ QuanserEncoder::QuanserEncoder(QuanserDaq& d, QuanserHandle& h, const ChanNums& 
         }
     };
     connect_write(quadratures, write_quad_impl);
-    /// on channels gained
-    auto on_gain = [this](const ChanNums& gained) {
-        return quadratures.write(gained, std::vector<QuadMode>(gained.size(), QuadMode::X4));
-    };
-    on_gain_channels.connect(on_gain);
+}
+
+bool QuanserEncoder::on_gain_channels(const ChanNums& chs) {
+    return quadratures.write(chs, std::vector<QuadMode>(chs.size(), QuadMode::X4));
 }
 
 namespace {
@@ -98,7 +97,7 @@ QuanserEncoderVelocity::QuanserEncoderVelocity(QuanserDaq& d, QuanserHandle& h, 
     connect_post_read(*this, convert);
 }
 
-ChanNum QuanserEncoderVelocity::transform_channel(ChanNum public_facing) const {
+ChanNum QuanserEncoderVelocity::convert_channel(ChanNum public_facing) const {
     return public_facing + g_v_off;
 }
 
