@@ -110,6 +110,10 @@ public:
     inline bool write() { return m_mod->write(m_ch, m_mod->get(m_ch)); }
     /// Physically writes the passed value
     inline bool write_level(TTL l) { return m_mod->write(m_ch, l); }
+    /// Physically writes the output to TTL_HIGH
+    inline bool write_high() { return m_mod->write(m_ch, TTL_HIGH); };
+    /// Physically writes the output to TTL_LOW
+    inline bool write_low() { return m_mod->write(m_ch, TTL_LOW); }
     /// Sets the current software buffer value
     inline bool set_level(TTL l) { return m_mod->set(m_ch, l); }
     /// Sets the current software buffer value to TTL_HIGH
@@ -118,6 +122,8 @@ public:
     inline bool set_low() { return m_mod->set(m_ch, TTL_LOW); }
     /// Flips the current software value (i.e. TTL_LOW becomes TTL_HIGH, vice versa)
     inline bool flip() { return m_mod->set(m_ch, TTL_HIGH - m_mod->get(m_ch)); }
+    /// Flips the current software value (i.e. TTL_LOW becomes TTL_HIGH, vice versa)
+    inline bool flip_write() { return m_mod->write(m_ch, TTL_HIGH - m_mod->get(m_ch)); }
     /// Sets the enable value
     inline bool set_enable(TTL l) { return m_mod->enable_values.set(m_ch, l); }
     /// Sets the disable value
