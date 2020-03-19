@@ -88,13 +88,13 @@ public:
     /// Physically writes the voltage currently in the software buffer
     inline bool write() { return m_mod->write(m_ch, m_mod->get(m_ch)); }
     /// Physically writes the passed value
-    inline void write_volts(Volts v) { m_mod->write(m_ch, v); }
+    inline bool write_volts(Volts v) { return m_mod->write(m_ch, v); }
     /// Sets the current software buffer value
-    inline void set_volts(Volts v) { m_mod->set(m_ch, v); }
+    inline bool set_volts(Volts v) { return m_mod->set(m_ch, v); }
     /// Sets the enable value
-    inline void set_enable(Volts v) { m_mod->enable_values.set(m_ch, v); }
+    inline bool set_enable(Volts v) { return m_mod->enable_values.set(m_ch, v); }
     /// Sets the disable value
-    inline void set_disable(Volts v) { m_mod->disable_values.set(m_ch, v); }
+    inline bool set_disable(Volts v) { return m_mod->disable_values.set(m_ch, v); }
 
 protected:
     AOModule* m_mod;
@@ -107,21 +107,21 @@ public:
     /// Constructor
     DOHandle(DOModule& mod, ChanNum ch) : m_mod(&mod), m_ch(ch) {}
     /// Physically writes the level currently in the software buffer
-    inline void write() { m_mod->write(m_ch, m_mod->get(m_ch)); }
+    inline bool write() { return m_mod->write(m_ch, m_mod->get(m_ch)); }
     /// Physically writes the passed value
-    inline void write_level(TTL l) { m_mod->write(m_ch, l); }
+    inline bool write_level(TTL l) { return m_mod->write(m_ch, l); }
     /// Sets the current software buffer value
-    inline void set_level(TTL l) { m_mod->set(m_ch, l); }
+    inline bool set_level(TTL l) { return m_mod->set(m_ch, l); }
     /// Sets the current software buffer value to TTL_HIGH
-    inline void set_high() { m_mod->set(m_ch, TTL_HIGH); };
+    inline bool set_high() { return m_mod->set(m_ch, TTL_HIGH); };
     /// Sets the current software buffer value to TTL_LOW
-    inline void set_low() { m_mod->set(m_ch, TTL_LOW); }
+    inline bool set_low() { return m_mod->set(m_ch, TTL_LOW); }
     /// Flips the current software value (i.e. TTL_LOW becomes TTL_HIGH, vice versa)
-    inline void flip() { m_mod->set(m_ch, TTL_HIGH - m_mod->get(m_ch)); }
+    inline bool flip() { return m_mod->set(m_ch, TTL_HIGH - m_mod->get(m_ch)); }
     /// Sets the enable value
-    inline void set_enable(TTL l) { m_mod->enable_values.set(m_ch, l); }
+    inline bool set_enable(TTL l) { return m_mod->enable_values.set(m_ch, l); }
     /// Sets the disable value
-    inline void set_disable(TTL l) { m_mod->disable_values.set(m_ch, l); }
+    inline bool set_disable(TTL l) { return m_mod->disable_values.set(m_ch, l); }
 
 protected:
     DOModule* m_mod;
@@ -144,11 +144,11 @@ public:
     /// Returns the converted position based on the current counts, quad mode, and units.
     inline double get_pos() const { return m_mod->positions.get(m_ch); }
     /// Sets the units to be used in position conversions.
-    inline void set_units(double u) { m_mod->units.set(m_ch, u); }
+    inline bool set_units(double u) { return m_mod->units.set(m_ch, u); }
     /// Writes the quadrature mode that the DAQ will use.
-    inline void write_mode(QuadMode q) { m_mod->modes.write(m_ch, q); }
+    inline bool write_mode(QuadMode q) { return m_mod->modes.write(m_ch, q); }
     /// Physically writes the encoder counts on the DAQ.
-    inline void write_counts(Counts cnts) { m_mod->write(m_ch, cnts); }
+    inline bool write_counts(Counts cnts) { return m_mod->write(m_ch, cnts); }
     /// Physically zeros the encoder counts on the DAQ.
     inline bool zero() { return m_mod->zero(m_ch); }
 
