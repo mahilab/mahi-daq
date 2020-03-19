@@ -20,16 +20,17 @@ typedef std::vector<ChanNum> ChanNums;
 typedef std::map<unsigned int, std::size_t> ChanMap;
 
 /// Represents a voltage in [V]
-typedef double Voltage;
+typedef double Volts;
 
-/// Represents a digital TTL logic level 
-typedef char Logic;
+/// Represents a digital transistor logic level 
+typedef char TTL;
 
 /// Low TTL level, i.e. 0 V
-constexpr Logic LOW  = 0;
-
+constexpr TTL TTL_LOW  = 0;
 /// High TTL, i.e. 3.3 V or 5 V
-constexpr Logic HIGH = 1; 
+constexpr TTL TTL_HIGH = 1; 
+/// TTL error value 
+constexpr TTL TTL_ERROR = -1;
 
 /// Represents a digital pin direction
 enum Direction {

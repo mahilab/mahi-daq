@@ -15,7 +15,7 @@ QuanserDO::QuanserDO(QuanserDaq& d, QuanserHandle& h, bool bidirectional, const 
 {
     set_name(d.name() + ".DO");
     /// Write Channels
-    auto write_impl = [this](const ChanNum *chs, const Logic *vals, std::size_t n) {
+    auto write_impl = [this](const ChanNum *chs, const TTL *vals, std::size_t n) {
         t_error result = hil_write_digital(m_h, chs, static_cast<t_uint32>(n), vals);
         if (result != 0) {
             LOG(Error) << "Failed to write " << this->name() << " digital outputs " << quanser_msg(result);
@@ -25,11 +25,11 @@ QuanserDO::QuanserDO(QuanserDaq& d, QuanserHandle& h, bool bidirectional, const 
     };
     connect_write(*this, write_impl);
     // // Write Expire States
-    auto expire_write_impl = [this](const ChanNum* chs, const Logic* vals, std::size_t n) { 
+    auto expire_write_impl = [this](const ChanNum* chs, const TTL* vals, std::size_t n) { 
         // convert to Quanser t_digital_state
         std::vector<t_digital_state> converted(n);
         for (int i = 0; i < n; ++i) {
-            if (vals[i] == HIGH)
+            if (vals[i] == TTL_HIGH)
                 converted.push_back(DIGITAL_STATE_HIGH);
             else
                 converted.push_back(DIGITAL_STATE_LOW);
@@ -57,7 +57,7 @@ bool QuanserDO::on_gain_channels(const ChanNums& chs) {
         }
     }
     LOG(Verbose) << "Set " << name() << " channels " << chs << " directions to outputs.";
-    return expire_values.write(std::vector<Logic>(channels().size(), LOW));    
+    return expire_values.write(std::vector<TTL>(channels().size(), TTL_LOW));    
 }
 
 } // namespace daq 

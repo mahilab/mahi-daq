@@ -15,6 +15,7 @@ endmacro(mahi_daq_example)
 mahi_daq_example(control)
 mahi_daq_example(custom)
 mahi_daq_example(perf)
+mahi_daq_example(handles)
 
 # quanser examples
 if (MAHI_QUANSER)

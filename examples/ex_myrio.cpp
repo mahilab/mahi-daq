@@ -38,6 +38,7 @@ int main(int argc, char** argv) {
     print_info(myrio.mxpA);
     print_info(myrio.mxpB);
     print_info(myrio.mspC);
+    
 
     /// By default, all DIO pins configured as DI channels,
     /// so we must enable DO channels. This will free DI[1].
@@ -45,7 +46,7 @@ int main(int argc, char** argv) {
 
     // Set enable values
     myrio.mspC.AO.enable_values[0] = 3.14;
-    myrio.mspC.DO.enable_values[1] = HIGH;
+    myrio.mspC.DO.enable_values[1] = TTL_HIGH;
 
     /// On myRIO, DIO pins are shared with encoders. We must
     /// enable the encoder channels we wish to use. This will
@@ -73,10 +74,10 @@ int main(int argc, char** argv) {
     while (!myrio.is_button_pressed()) {
         /// Synced read, reads all DAQ inputs
         myrio.read_all();
-        print("AI[0]: {:+.2f} V | DI[3]: {} | encoder[0]: {} = {:+.2f} deg.", myrio.mspC.AI[0], (int)myrio.mspC.DI[3], myrio.mspC.encoder[0], myrio.mspC.encoder.converted[0]);
+        print("AI[0]: {:+.2f} V | DI[3]: {} | encoder[0]: {} = {:+.2f} deg.", myrio.mspC.AI[0], (int)myrio.mspC.DI[3], myrio.mspC.encoder[0], myrio.mspC.encoder.positions[0]);
         double out = 5 * std::sin(TWOPI * clk.get_elapsed_time().as_seconds());
         myrio.mspC.AO[0] = out;
-        myrio.mspC.DO[1] = out > 0 ? HIGH : LOW;
+        myrio.mspC.DO[1] = out > 0 ? TTL_HIGH : TTL_LOW;
         /// Synced write, writes all DAQ outputs
         myrio.write_all();
         sleep(10_ms);
@@ -85,15 +86,15 @@ int main(int argc, char** argv) {
     /// LED sin wave. The LED module is simply a DO module.
     for (int i = 0; i < 500; ++i) {
         double s = std::sin(TWOPI * i * 0.01);
-        myrio.LED[0] = s < -0.5 ? HIGH : LOW;
-        myrio.LED[1] = s > -0.5 && s < 0 ? HIGH : LOW;
-        myrio.LED[2] = s > 0 && s < 0.5 ? HIGH : LOW;
-        myrio.LED[3] = s > 0.5 ? HIGH : LOW;
+        myrio.LED[0] = s < -0.5 ? TTL_HIGH : TTL_LOW;
+        myrio.LED[1] = s > -0.5 && s < 0 ? TTL_HIGH : TTL_LOW;
+        myrio.LED[2] = s > 0 && s < 0.5 ? TTL_HIGH : TTL_LOW;
+        myrio.LED[3] = s > 0.5 ? TTL_HIGH : TTL_LOW;
         myrio.write_all();
         sleep(10_ms);
     }
     // turn off all LEDs
-    myrio.LED.write({0,1,2,3},{LOW,LOW,LOW,LOW});
+    myrio.LED.write({0,1,2,3},{TTL_LOW,TTL_LOW,TTL_LOW,TTL_LOW});
 
     /// Restore default channels. myRIO channels are persistant, meaning they will
     /// carry over to the next session. Here, we will manually reset all our DIs.

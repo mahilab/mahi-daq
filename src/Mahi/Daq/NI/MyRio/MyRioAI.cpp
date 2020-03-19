@@ -16,7 +16,7 @@ MyRioAI::MyRioAI(MyRioConnector& connector, const ChanNums& allowed) :
     m_conn(connector)
 {
     set_name(m_conn.name() + ".AI");
-    auto read_impl = [this](const ChanNum* chs, Voltage* vals, std::size_t n) {
+    auto read_impl = [this](const ChanNum* chs, Volts* vals, std::size_t n) {
         bool success = true;
         for (std::size_t i = 0; i < n; ++i) {
             uint16_t value = 0;

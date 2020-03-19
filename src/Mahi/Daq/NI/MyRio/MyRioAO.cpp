@@ -16,7 +16,7 @@ MyRioAO::MyRioAO(MyRioConnector& connector, const ChanNums& allowed) :
     m_conn(connector)
 {
     set_name(m_conn.name() + ".AO");
-    auto write_impl = [this](const ChanNum* chs, const Voltage* vals, std::size_t n) {
+    auto write_impl = [this](const ChanNum* chs, const Volts* vals, std::size_t n) {
         bool success = true;
         NiFpga_Status status;
         uint16_t valueScaled;

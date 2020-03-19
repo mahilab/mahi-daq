@@ -15,6 +15,8 @@ QuanserPwm::QuanserPwm(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed,
                        std::function<bool(const ChanNums&)> on_gain_custom,
                        std::function<bool(const ChanNums&)> on_free_custom) :
     PwmModuleBasic(d, allowed),
+    m_on_gain_custom(on_gain_custom),
+    m_on_free_custom(on_free_custom),
     modes(*this, Mode::DutyCycle),
     expire_values(*this, 0),
     frequencies(*this, 10000),
@@ -93,16 +95,17 @@ QuanserPwm::QuanserPwm(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed,
 
 bool QuanserPwm::on_gain_channels(const ChanNums& chs) {
     bool success = true;
-    if (on_gain_custom)
-        success = on_gain_custom(chs);
+    if (m_on_gain_custom) {
+        success = m_on_gain_custom(chs);
+    }
     return success && modes.write(chs, std::vector<Mode>(chs.size(), Mode::DutyCycle)) &&
            frequencies.write(chs, std::vector<double>(chs.size(), 10000)) &&
            expire_values.write(chs, std::vector<double>(chs.size(), 0));
 }
 
 bool QuanserPwm::on_free_channels(const ChanNums& chs) {
-    if (on_free_custom)
-        return on_free_custom(chs);
+    if (m_on_free_custom)
+        return m_on_free_custom(chs);
     else
         return true;
 }

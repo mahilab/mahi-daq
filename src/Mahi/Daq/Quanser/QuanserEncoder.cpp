@@ -83,7 +83,7 @@ namespace {
 
 QuanserEncoderVelocity::QuanserEncoderVelocity(QuanserDaq& d, QuanserHandle& h, QuanserEncoder& e, const ChanNums& allowed) :
     QuanserOtherInput(d, h, allowed),
-    converted(*this, 0),
+    velocities(*this, 0),
     m_e(e)
 {  
     set_name(d.name() + ".velocity");
@@ -91,7 +91,7 @@ QuanserEncoderVelocity::QuanserEncoderVelocity(QuanserDaq& d, QuanserHandle& h, 
         for (int i = 0; i < n; ++i) {
             /// public facing channel
             ChanNum pch = chs[i] - g_v_off;
-            converted.buffer(pch) = static_cast<double>(cps[i]) * m_e.units[pch] / static_cast<double>(m_e.modes[pch]);
+            velocities.buffer(pch) = static_cast<double>(cps[i]) * m_e.units[pch] / static_cast<double>(m_e.modes[pch]);
         }
     };
     connect_post_read(*this, convert);

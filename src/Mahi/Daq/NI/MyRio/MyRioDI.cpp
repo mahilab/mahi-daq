@@ -17,9 +17,9 @@ MyRioDI::MyRioDI(MyRioConnector& connector, const ChanNums& allowed) :
     // set name
     set_name(m_conn.name() + ".DI");
     // read impl
-    auto read_impl = [this](const ChanNum* chs, Logic* vals, std::size_t n) {
+    auto read_impl = [this](const ChanNum* chs, TTL* vals, std::size_t n) {
         for (std::size_t i = 0; i < n; ++i)
-            vals[i] = get_bit(INS[m_conn.type][chs[i] / 8], chs[i] % 8) ? HIGH : LOW;
+            vals[i] = get_bit(INS[m_conn.type][chs[i] / 8], chs[i] % 8) ? TTL_HIGH : TTL_LOW;
         return true;
     };
     connect_read(*this, read_impl);

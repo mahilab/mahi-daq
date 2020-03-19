@@ -76,10 +76,10 @@ public:
 };
 
 /// Convenience type for analog input DAQ Module interfaces
-typedef InputModule<Voltage> AIModule;
+typedef InputModule<Volts> AIModule;
 
 /// Convenience type for digital input DAQ Module interfaces
-typedef InputModule<Logic> DIModule;
+typedef InputModule<TTL> DIModule;
 
 //==============================================================================
 // OUTPUT MODULES
@@ -112,10 +112,10 @@ protected:
 };
 
 /// Convenience type for analog output DAQ Module interfaces
-typedef OutputModule<Voltage> AOModule;
+typedef OutputModule<Volts> AOModule;
 
 /// Convenience type for digital output DAQ Module interfaces
-typedef OutputModule<Logic> DOModule;
+typedef OutputModule<TTL> DOModule;
 
 //==============================================================================
 // PWM MODULES
@@ -186,11 +186,11 @@ public:
         EncoderModuleBasic(daq, allowed),
         modes(*this, QuadMode::X4),
         units(*this, 1),
-        converted(*this, 0) {
+        positions(*this, 0) {
         // Updates positions after read and write
         auto convert = [this](const ChanNum* chs, const Counts* counts, std::size_t n) {
             for (std::size_t i = 0; i < n; ++i)
-                converted.buffer(chs[i]) = static_cast<double>(counts[i]) * units[chs[i]] /
+                positions.buffer(chs[i]) = static_cast<double>(counts[i]) * units[chs[i]] /
                                            static_cast<double>(modes[chs[i]]);
         };
         connect_post_read(*this, convert);
@@ -201,9 +201,9 @@ public:
     /// The user defined units per count for each channel (e.g. 360 degrees / 1024 counts)
     SettableBuffer<double> units;
     /// The converted positions in the units defined by the user, i.e.
-    /// {count * unit_per_count / quadratue factor} (see above)
+    /// {count * unit_per_count / quadrature factor} (see above)
     /// It is automatically update when the encoder is read or written
-    GettableBuffer<double,EncoderModule> converted;
+    GettableBuffer<double,EncoderModule> positions;
 };
 
 }  // namespace daq

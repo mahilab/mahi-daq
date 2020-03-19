@@ -135,7 +135,7 @@ public:
         if (this->valid_channel(ch))
             return this->buffer(ch);
         else
-            return Base::Type();
+            return typename Base::Type();
     }
 };
 
@@ -265,13 +265,13 @@ public:
     bool write(const ChanNums& chs, const typename Base::BufferType& values) {
         std::size_t n = chs.size() > 64 ? 64 : chs.size();
         ChanNum     intern_chs[64];
-        for (int i = 0; i < n; ++i) {
+        for (std::size_t i = 0; i < n; ++i) {
             if (!this->valid_channel(chs[i]))
                 return false;
             intern_chs[i] = this->intern(chs[i]);
         }
         if (chs.size() == values.size() && on_write.emit(intern_chs, &values[0], n)) {
-            for (int i = 0; i < chs.size(); ++i)
+            for (std::size_t i = 0; i < chs.size(); ++i)
                 this->buffer(chs[i]) = values[i];
             post_write.emit(intern_chs, &values[0], n);
             return true;

@@ -15,7 +15,7 @@ QuanserAO::QuanserAO(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed)  
 {
     set_name(d.name() + ".AO");
     /// Write Channels
-    auto write_impl = [this](const ChanNum *chs, const Voltage *vals, std::size_t n) {
+    auto write_impl = [this](const ChanNum *chs, const Volts *vals, std::size_t n) {
         t_error result = hil_write_analog(m_h, chs, static_cast<t_uint32>(n), vals);
         if (result != 0) {
             LOG(Error) << "Failed to write " << this->name() << " analog outputs " << quanser_msg(result);
@@ -25,7 +25,7 @@ QuanserAO::QuanserAO(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed)  
     };
     connect_write(*this, write_impl);
     // Write Expire States
-    auto expire_write_impl = [this](const ChanNum* chs, const Voltage* vals, std::size_t n) { 
+    auto expire_write_impl = [this](const ChanNum* chs, const Volts* vals, std::size_t n) { 
         t_error result = hil_watchdog_set_analog_expiration_state(m_h, chs, static_cast<t_uint32>(n), vals);
         if (result == 0) {
             LOG(Verbose) << "Wrote " << name() << " expire analog expiration states.";
@@ -38,9 +38,9 @@ QuanserAO::QuanserAO(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed)  
     };
     connect_write(expire_values, expire_write_impl);
     // Write Ranges
-    auto ranges_write_impl = [this](const ChanNum* chs, const Range<Voltage>* vals, std::size_t n) { 
-        std::vector<Voltage> temp_mins(n);
-        std::vector<Voltage> temp_maxs(n);
+    auto ranges_write_impl = [this](const ChanNum* chs, const Range<Volts>* vals, std::size_t n) { 
+        std::vector<Volts> temp_mins(n);
+        std::vector<Volts> temp_maxs(n);
         for (int i = 0; i < n; ++i) {
             temp_mins[i] = vals[i].min_val;
             temp_maxs[i] = vals[i].max_val;
@@ -59,7 +59,7 @@ QuanserAO::QuanserAO(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed)  
 }
 
 bool QuanserAO::on_gain_channels(const ChanNums& chs) {
-    return expire_values.write(chs, std::vector<Voltage>(chs.size(), 0)) &&  ranges.write(chs, std::vector<Range<Voltage>>(chs.size(), {-10,10}));
+    return expire_values.write(chs, std::vector<Volts>(chs.size(), 0)) &&  ranges.write(chs, std::vector<Range<Volts>>(chs.size(), {-10,10}));
 }
 
 

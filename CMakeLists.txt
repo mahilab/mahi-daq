@@ -1,6 +1,6 @@
 # mahi::daq CMakeLists.txt
 # Evan Pezent (epezent@rice.edu)
-# Updated: 2/2020
+# Updated: 3/2020
 
 cmake_minimum_required(VERSION 3.13.0)
 
@@ -9,7 +9,11 @@ cmake_minimum_required(VERSION 3.13.0)
 #===============================================================================
 
 # General
-option(MAHI_DAQ_EXAMPLES "Turn ON to build example executable(s)" OFF)
+if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+    option(MAHI_DAQ_EXAMPLES "Turn ON to build example executable(s)" ON)
+else()
+    option(MAHI_DAQ_EXAMPLES "Turn ON to build example executable(s)" OFF)
+endif()
 
 #===============================================================================
 # FRONT MATTER
@@ -53,7 +57,6 @@ add_library(daq "")
 add_library(mahi::daq ALIAS daq)
 set_target_properties(daq PROPERTIES DEBUG_POSTFIX -d)
 target_compile_features(daq PUBLIC cxx_std_11)
-install(TARGETS daq EXPORT mahi-daq-targets LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 set_target_properties(daq PROPERTIES OUTPUT_NAME "mahi-daq")
 
 # defines
@@ -167,6 +170,8 @@ endif()
 # INSTALL
 #===============================================================================
 
+install(TARGETS daq EXPORT mahi-daq-targets LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
 if (MSVC)
     if (CMAKE_SIZEOF_VOID_P EQUAL 8)
         set(MAHI_INSTALL_POSTFIX "") # 64 bit Windows is default
@@ -175,7 +180,7 @@ if (MSVC)
     endif()
 elseif(NI_LRT AND CMAKE_SYSTEM_PROCESSOR MATCHES ARM)
     set(MAHI_INSTALL_POSTFIX "-nilrt-arm")
-elseif(NI_LRT AND CMAKE_SYSTEM_PROCESSOR MATCHES ARM)
+elseif(NI_LRT AND CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(MAHI_INSTALL_POSTFIX "-nilrt-x64")
 endif()
 

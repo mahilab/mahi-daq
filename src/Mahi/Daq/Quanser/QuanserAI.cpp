@@ -15,7 +15,7 @@ QuanserAI::QuanserAI(QuanserDaq& d,QuanserHandle& h, const ChanNums& allowed) :
 {
     set_name(d.name() + ".AI");
     
-    auto on_read_impl = [this](const ChanNum* chs, Voltage* vals, std::size_t n) {
+    auto on_read_impl = [this](const ChanNum* chs, Volts* vals, std::size_t n) {
         t_error result = hil_read_analog(m_h, chs, static_cast<t_uint32>(n), vals);
         if (result == 0)
             return true;
@@ -27,9 +27,9 @@ QuanserAI::QuanserAI(QuanserDaq& d,QuanserHandle& h, const ChanNums& allowed) :
     };
     connect_read(*this, on_read_impl);
     // Write Ranges
-    auto ranges_write_impl = [this](const ChanNum* chs, const Range<Voltage>* vals, std::size_t n) { 
-        std::vector<Voltage> temp_mins(n);
-        std::vector<Voltage> temp_maxs(n);
+    auto ranges_write_impl = [this](const ChanNum* chs, const Range<Volts>* vals, std::size_t n) { 
+        std::vector<Volts> temp_mins(n);
+        std::vector<Volts> temp_maxs(n);
         for (int i = 0; i < n; ++i) {
             temp_mins[i] = vals[i].min_val;
             temp_maxs[i] = vals[i].max_val;

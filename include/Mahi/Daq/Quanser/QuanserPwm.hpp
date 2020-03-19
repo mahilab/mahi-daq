@@ -50,8 +50,8 @@ private:
     friend QuanserDaq;
     bool on_gain_channels(const ChanNums& chs) override;
     bool on_free_channels(const ChanNums& chs) override;
-    std::function<bool(const ChanNums&)> on_gain_custom;
-    std::function<bool(const ChanNums&)> on_free_custom;
+    std::function<bool(const ChanNums&)> m_on_gain_custom;
+    std::function<bool(const ChanNums&)> m_on_free_custom;
     QuanserHandle& m_h;
 };
 

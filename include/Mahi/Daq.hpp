@@ -22,6 +22,7 @@
 #include <Mahi/Daq/Io.hpp>
 #include <Mahi/Daq/Watchdog.hpp>
 #include <Mahi/Daq/Utils.hpp>
+#include <Mahi/Daq/Handle.hpp>
 
 #ifdef MAHI_QUANSER
     #include <Mahi/Daq/Quanser/Q2Usb.hpp>

@@ -20,7 +20,7 @@ S826AO::S826AO(S826& s826, unsigned int board) :
     set_name(s826.name() + ".AO");
 
     // write impl
-    auto write_impl = [this](const ChanNum* chs, const Voltage* vals, std::size_t n) {
+    auto write_impl = [this](const ChanNum* chs, const Volts* vals, std::size_t n) {
         bool success = true;
         for (int i = 0; i < n; ++i) {
             double volts = vals[i];
@@ -41,7 +41,7 @@ S826AO::S826AO(S826& s826, unsigned int board) :
     };
     connect_write(*this, write_impl);
     // range write impl
-    auto range_write_impl = [this](const ChanNum* chs, const Range<Voltage>* vals, std::size_t n) {
+    auto range_write_impl = [this](const ChanNum* chs, const Range<Volts>* vals, std::size_t n) {
         bool success = true;
         for (int i = 0; i < n; ++i) {
             uint range;
@@ -73,7 +73,7 @@ S826AO::S826AO(S826& s826, unsigned int board) :
 }
 
 bool S826AO::on_gain_channels(const ChanNums& chs) {
-    return ranges.write(chs, std::vector<Range<Voltage>>(chs.size(),{-10,10}));
+    return ranges.write(chs, std::vector<Range<Volts>>(chs.size(),{-10,10}));
 }
 
 } // namespace daq

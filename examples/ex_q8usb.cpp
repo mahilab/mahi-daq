@@ -35,7 +35,7 @@ int main(int argc, char const *argv[])
 
     // Set enable values
     q8.AO.enable_values[0] = 3.14;
-    q8.DO.enable_values[0] = HIGH;
+    q8.DO.enable_values[0] = TTL_HIGH;
     
     // Set the units on one of our encoders
     q8.encoder.units[0] = 360.0 / 512;
@@ -58,10 +58,10 @@ int main(int argc, char const *argv[])
     for (int i = 0; i < 500; ++i) {
         /// Synced read, reads all DAQ inputs
         q8.read_all();
-        print("AI[0]: {:+.2f} V | DI[0]: {} | encoder[0]: {} = {:+.2f} deg.", q8.AI[0], (int)q8.DI[0], q8.encoder[0], q8.encoder.converted[0]);
+        print("AI[0]: {:+.2f} V | DI[0]: {} | encoder[0]: {} = {:+.2f} deg. -> {:+.2f} deg/s", q8.AI[0], (int)q8.DI[0], q8.encoder[0], q8.encoder.positions[0], q8.velocity.velocities[0]);
         double out = 5 * std::sin(TWOPI * i * 0.01);
         q8.AO[0] = out;
-        q8.DO[0] = out > 0 ? HIGH : LOW;
+        q8.DO[0] = out > 0 ? TTL_HIGH : TTL_LOW;
         /// Synced write, writes all DAQ outputs
         q8.write_all();
         sleep(10_ms);

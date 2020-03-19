@@ -26,7 +26,7 @@ class QuanserDaq;
 class QuanserDO : public DOModule {
 public:
     QuanserDO(QuanserDaq& d, QuanserHandle& h, bool bidirectional, const ChanNums& allowed);
-    Register<Logic> expire_values;
+    Register<TTL> expire_values;
 private:
     friend QuanserDaq;
     bool on_gain_channels(const ChanNums& chs) override;

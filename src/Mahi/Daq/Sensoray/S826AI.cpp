@@ -19,7 +19,7 @@ S826AI::S826AI(S826& s826, unsigned int board) :
     // set name
     set_name(s826.name() + ".AI");
     // write impl
-    auto read_impl = [this](const ChanNum* chs, Voltage* vals, std::size_t n) {
+    auto read_impl = [this](const ChanNum* chs, Volts* vals, std::size_t n) {
         // set slots to read
         std::bitset<32> slotlist_bits;
         for (int i = 0; i < n; ++i)

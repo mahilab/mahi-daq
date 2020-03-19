@@ -39,7 +39,7 @@ int main(int argc, char const *argv[])
 
     // Set enable values
     q2.AO.enable_values[0] = 3.14;
-    q2.DO.enable_values[1] = HIGH;
+    q2.DO.enable_values[1] = TTL_HIGH;
     
     // Set the units on one of our encoders
     q2.encoder.units[0] = 360.0 / 512;
@@ -62,10 +62,10 @@ int main(int argc, char const *argv[])
     for (int i = 0; i < 500; ++i) {
         /// Synced read, reads all DAQ inputs
         q2.read_all();
-        print("AI[0]: {:+.2f} V | DI[0]: {} | encoder[0]: {} = {:+.2f} deg.", q2.AI[0], (int)q2.DI[0], q2.encoder[0], q2.encoder.converted[0]);
+        print("AI[0]: {:+.2f} V | DI[0]: {} | encoder[0]: {} = {:+.2f} deg.", q2.AI[0], (int)q2.DI[0], q2.encoder[0], q2.encoder.positions[0]);
         double out = 5 * std::sin(TWOPI * i * 0.01);
         q2.AO[0] = out;
-        q2.DO[1] = out > 0 ? HIGH : LOW;
+        q2.DO[1] = out > 0 ? TTL_HIGH : TTL_LOW;
         q2.DO[8] = q2.DO[1]; // blink LED
         /// Synced write, writes all DAQ outputs
         q2.write_all();

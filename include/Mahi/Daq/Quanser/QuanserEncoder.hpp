@@ -44,7 +44,7 @@ public:
     /// i.e. [counts_per_sec * unit_per_count / quadratue factor]
     /// It is automatically update when the the velocity is read. 
     /// The units and quadrature factors are pulled from the accompanying QuanserEncoder.
-    GettableBuffer<double,QuanserEncoderVelocity> converted;
+    GettableBuffer<double,QuanserEncoderVelocity> velocities;
 private:
     /// Quanser encoder velocity channels awkwardly start at 14000 instead of 0, 
     /// therefore we apply a transformation so that they can be accessed starting at 0.

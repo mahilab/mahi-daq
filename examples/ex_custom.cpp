@@ -41,11 +41,11 @@ public:
         set_name(d.name() + ".AO");
 
         // Wrap your DAQ's AO writing API into a lambda callback
-        auto write_impl = [this](const ChanNum* chs, const Voltage* volts, std::size_t n) {
+        auto write_impl = [this](const ChanNum* chs, const Volts* volts, std::size_t n) {
             // This is where you implement the low-level calls to your DAQ's API.
             // You will be given the channel numbers and values. Here, we will just print
             // the output to the command line.
-            for (int i = 0; i < n; ++i)
+            for (std::size_t i = 0; i < n; ++i)
                 print("Wrote {}[{}]: {} V", name(), chs[i], volts[i]);
             return true;
         };
@@ -53,9 +53,9 @@ public:
         connect_write(*this, write_impl);
 
         // Implement other Buffers, Registers, etc:
-        auto range_write_impl = [this](const ChanNum* chs, const Range<Voltage>* ranges,
+        auto range_write_impl = [this](const ChanNum* chs, const Range<Volts>* ranges,
                                        std::size_t n) {
-            for (int i = 0; i < n; ++i)
+            for (std::size_t i = 0; i < n; ++i)
                 print("Set {}}[{}] Range: ({} V, {} V)", name(), chs[i], ranges[i].min_val,
                       ranges[i].max_val);
             return true;
@@ -94,7 +94,7 @@ public:
     // Often, I/O channels will have associative registers and other buffers. You can implement
     // these by adding attional Buffer types from Io.hpp . For example, here we expose a Register
     /// interface for setting the Analog Output ranges.
-    Register<Range<Voltage>> ranges;
+    Register<Range<Volts>> ranges;
 };
 
 /// Now, we will make a digital input Module

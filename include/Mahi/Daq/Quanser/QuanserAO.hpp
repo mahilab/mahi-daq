@@ -26,8 +26,8 @@ class QuanserDaq;
 class QuanserAO : public AOModule {
 public:
     QuanserAO(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
-    Register<Voltage> expire_values;
-    Register<Range<Voltage>> ranges;
+    Register<Volts> expire_values;
+    Register<Range<Volts>> ranges;
 private:
     friend QuanserDaq;
     bool on_gain_channels(const ChanNums& chs) override;

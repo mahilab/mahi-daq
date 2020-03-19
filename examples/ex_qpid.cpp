@@ -35,7 +35,7 @@ int main(int argc, char const *argv[])
 
     // Set enable values
     qpid.AO.enable_values[0] = 3.14;
-    qpid.DO.enable_values[0] = HIGH;
+    qpid.DO.enable_values[0] = TTL_HIGH;
     
     // Set the units on one of our encoders
     qpid.encoder.units[0] = 360.0 / 512;
@@ -58,10 +58,10 @@ int main(int argc, char const *argv[])
     for (int i = 0; i < 500; ++i) {
         /// Synced read, reads all DAQ inputs
         qpid.read_all();
-        print("AI[0]: {:+.2f} V | DI[0]: {} | encoder[0]: {} = {:+.2f} deg.", qpid.AI[0], (int)qpid.DI[0], qpid.encoder[0], qpid.encoder.converted[0]);
+        print("AI[0]: {:+.2f} V | DI[0]: {} | encoder[0]: {} = {:+.2f} deg.", qpid.AI[0], (int)qpid.DI[0], qpid.encoder[0], qpid.encoder.positions[0]);
         double out = 5 * std::sin(TWOPI * i * 0.01);
         qpid.AO[0] = out;
-        qpid.DO[0] = out > 0 ? HIGH : LOW;
+        qpid.DO[0] = out > 0 ? TTL_HIGH : TTL_LOW;
         /// Synced write, writes all DAQ outputs
         qpid.write_all();
         sleep(10_ms);

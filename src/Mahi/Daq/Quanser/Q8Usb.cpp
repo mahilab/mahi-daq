@@ -22,9 +22,9 @@ Q8Usb::Q8Usb() :
                 opts.pwmX_en[g] = true;
             return set_options(opts);
         },
-        [this](const ChanNums& gain) {
+        [this](const ChanNums& free) {
             auto opts = get_options();
-            for (auto& g : gain)
+            for (auto& g : free)
                 opts.pwmX_en[g] = false;
             return set_options(opts);
         }),

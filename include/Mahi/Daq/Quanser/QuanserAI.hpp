@@ -26,7 +26,7 @@ class QuanserDaq;
 class QuanserAI : public AIModule {
 public:
     QuanserAI(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
-    Register<Range<Voltage>> ranges;
+    Register<Range<Volts>> ranges;
 private:
     friend QuanserDaq;
     QuanserHandle& m_h;

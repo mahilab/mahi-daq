@@ -17,9 +17,9 @@ MyRioDO::MyRioDO(MyRioConnector& connector, const ChanNums& allowed) :
     // set name
     set_name(m_conn.name() + ".DO");
     // write impl
-    auto write_impl = [this](const ChanNum* chs, const Logic* vals, std::size_t n) {
+    auto write_impl = [this](const ChanNum* chs, const TTL* vals, std::size_t n) {
         for (std::size_t i = 0; i < n; ++i) {
-            if (vals[i] == HIGH)
+            if (vals[i] == TTL_HIGH)
                 set_bit(OUTS[m_conn.type][chs[i] / 8], chs[i] % 8);
             else
                 clr_bit(OUTS[m_conn.type][chs[i] / 8], chs[i] % 8);
