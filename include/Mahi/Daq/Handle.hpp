@@ -150,7 +150,7 @@ public:
     /// Physically writes the encoder counts on the DAQ.
     inline void write_counts(Counts cnts) { m_mod->write(m_ch, cnts); }
     /// Physically zeros the encoder counts on the DAQ.
-    inline void zero() { m_mod->zero(m_ch); }
+    inline bool zero() { return m_mod->zero(m_ch); }
 
 protected:
     EncoderModule* m_mod;
