@@ -32,14 +32,16 @@ That's it! You should also be able to install or use the library as a git-submod
 ### Example Usage
 
 ```cpp
+// create and enable daq object
 Q8Usb q8;
 q8.enable();
 
 // synchronized reads
 q8.read_all();
 bool di0 = q8.DI[0];
-double ao5 = q8.AI[5];
+double ai5 = q8.AI[5];
 int enc3 = q8.encoder[3];
+double vel2 = q8.velocities[2];
 
 // synchronized writes
 q8.DO[7] = true;
@@ -51,7 +53,7 @@ q8.AI.read();
 q8.AO[0] = q8.AI[0];
 q8.AO.write();
 
-// per channel channel read/writes
+// per channel read/writes
 di0 = q8.DI.read(0);
 q8.DO.write(0,di0);
 
@@ -67,3 +69,44 @@ q8.PWM.write(0, 0.75);
 - Quanser only: [Quanser HIL SDK](https://github.com/quanser/hil_sdk_win64)
 - Sensoray S826 only: [S826 SDK](http://www.sensoray.com/PCI_Express_digital_output_826.htm)
 - myRIO only: [GNU C & C++ Compilers for ARMv7 Linux](http://www.ni.com/download/labview-real-time-module-2018/7813/en/)
+
+### Building for Windows (Quanser/Sensoray)
+
+On Windows, we recommend using to MSVC 2019:
+
+```shell
+> cd mahi-daq
+> mkdir build
+> cmake .. -G "Visual Studio 16 2019" -A x64
+> cmake --build . --config Release
+```
+
+`mahi-daq` will automatically scan your system for supported SDKs, and build the associated DAQ classes.
+
+### Building for myRIO
+
+First, download and install the [NI ARM cross-compiler](http://www.ni.com/download/labview-real-time-module-2018/7813/en/) to `C:/dev/nilrt-arm` so that the directory contains `sysroots/`, `relocate_sdk.py`, etc. 
+
+`mahi-daq` ships with a CMake toolchain file, which can be used like so:
+
+```shell
+> cd mahi-daq
+> mkdir build
+> cmake .. -G Ninja -DCMAKE_TOOLCHAIN_FILE="../cmake/nilrt-arm-toolchain.cmake" -DCMAKE_BUILD_TYPE="Release"
+cmake --build .
+```
+
+Now, you can transfer the compiled example binaries from `mahi-daq/build/examples` over SFTP and run them though SSH.
+
+```shell
+> cd examples
+> sftp admin@172.22.11.2
+> put myrio
+> chmod 777 myrio
+```
+
+```shell
+> ssh admin@172.22.11.2
+> ./myrio
+```
+
