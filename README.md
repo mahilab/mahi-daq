@@ -61,6 +61,17 @@ q8.DO.write(0,di0);
 q8.PWM.set_channels({0,1,2,3}); // converts DO 0:3 to PWM outputs
 q8.PWM.frequencies.write(0, 20000);
 q8.PWM.write(0, 0.75);
+
+// lightweight channel handles
+DOHandle do0_h(q8.DO, 0);
+AOHandle ao0_h(q8.DO, 0);
+EncoderHandle enc0_h(q8.encoder, 0);
+
+do0_h.write_level(HIGH);
+ao0_h.write_volts(3.14);
+int cnts = enc0_h.read_counts();
+
+MyRobot rob(do0_h, ao0_h, enc0_h);
 ```
 
 ### Requirments 
@@ -98,7 +109,6 @@ First, download and install the [NI ARM cross-compiler](http://www.ni.com/downlo
 
 Now, you can transfer the compiled example binaries from `mahi-daq/build/examples` over SFTP and run them though SSH.
 
-
 ```shell
 # terminal 1
 > cd examples
@@ -106,7 +116,6 @@ Now, you can transfer the compiled example binaries from `mahi-daq/build/example
 > put myrio
 > chmod 777 myrio
 ```
-
 ```shell
 # terminal 2
 > ssh admin@172.22.11.2
