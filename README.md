@@ -63,15 +63,15 @@ q8.PWM.frequencies.write(0, 20000);
 q8.PWM.write(0, 0.75);
 
 // lightweight channel handles
-DOHandle do0_h(q8.DO, 0);
-AOHandle ao0_h(q8.DO, 0);
-EncoderHandle enc0_h(q8.encoder, 0);
+DOHandle h_do0(q8.DO, 0);
+AOHandle h_ao0(q8.AO, 0);
+EncoderHandle h_enc0(q8.encoder, 0);
 
-do0_h.write_level(HIGH);
-ao0_h.write_volts(3.14);
-int cnts = enc0_h.read_counts();
+h_do0.write_level(HIGH);
+h_ao0.write_volts(3.14);
+int cnts = h_enc0.read_counts();
 
-MyRobot rob(do0_h, ao0_h, enc0_h);
+MyRobot rob(h_do0, h_ao0, h_enc0);
 ```
 
 ### Requirments 
