@@ -66,11 +66,9 @@ q8.PWM.write(0, 0.75);
 DOHandle h_do0(q8.DO, 0);
 AOHandle h_ao0(q8.AO, 0);
 EncoderHandle h_enc0(q8.encoder, 0);
-
 h_do0.write_level(LOW);
 h_ao0.write_volts(0);
 h_enc0.zero();
-
 MyRobot rob(h_do0, h_ao0, h_enc0);
 ```
 
@@ -81,7 +79,7 @@ MyRobot rob(h_do0, h_ao0, h_enc0);
 - Sensoray S826 only: [S826 SDK](http://www.sensoray.com/PCI_Express_digital_output_826.htm)
 - myRIO only: [GNU C & C++ Compilers for ARMv7 Linux](http://www.ni.com/download/labview-real-time-module-2018/7813/en/)
 
-### Building for Windows (Quanser/Sensoray)
+### Building for Windows DAQs (Quanser/Sensoray)
 
 On Windows, we recommend using to MSVC 2019:
 
@@ -121,4 +119,3 @@ Now, you can transfer the compiled example binaries from `mahi-daq/build/example
 > ssh admin@172.22.11.2
 > ./myrio
 ```
-
