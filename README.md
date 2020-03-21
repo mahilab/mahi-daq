@@ -41,7 +41,7 @@ q8.read_all();
 bool di0 = q8.DI[0];
 double ai5 = q8.AI[5];
 int enc3 = q8.encoder[3];
-double vel2 = q8.velocities[2];
+double vel2 = q8.velocity[2];
 
 // synchronized writes
 q8.DO[7] = true;
@@ -68,6 +68,8 @@ AOHandle h_ao0(q8.AO, 0);
 EncoderHandle h_enc0(q8.encoder, 0);
 h_do0.write_level(LOW);
 h_ao0.write_volts(0);
+h_enc0.write_mode(QuadMode::X4);
+h_enc0.set_units(360.0 / 1024);
 h_enc0.zero();
 MyRobot rob(h_do0, h_ao0, h_enc0);
 ```
