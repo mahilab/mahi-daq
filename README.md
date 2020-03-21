@@ -67,9 +67,9 @@ DOHandle h_do0(q8.DO, 0);
 AOHandle h_ao0(q8.AO, 0);
 EncoderHandle h_enc0(q8.encoder, 0);
 
-h_do0.write_level(HIGH);
-h_ao0.write_volts(3.14);
-int cnts = h_enc0.read_counts();
+h_do0.write_level(LOW);
+h_ao0.write_volts(0);
+h_enc0.zero();
 
 MyRobot rob(h_do0, h_ao0, h_enc0);
 ```
