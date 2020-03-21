@@ -93,12 +93,14 @@ First, download and install the [NI ARM cross-compiler](http://www.ni.com/downlo
 > cd mahi-daq
 > mkdir build
 > cmake .. -G Ninja -DCMAKE_TOOLCHAIN_FILE="../cmake/nilrt-arm-toolchain.cmake" -DCMAKE_BUILD_TYPE="Release"
-cmake --build .
+> cmake --build .
 ```
 
 Now, you can transfer the compiled example binaries from `mahi-daq/build/examples` over SFTP and run them though SSH.
 
+
 ```shell
+# terminal 1
 > cd examples
 > sftp admin@172.22.11.2
 > put myrio
@@ -106,6 +108,7 @@ Now, you can transfer the compiled example binaries from `mahi-daq/build/example
 ```
 
 ```shell
+# terminal 2
 > ssh admin@172.22.11.2
 > ./myrio
 ```
