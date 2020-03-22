@@ -29,49 +29,103 @@ That's it! You should also be able to install or use the library as a git-submod
 - Sensoray S826
 - NI myRIO
 
-### Example Usage
+### Example Usage 
 
+#### Opening and Configuration
 ```cpp
-// create and enable daq object
+// open Q8-USB
 Q8Usb q8;
-q8.enable();
-
+// create DAQ specific options
+QuanserOptions opts;
+opts.encX_filter[0] = QuanserOptions::EncoderFilter::Filtered;
+opts.encX_velocity[0] = 0.1;
+opts.aoX_params[0].ch_mode = QuanserOptions::AoMode::CurrentMode1;
+opts.aoX_params[0].ch_kff = 0;
+opts.aoX_params[0].ch_a0 = 2;
+opts.aoX_params[0].ch_a1 = 20;
+opts.aoX_params[0].ch_a2 = 0;
+opts.aoX_params[0].ch_b0 = -1;
+opts.aoX_params[0].ch_b1 = 0;
+opts.aoX_params[0].ch_post = 1000;
+// set options
+q8.set_options(opts);
+```
+#### Synchronized Reads/Writes
+```cpp
 // synchronized reads
 q8.read_all();
 bool di0 = q8.DI[0];
 double ai5 = q8.AI[5];
 int enc3 = q8.encoder[3];
 double vel2 = q8.velocity[2];
-
 // synchronized writes
 q8.DO[7] = true;
 q8.AO[2] = 1.23;
 q8.write_all();
-
-// per module reads/writes
+```
+#### Per Module Reads/Writes
+```cpp
 q8.AI.read();
-q8.AO[0] = q8.AI[0];
+q8.AO[0] = q8.AI[7];
 q8.AO.write();
-
-// per channel read/writes
-di0 = q8.DI.read(0);
-q8.DO.write(0,di0);
-
-// automatic handling of shared pins
+```
+#### Per Channel Reads/Writes
+```cpp
+q8.DI.read(1);
+q8.DO.write(1,q8.DI[1]);
+```
+#### Set Enable/Disable/Expire Values
+```cpp
+q8.DO.enable_values[0] = true;
+q8.AO.enable_values[0] = 3.14;
+q8.AO.disable_values[0] = 0;
+q8.AO.expire_values.write(0,0);
+...
+q8.enable(); // AO0 will go to 3.14 V, DO0 will go to 5 V
+...
+q8.disabe(); // AO0 will go to 0 V, DO0 will go to 0 V (default)
+```
+#### Watchdog Support
+```cpp
+q8.watchdog.set_timeout(10_ms);
+q8.watchdog.start();
+while (true) {
+    ...
+    q8.watchdog.kick();
+}
+q8.watchdog.stop();
+```
+#### Automatic Handling of Shared Pins
+```cpp
 q8.PWM.set_channels({0,1,2,3}); // converts DO 0:3 to PWM outputs
 q8.PWM.frequencies.write(0, 20000);
 q8.PWM.write(0, 0.75);
-
-// lightweight channel handles
+```
+#### Lightweight Handles for Individual Channels
+```cpp
 DOHandle h_do0(q8.DO, 0);
 AOHandle h_ao0(q8.AO, 0);
 EncoderHandle h_enc0(q8.encoder, 0);
-h_do0.write_level(LOW);
+// I/O through handles
+h_do0.write_level(TTL_LOW);
 h_ao0.write_volts(0);
 h_enc0.write_mode(QuadMode::X4);
 h_enc0.set_units(360.0 / 1024);
 h_enc0.zero();
+// pass handles to other classes
 MyRobot rob(h_do0, h_ao0, h_enc0);
+```
+#### Precision Timing Utilities
+```cpp
+Q8Usb q8;
+Timer timer(1000_Hz);
+Time t = Time::Zero;
+while (t < 60_s) {
+    q8.read_all();
+    my_controller_update(t, q8.AO[0],q8.AI[0],q8.encoder[0]);
+    q8.write_all();
+    t = timer.wait();
+}
 ```
 
 ### Requirments 
