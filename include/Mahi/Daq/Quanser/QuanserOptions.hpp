@@ -45,7 +45,7 @@ struct QuanserOptions {
     enum class LedMode { None, Auto, User };
     enum class DoMode { None, Digital, Pwm };
     enum class AoMode { VoltageMode  = 0, CurrentMode2 = 1, CurrentMode1 = 2, CurrentMode0 = 3, ControlMode2 = 4, ControlMode1 = 5, ControlMode0 = 6};
-    struct AoPrams { AoMode ch_mode; double ch_kff, ch_a0, ch_a1, ch_a2, ch_b0, ch_b1, ch_post; };
+    struct AoParams { AoMode ch_mode; double ch_kff, ch_a0, ch_a1, ch_a2, ch_b0, ch_b1, ch_post; };
     
     /// Makes the Quanser formatted options string
     std::string str();    
@@ -107,7 +107,7 @@ struct QuanserOptions {
     /// Function:       Sets analog mode and parameters (consult Quanser docs)
     /// Quanser option: chX_mode, chX_kff, chX_a0, chX_a1, chX_a2, chX_b0, chX_b1, chX_post
     /// Applies to:     Q8Usb
-    std::map<ChanNum, AoPrams> aoX_params;
+    std::map<ChanNum, AoParams> aoX_params;
     /// Function:       Set special user specific string options
     /// Quanser option: N/A
     /// Applies to:     Any

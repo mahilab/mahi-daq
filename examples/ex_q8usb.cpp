@@ -51,7 +51,6 @@ int main(int argc, char const *argv[])
     q8.DI.read(0);
     print("AI[0]: {:+.2f} V", q8.AI[0]);
     print("DI[0]: {}",(int)q8.DI[0]);
-
     prompt("Press ENTER to start I/O loop.");
 
     /// General I/O loop
@@ -61,7 +60,7 @@ int main(int argc, char const *argv[])
         print("AI[0]: {:+.2f} V | DI[0]: {} | encoder[0]: {} = {:+.2f} deg. -> {:+.2f} deg/s", q8.AI[0], (int)q8.DI[0], q8.encoder[0], q8.encoder.positions[0], q8.velocity.velocities[0]);
         double out = 5 * std::sin(TWOPI * i * 0.01);
         q8.AO[0] = out;
-        q8.DO[0] = out > 0 ? TTL_HIGH : TTL_LOW;
+        q8.DO[0] = out > 0 ? true : false;
         /// Synced write, writes all DAQ outputs
         q8.write_all();
         sleep(10_ms);
@@ -92,5 +91,18 @@ int main(int argc, char const *argv[])
     q8.disable();
     q8.close();
 
+    q8.AO.disable_values[0] = 0;
+    q8.AO.expire_values.write(0,0);
+
+    q8.watchdog.set_timeout(10_ms);
+    q8.watchdog.start();
+    while (true) {
+        // controls
+        q8.watchdog.kick();
+    }
+    q8.watchdog.stop();
+
     return 0;
 }
+
+
