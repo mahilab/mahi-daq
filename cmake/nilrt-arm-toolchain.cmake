@@ -9,7 +9,7 @@ set(NI_LRT ON)
 set(NI_ARM ON)
 
 # root to cross compiler
-set(NI_ARM_ROOT "/dev/nilrt-arm" CACHE FILEPATH "Absolute path to NI Linux Realtime GNU toolchain (ARM).")
+set(NI_ARM_ROOT "C:/dev/nilrt-arm" CACHE FILEPATH "Absolute path to NI Linux Realtime GNU toolchain (ARM).")
 
 # add compiler program path
 LIST(APPEND CMAKE_PROGRAM_PATH ${NI_ARM_ROOT}/sysroots/i686-nilrtsdk-mingw32/usr/bin/arm-nilrt-linux-gnueabi)
