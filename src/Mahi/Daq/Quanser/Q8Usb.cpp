@@ -8,7 +8,7 @@ using namespace mahi::util;
 namespace mahi {
 namespace daq {
 
-Q8Usb::Q8Usb() :
+Q8Usb::Q8Usb(bool auto_open) :
     QuanserDaq("q8_usb"),
     AI(*this, m_h, {0, 1, 2, 3, 4, 5, 6, 7}),
     AO(*this, m_h, {0, 1, 2, 3, 4, 5, 6, 7}),
@@ -31,8 +31,6 @@ Q8Usb::Q8Usb() :
     encoder(*this, m_h, {0, 1, 2, 3, 4, 5, 6, 7}),
     velocity(*this, m_h, encoder, {0, 1, 2, 3, 4, 5, 6, 7}),
     watchdog(*this, m_h, 100_ms) {
-    // open
-    open();
     // establish shared pins relationships
     create_shared_pins(&DO, &PWM,
                        {{{0}, {0}},
@@ -54,6 +52,9 @@ Q8Usb::Q8Usb() :
     config_read(&AI, &DI, &encoder, &velocity);
     // configure synced writes
     config_write(&AO, &DO, &PWM, nullptr);
+    // open
+    if (auto_open)
+        open();
 }
 
 Q8Usb::~Q8Usb() {

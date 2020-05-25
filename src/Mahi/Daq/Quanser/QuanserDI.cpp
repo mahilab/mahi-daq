@@ -28,7 +28,7 @@ QuanserDI::QuanserDI(QuanserDaq& d,QuanserHandle& h, bool bidirectional, const C
     connect_read(*this, on_read_impl);
 }
 
-bool QuanserDI::on_gain_channels(const ChanNums& chs) {
+bool QuanserDI::init_channels(const ChanNums& chs) {
     if (!m_bidirectional)
         return true;
     auto result = hil_set_digital_directions(m_h, &chs[0], static_cast<t_uint32>(chs.size()), nullptr, 0);
@@ -38,6 +38,16 @@ bool QuanserDI::on_gain_channels(const ChanNums& chs) {
     }
     LOG(Verbose) << "Set " << name() << " channels " << chs << " directions to inputs.";
     return true;
+}
+
+bool QuanserDI::on_daq_open() {
+    return init_channels(channels());
+}
+
+bool QuanserDI::on_gain_channels(const ChanNums& chs) {
+    if (!daq().is_open())
+        return true;
+    return init_channels(chs);
 }
 
 

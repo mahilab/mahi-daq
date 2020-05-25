@@ -22,6 +22,7 @@ using namespace mahi::util;
 
 int main(int argc, char const *argv[])
 {
+
     MahiLogger->set_max_severity(Verbose);
 
     // For this example, connect AO0 to AI0 and DO0 to DI0, 
@@ -87,20 +88,22 @@ int main(int argc, char const *argv[])
     /// Restore default DO channels (disables PWM[0])
     q8.DO.set_channels({0,1,2,3,4,5,6,7});
 
+    // prompt("Press ENTER to test Watchdog.");
+
+    // q8.AO.disable_values[0] = 0;
+    // q8.AO.expire_values.write(0,0);
+
+    // q8.watchdog.set_timeout(10_ms);
+    // q8.watchdog.start();
+    // while (true) {
+    //     // controls
+    //     q8.watchdog.kick();
+    // }
+    // q8.watchdog.stop();
+
     /// Q8Usb will auto disable/close on destruction, but explicit calls are good practice
     q8.disable();
     q8.close();
-
-    q8.AO.disable_values[0] = 0;
-    q8.AO.expire_values.write(0,0);
-
-    q8.watchdog.set_timeout(10_ms);
-    q8.watchdog.start();
-    while (true) {
-        // controls
-        q8.watchdog.kick();
-    }
-    q8.watchdog.stop();
 
     return 0;
 }

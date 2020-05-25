@@ -8,7 +8,7 @@ using namespace mahi::util;
 namespace mahi {
 namespace daq {
 
-Q2Usb::Q2Usb() :
+Q2Usb::Q2Usb(bool auto_open) :
     QuanserDaq("q2_usb"),
     AI(*this, m_h, {0, 1}),
     AO(*this, m_h, {0, 1}),
@@ -44,8 +44,6 @@ Q2Usb::Q2Usb() :
         }),
     encoder(*this, m_h, {0, 1}),
     watchdog(*this, m_h, 100_ms) {
-    // open
-    open();
     /// Configure LED for user mode and turn off PWM by default
     QuanserOptions opts;
     opts.led = QuanserOptions::LedMode::User;
@@ -74,6 +72,9 @@ Q2Usb::Q2Usb() :
     config_read(&AI, &DI, &encoder, nullptr);
     // configure synced writes
     config_write(&AO, &DO, &PWM, nullptr);
+    // open
+    if (auto_open)
+        open();
 }
 
 Q2Usb::~Q2Usb() {

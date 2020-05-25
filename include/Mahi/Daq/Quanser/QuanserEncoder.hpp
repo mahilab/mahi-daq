@@ -31,6 +31,8 @@ public:
     QuanserEncoder(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
 private:
     friend QuanserDaq;
+    bool init_channels(const ChanNums& chs);
+    bool on_daq_open() override;
     bool on_gain_channels(const ChanNums& chs) override;
     QuanserHandle& m_h;
 };

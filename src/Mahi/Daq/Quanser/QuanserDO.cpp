@@ -48,7 +48,7 @@ QuanserDO::QuanserDO(QuanserDaq& d, QuanserHandle& h, bool bidirectional, const 
     connect_write(expire_values, expire_write_impl);
 }
 
-bool QuanserDO::on_gain_channels(const ChanNums& chs) {
+bool QuanserDO::init_channels(const ChanNums& chs) {
     if (m_bidirectional) {
         auto result = hil_set_digital_directions(m_h, nullptr, 0, &chs[0], static_cast<t_uint32>(chs.size()));
         if (result != 0) {
@@ -57,7 +57,17 @@ bool QuanserDO::on_gain_channels(const ChanNums& chs) {
         }
     }
     LOG(Verbose) << "Set " << name() << " channels " << chs << " directions to outputs.";
-    return expire_values.write(std::vector<TTL>(channels().size(), TTL_LOW));    
+    return expire_values.write(std::vector<TTL>(channels().size(), TTL_LOW));   
+}
+
+bool QuanserDO::on_daq_open() {
+    return init_channels(channels());
+}
+
+bool QuanserDO::on_gain_channels(const ChanNums& chs) {
+    if (!daq().is_open())
+        return true;
+    return init_channels(chs);   
 }
 
 } // namespace daq 

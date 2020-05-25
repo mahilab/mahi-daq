@@ -48,6 +48,8 @@ public:
     Register<double> duty_cycles;
 private:
     friend QuanserDaq;
+    bool init_channels(const ChanNums& chs);
+    bool on_daq_open() override;
     bool on_gain_channels(const ChanNums& chs) override;
     bool on_free_channels(const ChanNums& chs) override;
     std::function<bool(const ChanNums&)> m_on_gain_custom;

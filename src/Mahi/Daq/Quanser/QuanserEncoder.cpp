@@ -72,8 +72,18 @@ QuanserEncoder::QuanserEncoder(QuanserDaq& d, QuanserHandle& h, const ChanNums& 
     connect_write(modes, write_quad_impl);
 }
 
-bool QuanserEncoder::on_gain_channels(const ChanNums& chs) {
+bool QuanserEncoder::init_channels(const ChanNums& chs) {
     return modes.write(chs, std::vector<QuadMode>(chs.size(), QuadMode::X4));
+}
+
+bool QuanserEncoder::on_daq_open() {
+    return init_channels(channels());
+}
+
+bool QuanserEncoder::on_gain_channels(const ChanNums& chs) {
+    if (!daq().is_open())
+        return true;
+    return init_channels(chs);
 }
 
 namespace {

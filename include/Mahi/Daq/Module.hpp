@@ -86,7 +86,7 @@ protected:
     /// Converts a public facing channel number to the internal representation.
     /// Passes through by default. Override if your DAQ API channel indexing is
     /// different from the interface indexing you you want clients to use.
-    virtual ChanNum convert_channel(ChanNum public_facing) const;
+    virtual ChanNum convert_channel(ChanNum public_facing) const;   
     /// Called when new channels have been gained
     virtual bool on_gain_channels(const ChanNums& chs) { return true; }
     /// Called when old channels have been freed

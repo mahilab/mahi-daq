@@ -30,7 +30,7 @@ namespace daq {
 class QPid final : public QuanserDaq {
 public:
     /// Constructor. Automatically opens communication.
-    QPid();
+    QPid(bool auto_open = true);
     /// Destructor. First disables if enabled, then closes if open.
     ~QPid();
     /// The Quanser Q8-USB supports eight 16-bit differential analog inputs

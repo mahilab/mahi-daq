@@ -93,7 +93,7 @@ QuanserPwm::QuanserPwm(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed,
     connect_write(duty_cycles, duty_write_impl);
 }
 
-bool QuanserPwm::on_gain_channels(const ChanNums& chs) {
+bool QuanserPwm::init_channels(const ChanNums& chs) {
     bool success = true;
     if (m_on_gain_custom) {
         success = m_on_gain_custom(chs);
@@ -101,6 +101,16 @@ bool QuanserPwm::on_gain_channels(const ChanNums& chs) {
     return success && modes.write(chs, std::vector<Mode>(chs.size(), Mode::DutyCycle)) &&
            frequencies.write(chs, std::vector<double>(chs.size(), 10000)) &&
            expire_values.write(chs, std::vector<double>(chs.size(), 0));
+}
+
+bool QuanserPwm::on_daq_open() {
+    return init_channels(channels());
+}
+
+bool QuanserPwm::on_gain_channels(const ChanNums& chs) {
+    if (!daq().is_open())
+        return true;
+    return init_channels(chs);
 }
 
 bool QuanserPwm::on_free_channels(const ChanNums& chs) {

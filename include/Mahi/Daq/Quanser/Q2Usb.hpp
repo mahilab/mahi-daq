@@ -25,12 +25,12 @@
 #include <Mahi/Daq/Quanser/QuanserWatchdog.hpp>
 
 namespace mahi {
-namespace daq {
+namespace daq {\
 
 class Q2Usb final : public QuanserDaq {
 public:
     /// Constructor. Automatically opens communication.
-    Q2Usb();
+    Q2Usb(bool auto_open = true);
     /// Destructor. First disables if enabled, then closes if open.
     ~Q2Usb();
     /// The Quanser Q2-USB supports two 12-bit single-ended analog inputs with

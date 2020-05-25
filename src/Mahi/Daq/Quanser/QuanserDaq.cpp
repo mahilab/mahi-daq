@@ -36,7 +36,7 @@ void dec_id(const char* card_type) {
 } // private namespace
 
 /// Structure for holding potential Modules that can be read/written
-/// using Quansers synced read/write operations. I'm using PIMPL idiom
+/// using Quanser's synced read/write operations. I'm using PIMPL idiom
 /// so as to not pollute the public API or confuse the user.
 struct QuanserDaq::ReadWriteImpl {
     QuanserAI* AI = nullptr;
@@ -135,10 +135,10 @@ bool QuanserDaq::write_all() {
 }
 
 bool QuanserDaq::set_options(const QuanserOptions& options) {
-    char options_str[4096];
-    auto temp = options;
-    std::strcpy(options_str, temp.str().c_str());
     if (valid()) {
+        char options_str[4096];
+        auto temp = options;
+        std::strcpy(options_str, temp.str().c_str());
         t_error result;
         result = hil_set_card_specific_options(m_h, options_str, std::strlen(options_str));
         util::sleep(10_ms);
@@ -152,6 +152,10 @@ bool QuanserDaq::set_options(const QuanserOptions& options) {
             return false;
         }
     }
+    else {
+        LOG(Verbose) << "Cached Quanser options because " << name() << " is not currently open or valid. They will be set when the DAQ is opened.";
+        m_options = options;
+    }
     return true;
 }
 
@@ -163,7 +167,7 @@ bool QuanserDaq::valid() const {
     return m_h != nullptr && hil_is_valid(m_h);
 }
 
-std::string QuanserDaq::manufactuer() const {
+std::string QuanserDaq::manufacturer() const {
     char buf[256];
     t_error result = hil_get_string_property(m_h, PROPERTY_STRING_MANUFACTURER, buf, ARRAY_LENGTH(buf));
     if (result == 0)

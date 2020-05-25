@@ -7,7 +7,7 @@ using namespace mahi::util;
 namespace mahi {
 namespace daq {
 
-QPid::QPid() :
+QPid::QPid(bool auto_open) :
     QuanserDaq("qpid_e"),
     AI(*this, m_h, {0,1,2,3,4,5,6,7}), 
     AO(*this, m_h, {0,1,2,3,4,5,6,7}),
@@ -30,8 +30,6 @@ QPid::QPid() :
     velocity(*this, m_h, encoder, {0,1,2,3,4,5,6,7}),
     watchdog(*this, m_h, 100_ms)
 {   
-    // open
-    open();
     // establish shared pins relationships
     SharedPins list(56);
     for (ChanNum i = 0; i < 56; ++i)
@@ -53,6 +51,8 @@ QPid::QPid() :
     config_read(&AI, &DI, &encoder, &velocity);
     // configure synced writes
     config_write(&AO, &DO, &PWM, nullptr);
+    if (auto_open)
+        open();
 }
 
 QPid::~QPid() {

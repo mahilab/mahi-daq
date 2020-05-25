@@ -50,8 +50,8 @@ public:
     QuanserOptions get_options() const;
     /// Is the DAQ currently valid?
     bool valid() const;
-    /// Returns the DAQ manufactuer name (DAQ must be open)
-    std::string manufactuer() const;
+    /// Returns the DAQ manufacturer name (DAQ must be open)
+    std::string manufacturer() const;
     /// Returns the DAQ product name (DAQ must be open)
     std::string product_name() const;
     /// Returns the DAQ model name (DAQ must be open)
@@ -75,7 +75,7 @@ protected:
     /// Quanser DAQ close impl
     bool on_daq_close() override;
 protected:
-    /// Qunaser card type string
+    /// Quanser card type string
     const char* m_card_type;
     /// Quanser integer ID
     const int m_id;

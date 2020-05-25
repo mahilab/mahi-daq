@@ -31,8 +31,8 @@ namespace daq {
 /// Documentation: https://docs.quanser.com/quarc/documentation/q8_usb.html
 class Q8Usb final : public QuanserDaq {
 public:
-    /// Constructor. Automatically opens communication.
-    Q8Usb();
+    /// Constructor. Automatically opens communication if #auto_open is true.
+    Q8Usb(bool auto_open = true);
     /// Destructor. First disables if enabled, then closes if open.
     ~Q8Usb();
     /// The Quanser Q8-USB supports eight 16-bit differential analog inputs

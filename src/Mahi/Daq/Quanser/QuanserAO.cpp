@@ -58,9 +58,21 @@ QuanserAO::QuanserAO(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed)  
     connect_write(ranges, ranges_write_impl);
 }
 
-bool QuanserAO::on_gain_channels(const ChanNums& chs) {
+bool QuanserAO::init_channels(const ChanNums& chs) {
     return expire_values.write(chs, std::vector<Volts>(chs.size(), 0)) &&  ranges.write(chs, std::vector<Range<Volts>>(chs.size(), {-10,10}));
 }
+
+bool QuanserAO::on_daq_open() {
+    return init_channels(channels());
+}
+
+bool QuanserAO::on_gain_channels(const ChanNums& chs) {
+    if (!daq().is_open())
+        return true;
+    return init_channels(chs);
+}
+
+ 
 
 
 } // namespace daq 
