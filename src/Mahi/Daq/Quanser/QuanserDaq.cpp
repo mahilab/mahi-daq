@@ -21,17 +21,20 @@ namespace mahi {
 namespace daq {
 
 namespace {
-std::unordered_map<const char*, int> g_id_map;
-int inc_id(const char* card_type) {
-    if (g_id_map.count(card_type))
-        g_id_map[card_type]++;
-    else
-        g_id_map.emplace(card_type, 0);
-    return g_id_map[card_type];
-}
-void dec_id(const char* card_type) {
-    if (g_id_map.count(card_type))
-        g_id_map[card_type]--;
+int qdaq_id(const char* card_type, bool decrement) {
+    static std::unordered_map<const char*, int> id_map;
+    if (decrement) {
+        if (id_map.count(card_type))
+            id_map[card_type]--;
+        return -1;
+    }
+    else {
+        if (id_map.count(card_type))
+            id_map[card_type]++;
+        else
+            id_map.emplace(card_type, 0);
+        return id_map[card_type];
+    }    
 }
 } // private namespace
 
@@ -53,7 +56,7 @@ struct QuanserDaq::ReadWriteImpl {
 
 QuanserDaq::QuanserDaq(const char* card_type) :
     m_card_type(card_type),
-    m_id(inc_id(card_type)),
+    m_id(qdaq_id(card_type, false)),
     m_h(nullptr),
     m_rw(std::make_unique<QuanserDaq::ReadWriteImpl>())
 {
@@ -61,7 +64,7 @@ QuanserDaq::QuanserDaq(const char* card_type) :
 }
 
 QuanserDaq::~QuanserDaq() {
-    dec_id(m_card_type);
+    qdaq_id(m_card_type, true);
 }
 
 bool QuanserDaq::read_all() {
