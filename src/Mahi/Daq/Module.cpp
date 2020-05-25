@@ -12,7 +12,12 @@ namespace daq {
 
 namespace  {
 
-std::unordered_map<ChanneledModule*,std::vector<std::pair<ChanneledModule*,SharedPins>>> g_share_list_map; 
+typedef std::unordered_map<ChanneledModule*,std::vector<std::pair<ChanneledModule*,SharedPins>>> ShareListMap;
+
+ShareListMap& share_list_map() {
+    static ShareListMap slm;
+    return slm;
+}
 
 inline void sort_and_reduce(ChanNums& chs) {
     std::sort(chs.begin(), chs.end());
@@ -105,7 +110,7 @@ bool ChanneledModule::set_channels(const ChanNums& chs) {
         m_buffs[i]->remap(old_map, m_ch_map); 
     // relinquish shared pins
     if (shares_pins()) {
-        for (auto relation : g_share_list_map[this]) {
+        for (auto relation : share_list_map()[this]) {
             ChanneledModule* other = relation.first;
             ChanNums must_remove;
             for (auto& mapping : relation.second) {
@@ -165,7 +170,7 @@ ChanNum ChanneledModule::convert_channel(ChanNum public_facing) const {
 }
 
 bool ChanneledModule::shares_pins() const {
-    for (auto& entry : g_share_list_map) {
+    for (auto& entry : share_list_map()) {
         if (entry.first == this)
             return true;
     }
@@ -174,12 +179,12 @@ bool ChanneledModule::shares_pins() const {
 
 void ChanneledModule::create_shared_pins(ChanneledModule* a, ChanneledModule* b, SharedPins share_list) {
     // make sure entries exist
-    if (g_share_list_map.count(a) == 0)
-        g_share_list_map[a] = {};
-    if (g_share_list_map.count(b) == 0)
-        g_share_list_map[b] = {};
+    if (share_list_map().count(a) == 0)
+        share_list_map()[a] = {};
+    if (share_list_map().count(b) == 0)
+        share_list_map()[b] = {};
     // add share lists for a
-    g_share_list_map[a].push_back({b,share_list});
+    share_list_map()[a].push_back({b,share_list});
     // reverse share list
     ChanNums temp;
     for (auto& p : share_list)
@@ -188,11 +193,11 @@ void ChanneledModule::create_shared_pins(ChanneledModule* a, ChanneledModule* b,
         p.first = p.second;
         p.second = temp;
     } 
-    g_share_list_map[b].push_back({a,share_list});
+    share_list_map()[b].push_back({a,share_list});
 }
 
 // void ChanneledModule::print_shared_pins() {
-//     for (auto& entry : g_share_list_map) {
+//     for (auto& entry : share_list_map()) {
 //         for (auto& other : entry.second) {
 //             std::cout << entry.first->name() << " <=> " << other.first->name() << std::endl;
 //             for (auto& p : other.second) {
