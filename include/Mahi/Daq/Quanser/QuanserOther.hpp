@@ -13,7 +13,7 @@ public:
     QuanserOtherInput(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
 protected:
     friend QuanserDaq;
-    QuanserHandle m_h;
+    QuanserHandle& m_h;
 };
 
 class QuanserOtherOutput : public ChanneledModule, public WriteBuffer<double> {
@@ -21,7 +21,7 @@ public:
     QuanserOtherOutput(QuanserDaq& d, QuanserHandle& h, const ChanNums& allowed);
 protected:
     friend QuanserDaq;
-    QuanserHandle m_h;
+    QuanserHandle& m_h;
 };
 
 } // namespace daq
