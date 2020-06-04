@@ -24,14 +24,16 @@ int main(int argc, char const *argv[])
 {
     MahiLogger->set_max_severity(Verbose);
 
-    // For this example, connect AO0 to AI0 and DO0 to DI0, 
-    // and connect an encoder to channel 0.
+    // For this example, connect AO0 to AI0 and DIO0 to DIO1, 
+    // PWM0 to DIO2, and connect an encoder to channel 0.
     QPid qpid;
     if (!qpid.is_open())
         return 1;
 
     /// Print the DAQ info
     print_info(qpid);
+
+    qpid.DO.set_channels({0});
 
     // Set enable values
     qpid.AO.enable_values[0] = 3.14;
@@ -42,15 +44,16 @@ int main(int argc, char const *argv[])
     // Zero the encoder
     qpid.encoder.zero(0);
 
+
     /// Enable, this will set enable values on AO and DO, which we can read on AI[0] and DI[0]
     qpid.enable();
     sleep(1_ms);
     /// Can read the whole Module
     qpid.AI.read();
     /// Or just a single channel
-    qpid.DI.read(0);
+    qpid.DI.read(1);
     print("AI[0]: {:+.2f} V", qpid.AI[0]);
-    print("DI[0]: {}",(int)qpid.DI[0]);
+    print("DI[1]: {}",(int)qpid.DI[1]);
 
     prompt("Press ENTER to start I/O loop.");
 
@@ -58,7 +61,7 @@ int main(int argc, char const *argv[])
     for (int i = 0; i < 500; ++i) {
         /// Synced read, reads all DAQ inputs
         qpid.read_all();
-        print("AI[0]: {:+.2f} V | DI[0]: {} | encoder[0]: {} = {:+.2f} deg.", qpid.AI[0], (int)qpid.DI[0], qpid.encoder[0], qpid.encoder.positions[0]);
+        print("AI[0]: {:+.2f} V | DI[1]: {} | encoder[0]: {} = {:+.2f} deg.", qpid.AI[0], (int)qpid.DI[1], qpid.encoder[0], qpid.encoder.positions[0]);
         double out = 5 * std::sin(TWOPI * i * 0.01);
         qpid.AO[0] = out;
         qpid.DO[0] = out > 0 ? TTL_HIGH : TTL_LOW;
@@ -77,7 +80,7 @@ int main(int argc, char const *argv[])
     /// Read PWM out in to DO[0] (this loop is too slow to actually keep up, but we can see that it is changing)
     for (int i = 0; i < 500; ++i) {
         qpid.read_all();
-        print("DI[0]: {}", (int)qpid.DI[0]);
+        print("DI[2]: {}", (int)qpid.DI[2]);
         double duty_cycle = 0.5f + 0.5f * std::sin(TWOPI * i * 0.01);
         qpid.PWM.write(0,duty_cycle);
         sleep(10_ms);
