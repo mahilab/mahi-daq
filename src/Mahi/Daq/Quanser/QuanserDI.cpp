@@ -29,6 +29,8 @@ QuanserDI::QuanserDI(QuanserDaq& d,QuanserHandle& h, bool bidirectional, const C
 }
 
 bool QuanserDI::init_channels(const ChanNums& chs) {
+    if (chs.size() == 0)
+        return true;
     if (!m_bidirectional)
         return true;
     auto result = hil_set_digital_directions(m_h, &chs[0], static_cast<t_uint32>(chs.size()), nullptr, 0);
