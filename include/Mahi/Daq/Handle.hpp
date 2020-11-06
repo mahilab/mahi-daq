@@ -91,6 +91,8 @@ public:
     inline bool write_volts(Volts v) { return m_mod->write(m_ch, v); }
     /// Sets the current software buffer value
     inline bool set_volts(Volts v) { return m_mod->set(m_ch, v); }
+    /// Returns the current value in the software buffer.
+    inline Volts get_volts() { return m_mod->get(m_ch); }
     /// Sets the enable value
     inline bool set_enable(Volts v) { return m_mod->enable_values.set(m_ch, v); }
     /// Sets the disable value
