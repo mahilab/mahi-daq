@@ -45,6 +45,8 @@ namespace daq {
 /// A single-channel view into an AIModule
 class AIHandle {
 public:
+    /// Default Constructor (invalid handle)
+    AIHandle() {}
     /// Constructor
     AIHandle(AIModule& mod, ChanNum ch) : m_mod(&mod), m_ch(ch) {}
     /// Physically reads the voltage into the software buffer.
@@ -62,6 +64,8 @@ protected:
 /// A single-channel view into a DIModule
 class DIHandle {
 public:
+    /// Default Constructor (invalid handle)
+    DIHandle() {}
     /// Constructor
     DIHandle(DIModule& mod, ChanNum ch) : m_mod(&mod), m_ch(ch) {}
     /// Physically reads the TTL level into the software buffer.
@@ -83,6 +87,8 @@ protected:
 /// A single-channel view into an AOModule
 class AOHandle {
 public:
+    /// Default Constructor (invalid handle)
+    AOHandle() {}
     /// Constructor
     AOHandle(AOModule& mod, ChanNum ch) : m_mod(&mod), m_ch(ch) {}
     /// Physically writes the voltage currently in the software buffer
@@ -106,6 +112,8 @@ protected:
 /// A single-channel view into a DOModule
 class DOHandle {
 public:
+    /// Default Constructor (invalid handle)
+    DOHandle() {}
     /// Constructor
     DOHandle(DOModule& mod, ChanNum ch) : m_mod(&mod), m_ch(ch) {}
     /// Physically writes the level currently in the software buffer
@@ -139,6 +147,8 @@ protected:
 /// A single-channel view into an EncoderModule
 class EncoderHandle {
 public:
+    /// Default Constructor (invalid handle)
+    EncoderHandle() {}
     /// Constructor
     EncoderHandle(EncoderModule& mod, ChanNum ch) : m_mod(&mod), m_ch(ch) {}
     /// Physically reads the counts into the software buffer.
