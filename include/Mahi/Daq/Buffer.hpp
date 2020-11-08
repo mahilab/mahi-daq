@@ -263,6 +263,8 @@ public:
     /// Immediately writes a subset of channels (up to 64). The channel numbers must be valid and
     /// chs and values must be the same size. Returns true for success, false otherwise.
     bool write(const ChanNums& chs, const typename Base::BufferType& values) {
+        if (chs.size() == 0 || values.size() == 0)
+            return true;
         std::size_t n = chs.size() > 64 ? 64 : chs.size();
         ChanNum     intern_chs[64];
         for (std::size_t i = 0; i < n; ++i) {
