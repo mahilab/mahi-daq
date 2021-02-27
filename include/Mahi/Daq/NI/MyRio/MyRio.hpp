@@ -38,8 +38,6 @@ public:
     bool write_all() override;
     /// Returns true if the myRIO button is currently pressed
     bool is_button_pressed() const;
-    /// Set myRIO led in range 0 to 3 on/off
-    void set_led(int led, bool on);
     /// Prints configuration and status registers
     void print_registers() const;
 public:
