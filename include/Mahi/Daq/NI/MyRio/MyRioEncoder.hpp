@@ -33,6 +33,11 @@ private:
     MyRioEncoder(MyRioConnector& connector, const ChanNums& allowed);
     bool on_gain_channels(const ChanNums& chs) override;
     bool on_free_channels(const ChanNums& chs) override;
+public:
+    /// returns true if there is an encoder error
+    bool has_encoder_error(const ChanNums& chs);
+    /// clears the encoder error
+    bool clear_encoder_error(const ChanNums& chs);
 private:
     using EncoderModule::write;
     const MyRioConnector& m_conn; 
