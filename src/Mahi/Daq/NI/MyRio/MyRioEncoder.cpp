@@ -99,19 +99,22 @@ bool MyRioEncoder::on_free_channels(const ChanNums& chs) {
 
 bool MyRioEncoder::has_encoder_error(const ChanNums& chs){
     bool enc_error = false;
-    for (auto& ch : chs)
-        bool error = get_bit(ENC_STAT[m_conn.type][ch], 1);  // disable encoder
+    for (auto& ch : chs){
+        enc_error = get_bit(ENC_STAT[m_conn.type][ch], 1);  // get the encoder error bit
         if (enc_error){
             LOG(Verbose) << "Encoder error bit high. Encoder value will not change until cleared";
             return true;
         }
+    }
     return false;
 }
 
 bool MyRioEncoder::clear_encoder_error(const ChanNums& chs){
-    for (auto& ch : chs)
-        clr_bit(ENC_STAT[m_conn.type][ch], 1);  // disable encoder
+    for (auto& ch : chs){
+        set_bit(ENC_CNFG[m_conn.type][ch], 3);  // clear the encoder errors
+        clr_bit(ENC_CNFG[m_conn.type][ch], 3);  // reset the bit manually
         LOG(Verbose) << "Clearing encoder error bit";
+    }
     return true;
 }
 
