@@ -128,7 +128,7 @@ while (t < 60_s) {
 }
 ```
 
-### Requirments 
+### Requirements 
 
 - C++11 compiler
 - Quanser only: [Quanser HIL SDK](https://github.com/quanser/hil_sdk_win64)
